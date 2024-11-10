@@ -11,6 +11,7 @@ function Home() {
         Hello {currentUser && currentUser.displayName}, this is the Protected
         Home page
       </h2>
+      
     </div>
   );
 }

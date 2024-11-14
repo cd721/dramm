@@ -7,7 +7,7 @@ import validation from "../helpers/validation.js";
 import { useNavigate } from "react-router-dom";
 import SearchPlaces from "./SearchPlaces";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
-const resultsPerPage = 20;
+
 function PlaceList(props) {
   const { page } = useParams();
   const navigate = useNavigate();
@@ -52,9 +52,7 @@ function PlaceList(props) {
 
     fetchData();
 
-    // if (!pageExists) {
-    //   return <Navigate to="/404" />;
-    // }
+   
   }, [navigate]);
   //search
   useEffect(() => {

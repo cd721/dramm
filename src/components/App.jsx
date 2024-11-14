@@ -7,6 +7,7 @@ import Navigation from "./Navigation";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import Places from "./Places";
+import Place from "./Place"
 import { AuthProvider } from "../context/AuthContext";
 import PrivateRoute from "./PrivateRoute";
 function App() {
@@ -28,6 +29,8 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
 
           <Route path="/places" element={<Places />} />
+          <Route path="/place/:id" element={<Place />} />
+
         </Routes>
       </div>
     </AuthProvider>

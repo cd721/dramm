@@ -2,13 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import noImage from "../img/download.jpeg";
 import { Link, useParams } from "react-router-dom";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import FacebookIcon from "@mui/icons-material/Facebook";
-import YoutubeIcon from "@mui/icons-material/Youtube";
-
-//useParams gets URL parameters
-///places/page/:page"
-//"/places/:id"
 
 import {
   Card,
@@ -18,9 +11,12 @@ import {
   CardHeader,
 } from "@mui/material";
 
+const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
+const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 function Place(props) {
   const { id } = useParams();
   const [placeData, setPlaceData] = useState(undefined);
+  const [weatherDataForPlace, setWeatherDataForPlace] = useState(undefined);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,22 +24,33 @@ function Place(props) {
 
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(
-          `https://api.yelp.com/v3/businesses/${id}`
+        const { data: placeData } = await axios.get(
+          `https://api.yelp.com/v3/businesses/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${YELP_API_KEY}`,
+            },
+          }
         );
-        setPlaceData(data);
+
+        setPlaceData(placeData);
+        console.log(placeData);
+
+        const latitude = placeData.coordinates.latitude;
+        const longitude = placeData.coordinates.longitude;
+
+        const { data: weatherDataForPlace } = await axios.get(
+          `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}}&appid=${WEATHER_API_KEY}`
+        );
+        setWeatherDataForPlace(weatherDataForPlace);
+
         setLoading(false);
-        console.log(data);
       } catch (e) {
         console.log(e);
       }
     };
     fetchData();
   }, [id]);
-  let name = null;
-  if (placeData) {
-    placeData.name ? (name = placeData.name) : (name = "No Name");
-  }
 
   if (loading) {
     return (
@@ -93,7 +100,33 @@ function Place(props) {
                 fontWeight: "bold",
               }}
             >
-              <h3 className="title">Social Media Pages:</h3>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {placeData.location &&
+                placeData.location.display_address &&
+                placeData.location.display_address[0]
+                  ? placeData.location.display_address[0]
+                  : "No Address available"}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {placeData.location &&
+                placeData.location.display_address &&
+                placeData.location.display_address[1]
+                  ? placeData.location.display_address[1]
+                  : "No other location info available"}
+              </Typography>
+              <br />
+              <Typography variant="body2" color="textSecondary" component="p">
+                {placeData.display_phone && placeData.display_phone
+                  ? placeData.display_phone
+                  : "No phone number available."}
+              </Typography>{" "}
+              <br />
+              <Typography variant="body2" color="textSecondary" component="p">
+                {placeData.rating && placeData.rating
+                  ? `Yelp Rating: ${placeData.rating}/5`
+                  : "There are no ratings on Yelp for this place."}
+              </Typography>
+              {/* <h3 className="title">Social Media Pages:</h3>
 
               <h3 className="title">Venue address:</h3>
               {placeData &&
@@ -108,40 +141,7 @@ function Place(props) {
               ) : (
                 <p>Place City not available</p>
               )}
-              {placeData && placeData.location && placeData.location.state ? (
-                <p>{placeData.location.state}</p>
-              ) : (
-                {}
-              )}
-              {placeData &&
-              placeData.location &&
-              placeData.location.postalCode ? (
-                <p>{placeData.location.postalCode}</p>
-              ) : (
-                {}
-              )}
-              {placeData && placeData.location && placeData.location.country ? (
-                <p>{placeData.location.country}</p>
-              ) : (
-                <p>Venue Country not available</p>
-              )}
-
-              {placeData && placeData.url ? (
-                <p>
-                  <a
-                    rel="noopener noreferrer"
-                    target="_blank"
-                    href={placeData.url}
-                  >
-                    Click Here to find tickets/upcoming events for this place.
-                  </a>
-                </p>
-              ) : (
-                <p>
-                  Sorry, there's no Ticketmaster page for this place right now.
-                </p>
-              )}
-
+            */}
               <Link to="/places">Click here to go back to all places...</Link>
             </Typography>
           </CardContent>

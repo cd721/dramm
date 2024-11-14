@@ -1,5 +1,4 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
 import Account from "./Account";
 import Home from "./Home";
 import Landing from "./Landing";
@@ -8,8 +7,11 @@ import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import Places from "./Places";
 import Place from "./Place"
+import ErrorPage from "./ErrorPage";
 import { AuthProvider } from "../context/AuthContext";
 import PrivateRoute from "./PrivateRoute";
+import { Route, Link, Routes ,Navigate} from "react-router-dom";
+
 function App() {
   return (
     <AuthProvider>
@@ -30,6 +32,10 @@ function App() {
 
           <Route path="/places" element={<Places />} />
           <Route path="/place/:id" element={<Place />} />
+
+
+          <Route path="/404" element={<ErrorPage />} />
+          <Route path="*" element={<Navigate to='/404' />} />
 
         </Routes>
       </div>

@@ -8,7 +8,7 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import Button from "@mui/material/Button";
 function PlaceListCard({ place }) {
   console.log(place);
   return (
@@ -27,39 +27,59 @@ function PlaceListCard({ place }) {
         }}
       >
         <CardActionArea>
-          <Link to={`/places/${place.id}`}>
-            <CardMedia
-              sx={{
-                height: "100%",
-                width: "100%",
-              }}
-              component="img"
-              image={place.image_url ? place.image_url : noImage}
-              title="place image"
-            />
+          <CardMedia
+            sx={{
+              height: "100%",
+              width: "100%",
+            }}
+            component="img"
+            image={place.image_url ? place.image_url : noImage}
+            title="place image"
+          />
 
-            <CardContent>
-              <Typography
-                sx={{
-                  borderBottom: "1px solid #1e8678",
-                  fontWeight: "bold",
-                }}
-                gutterBottom
-                variant="h5"
-                component="h3"
-              >
-                {place.name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                <span>More Info</span>
-              </Typography>
-              <a rel=""
-              target=""
-              href="">
-                <AddIcon><span>Add to my places</span></AddIcon>
-              </a>
-            </CardContent>
-          </Link>
+          <CardContent>
+            <Typography
+              sx={{
+                borderBottom: "1px solid #1e8678",
+                fontWeight: "bold",
+              }}
+              gutterBottom
+              variant="h5"
+              component="h3"
+            >
+              {place.name}
+            </Typography>
+
+            <Typography variant="body2" color="textSecondary" component="p">
+              {place.location &&
+              place.location.display_address &&
+              place.location.display_address[0]
+                ? place.location.display_address[0]
+                : "No Address available"}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              {place.location &&
+              place.location.display_address &&
+              place.location.display_address[1]
+                ? place.location.display_address[1]
+                : "No other location info available"}
+            </Typography>
+            <br />
+
+            <Button variant="outlined" component={Link} to={`/place/${place.id}`}>
+          
+              See more info
+            </Button>
+            <br />
+            <Button
+              onClick={() => {
+                alert("TODO: add place to user's list of saved places");
+              }}
+              variant="contained"
+            >
+              Add to my places
+            </Button>
+          </CardContent>
         </CardActionArea>
       </Card>
     </Grid>

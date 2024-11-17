@@ -16,8 +16,9 @@ const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 function Place(props) {
   const { id } = useParams();
   const [placeData, setPlaceData] = useState(undefined);
-  const [weatherDataForPlace, setWeatherDataForPlace] = useState(undefined);
+  const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] = useState(undefined);
   const [loading, setLoading] = useState(true);
+  const [weatherForecastForPlace, setWeatherForecastForPlace] = useState(undefined);
 
   useEffect(() => {
     console.log("show use effect fired");
@@ -39,10 +40,21 @@ function Place(props) {
         const latitude = placeData.coordinates.latitude;
         const longitude = placeData.coordinates.longitude;
 
-        const { data: weatherDataForPlace } = await axios.get(
-          `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}}&appid=${WEATHER_API_KEY}`
+        const { data: currentWeatherDataForPlace } = await axios.get(
+          `https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
         );
-        setWeatherDataForPlace(weatherDataForPlace);
+        console.log(currentWeatherDataForPlace)
+        setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
+
+        //Gives 40 timestamps by default (gives  forecast for every three hours over the next 5 days).
+        const {data: weatherForecastForPlace} = await axios.get(
+          `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
+        );
+
+        
+        console.log(weatherForecastForPlace);
+        setWeatherForecastForPlace(weatherForecastForPlace);
+
 
         setLoading(false);
       } catch (e) {

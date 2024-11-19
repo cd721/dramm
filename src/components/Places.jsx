@@ -6,9 +6,15 @@ import PlaceListCard from "./PlaceListCard";
 import validation from "../helpers/validation.js";
 import { useNavigate } from "react-router-dom";
 import SearchPlaces from "./SearchPlaces";
+
+import {AuthContext} from '../context/AuthContext';
+import  {useContext} from 'react';
+
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
 function PlaceList(props) {
+  const {currentUser} = useContext(AuthContext);
+
   const { page } = useParams();
   const navigate = useNavigate();
 
@@ -111,6 +117,7 @@ function PlaceList(props) {
   } else {
     return (
       <div>
+        <h3>Welcome, {currentUser && currentUser.displayName}.</h3>
         {page >= 1 && nextPageExists && !searchTerm && (
           <Link to={`/places/page/${nextPage}`}>Go to Next Page</Link>
         )}

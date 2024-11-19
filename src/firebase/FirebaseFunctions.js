@@ -12,12 +12,15 @@ import {
   reauthenticateWithCredential
 } from 'firebase/auth';
 
+import users from "../../db/users.js"
+
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
   const auth = getAuth();
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   console.log("user created")
   console.log(userCredential);
   await updateProfile(auth.currentUser, { displayName: displayName });
+  await users.addUser(userCredential.uid);
 }
 
 async function doChangePassword(email, oldPassword, newPassword) {
@@ -44,7 +47,8 @@ async function doSocialSignIn() {
   let socialProvider = new GoogleAuthProvider();
   const userCredential = await signInWithPopup(auth, socialProvider);
   console.log("social signin:")
-  console.log(userCredential)
+  console.log(userCredential);
+  users.addUserIfNotExists(userCredential.uid);
 }
 
 async function doPasswordReset(email) {

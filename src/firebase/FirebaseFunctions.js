@@ -12,15 +12,17 @@ import {
   reauthenticateWithCredential
 } from 'firebase/auth';
 
-import users from "../../db/users.js"
+import axios from 'axios';
 
 async function doCreateUserWithEmailAndPassword(email, password, displayName) {
   const auth = getAuth();
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   console.log("user created")
-  console.log(userCredential);
+  console.log(userCredential.uid);
   await updateProfile(auth.currentUser, { displayName: displayName });
-  await users.addUser(userCredential.uid);
+
+  
+  await axios.post(`http://localhost:3001/users/${userCredential.user.uid}`);
 }
 
 async function doChangePassword(email, oldPassword, newPassword) {
@@ -48,7 +50,7 @@ async function doSocialSignIn() {
   const userCredential = await signInWithPopup(auth, socialProvider);
   console.log("social signin:")
   console.log(userCredential);
-  users.addUserIfNotExists(userCredential.uid);
+  await axios.post(`http://localhost:3001/users/${userCredential.user.uid}`);
 }
 
 async function doPasswordReset(email) {

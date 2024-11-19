@@ -9,7 +9,27 @@ import {
   Typography,
 } from "@mui/material";
 import Button from "@mui/material/Button";
+
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
+import axios from "axios";
+
+async function addPlaceForUser(currentUser, place) {
+  console.log(currentUser.uid);
+  const { data } = await axios.patch(
+    `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`
+  );
+  console.log("hello");
+
+  if (data.modifiedCount) {
+    alert(`You have added ${place.name} to your list of places.`);
+  } else {
+    alert(`${place.name} is already in your list of places.`);
+  }
+}
+
 function PlaceListCard({ place }) {
+  const { currentUser } = useContext(AuthContext);
   console.log(place);
   return (
     <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={place.id}>
@@ -66,15 +86,16 @@ function PlaceListCard({ place }) {
             </Typography>
             <br />
 
-            <Button variant="outlined" component={Link} to={`/place/${place.id}`}>
-          
+            <Button
+              variant="outlined"
+              component={Link}
+              to={`/place/${place.id}`}
+            >
               See more info
             </Button>
             <br />
             <Button
-              onClick={() => {
-                alert("TODO: add place to user's list of saved places");
-              }}
+              onClick={() => addPlaceForUser(currentUser, place)}
               variant="contained"
             >
               Add to my places

@@ -1,5 +1,7 @@
-import {users} from '../config/mongoCollections.js'
+import { users } from '../config/mongoCollections.js'
+import ObjectId from 'mongodb'
 
+//TODO: error handling
 const exportedMethods = {
     async getAllUsers() {
         const userCollection = await users();
@@ -23,7 +25,7 @@ const exportedMethods = {
 
 
             let newUser = {
-                uid: uid,
+                _id: uid,
                 places: [],
                 streak: 0
             };
@@ -39,6 +41,22 @@ const exportedMethods = {
             return { signupCompleted: true };
         }
     },
+
+    async addPlaceForUser(uid, placeId) {
+        const userCollection = await users();
+        let result = await userCollection.updateOne({ _id: uid }, { $addToSet: { places: placeId } });
+        console.log(result)
+        return result;
+    },
+    async getPlacesForUser(uid) {
+        const userCollection = await users();
+
+        const foundPlaces = await userCollection.findOne(
+            { _id: uid },
+            { projection: { _id: 0, 'places.$': 1 } }
+        );
+        return foundPlaces;
+    }
 }
 
 

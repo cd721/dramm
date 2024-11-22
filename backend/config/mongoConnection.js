@@ -17,3 +17,4 @@ const closeConnection = async () => {
 };
 
 export {dbConnection, closeConnection};
+

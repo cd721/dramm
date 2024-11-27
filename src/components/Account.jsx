@@ -6,6 +6,9 @@ function Account() {
   return (
     <div className='card'>
       <h2>Account Page</h2>
+      <button className='button' type='button'>
+        Customize Your Profile
+      </button>
       <ChangePassword />
       <SignOutButton />
     </div>

@@ -33,7 +33,7 @@ const constructorMethod = (app) => {
         } catch (e) {
             return res.status(500).json({ error: e })
         }
-    })
+    });
     app.post('/users/:uid', async (req, res) => {
         try {
             const result = await users.addUserIfNotExists(req.params.uid);
@@ -43,10 +43,30 @@ const constructorMethod = (app) => {
         } catch (e) {
             return res.status(400).json({ error: e });
         }
-
-
-
     });
+
+    app.get("/users/:uid/photo", async (req, res) => {
+        try {
+            const photo = await users.getUserPhoto(req.params.uid);
+            if (!photo) return res.status(404).json({ error: "User photo not found" });
+            return res.status(200).json({ photo });
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.post("/users/:uid/photo", async (req, res) => {
+        try {
+            const { photo } = req.body;
+            if (!photo) return res.status(400).json({ error: "Photo is required in request body" });
+
+            const result = await users.saveUserPhoto(req.params.uid, photo);
+            return res.status(200).json(result);
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    });
+
     app.use('*', (req, res) => {
         res.redirect('/');
     });

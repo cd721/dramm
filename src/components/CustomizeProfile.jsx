@@ -3,8 +3,8 @@ import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { TextField, Box, Avatar, Button } from '@mui/material';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
-import { updateProfile } from 'firebase/auth';
 import axios from 'axios';
+import { updateProfile } from 'firebase/auth';
 
 function CustomizeProfile() {
     const { currentUser } = useContext(AuthContext);
@@ -13,6 +13,8 @@ function CustomizeProfile() {
     const [bio, setBio] = useState("");
     const [photoBase64, setPhotoBase64] = useState("");
     const [uploading, setUploading] = useState(false);
+
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -31,43 +33,75 @@ function CustomizeProfile() {
         fetchUserData();
     }, [currentUser.uid]);
 
-    const handleImageUpload = (file) => {
-        if (!file) return;
+    const compressImage = (file, maxWidth = 800, quality = 0.8) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPhotoBase64(reader.result);
-        };
-        reader.readAsDataURL(file);
+                    const scaleFactor = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scaleFactor;
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+                    resolve(compressedBase64);
+                };
+                img.onerror = (error) => reject(error);
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
     };
 
-    const handleUpdate = async () => {
+    const handleImageUpload = async (file) => {
+        if (!file) return;
+
+        console.log("File size in bytes:", file.size);
+
+        if (file.size > MAX_FILE_SIZE) {
+            alert("File size exceeds 2 MB. Please upload a smaller file.");
+            return;
+        }
+
         try {
-            setUploading(true);
+            const compressedBase64 = await compressImage(file);
+            console.log("Compressed Base64 size:", compressedBase64.length);
 
-            if (currentUser.displayName !== displayName) {
-                await updateProfile(currentUser, { displayName });
-                alert("Display name updated successfully in Firebase!");
-            }
-
-            const updatedData = {};
-            if (zipCode) updatedData.zipCode = zipCode;
-            if (bio) updatedData.bio = bio;
-            if (photoBase64) updatedData.photo = photoBase64;
-
-            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}`, updatedData);
+            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}/photo`, {
+                photo: compressedBase64,
+            });
 
             if (response.data.success) {
-                alert("Profile updated successfully in MongoDB!");
-            } else {
-                alert("Profile update failed in MongoDB!");
+                alert("Profile photo updated successfully!");
+                setPhotoBase64(compressedBase64);
+            }
+        } catch (error) {
+            console.error("Error updating photo:", error);
+            alert("Failed to update photo.");
+        }
+    };
+
+    const handleTextUpdate = async () => {
+        try {
+            if (displayName !== currentUser.displayName) {
+                await updateProfile(currentUser, { displayName });
+                console.log("Updated display name in Firebase");
             }
 
-            setUploading(false);
+            const updatedData = { displayName, zipCode, bio };
+            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}/details`, updatedData);
+            if (response.data.success) {
+                alert("Details updated successfully!");
+            }
         } catch (error) {
-            console.error("Error updating profile:", error);
-            alert("Failed to update profile.");
-            setUploading(false);
+            console.error("Error updating details:", error);
+            alert("Failed to update details.");
         }
     };
 
@@ -89,6 +123,7 @@ function CustomizeProfile() {
                         type="file"
                         accept="image/*"
                         hidden
+                        id="file-input"
                         onChange={(e) => handleImageUpload(e.target.files[0])}
                     />
                 </Button>
@@ -118,7 +153,7 @@ function CustomizeProfile() {
                 />
                 <Button
                     variant="outlined"
-                    onClick={handleUpdate}
+                    onClick={handleTextUpdate}
                     disabled={uploading}
                 >
                     Update

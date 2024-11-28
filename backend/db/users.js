@@ -74,20 +74,21 @@ const exportedMethods = {
         return { success: true, photo };
     },
     async updateUserProfile(uid, updateFields) {
-        if (!uid) throw new Error("User ID is required");
-
         const userCollection = await users();
         const updateResult = await userCollection.updateOne(
             { _id: uid },
-            { $set: updateFields },
-            { upsert: true }
+            { $set: updateFields }
         );
 
-        if (!updateResult.matchedCount && !updateResult.upsertedCount) {
-            throw new Error("Failed to update user profile");
+        if (!updateResult.matchedCount) {
+            throw new Error(`User with ID ${uid} not found.`);
         }
 
-        return updateResult;
+        if (!updateResult.modifiedCount) {
+            throw new Error("No changes made to the user profile.");
+        }
+
+        return { uid, updatedFields: updateFields };
     }
 }
 

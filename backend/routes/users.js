@@ -67,6 +67,26 @@ const constructorMethod = (app) => {
         }
     });
 
+    app.patch("/users/:uid", async (req, res) => {
+        try {
+            const { zipCode, bio, photo } = req.body;
+
+            const updateFields = {};
+            if (zipCode) updateFields.zipCode = zipCode;
+            if (bio) updateFields.bio = bio;
+            if (photo) updateFields.photo = photo;
+
+            if (Object.keys(updateFields).length === 0) {
+                return res.status(400).json({ error: "No fields to update" });
+            }
+
+            const result = await users.updateUserProfile(req.params.uid, updateFields);
+            return res.status(200).json({ success: true, result });
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    });
+
     app.use('*', (req, res) => {
         res.redirect('/');
     });

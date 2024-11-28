@@ -1,8 +1,9 @@
 import './App.css';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { TextField, Box, Avatar, Button } from '@mui/material';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
+import { updateProfile } from 'firebase/auth';
 import axios from 'axios';
 
 function CustomizeProfile() {
@@ -12,6 +13,23 @@ function CustomizeProfile() {
     const [bio, setBio] = useState("");
     const [photoBase64, setPhotoBase64] = useState("");
     const [uploading, setUploading] = useState(false);
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`http://localhost:3001/users/${currentUser.uid}`);
+                const userData = response.data;
+
+                if (userData.zipCode) setZipCode(userData.zipCode);
+                if (userData.bio) setBio(userData.bio);
+                if (userData.photo) setPhotoBase64(userData.photo);
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        };
+
+        fetchUserData();
+    }, [currentUser.uid]);
 
     const handleImageUpload = (file) => {
         if (!file) return;
@@ -27,12 +45,22 @@ function CustomizeProfile() {
         try {
             setUploading(true);
 
-            const response = await axios.post(`http://localhost:3001/users/${currentUser.uid}/photo`, {
-                photo: photoBase64,
-            });
+            if (currentUser.displayName !== displayName) {
+                await updateProfile(currentUser, { displayName });
+                alert("Display name updated successfully in Firebase!");
+            }
+
+            const updatedData = {};
+            if (zipCode) updatedData.zipCode = zipCode;
+            if (bio) updatedData.bio = bio;
+            if (photoBase64) updatedData.photo = photoBase64;
+
+            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}`, updatedData);
 
             if (response.data.success) {
-                alert("Profile photo updated successfully!");
+                alert("Profile updated successfully in MongoDB!");
+            } else {
+                alert("Profile update failed in MongoDB!");
             }
 
             setUploading(false);
@@ -91,7 +119,7 @@ function CustomizeProfile() {
                 <Button
                     variant="outlined"
                     onClick={handleUpdate}
-                    disabled={uploading || !photoBase64}
+                    disabled={uploading}
                 >
                     Update
                 </Button>

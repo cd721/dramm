@@ -72,8 +72,23 @@ const exportedMethods = {
         }
 
         return { success: true, photo };
+    },
+    async updateUserProfile(uid, updateFields) {
+        if (!uid) throw new Error("User ID is required");
+
+        const userCollection = await users();
+        const updateResult = await userCollection.updateOne(
+            { _id: uid },
+            { $set: updateFields },
+            { upsert: true }
+        );
+
+        if (!updateResult.matchedCount && !updateResult.upsertedCount) {
+            throw new Error("Failed to update user profile");
+        }
+
+        return updateResult;
     }
 }
-
 
 export default exportedMethods;

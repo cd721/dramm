@@ -16,9 +16,14 @@ import Categories from "./Categories";
 import yelpCategories from "../helpers/categories.js";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
+async function getUserData(currentUser) {
+  const { data } = await axios.get(
+    `http://localhost:3001/users/${currentUser.uid}`
+  );
+  return data;
+}
 function PlaceList(props) {
   const { currentUser } = useContext(AuthContext);
-
   const { page } = useParams();
   const navigate = useNavigate();
 
@@ -31,6 +36,8 @@ function PlaceList(props) {
   const [searchData, setSearchData] = useState(undefined);
   const [placesData, setPlacesData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [userZipCode, setUserZipCode] = useState("07030");
 
   const [deselectedCategories, setDeselectedCategories] = useState([]);
   const addDeselectedCategory = (newCategory) => {
@@ -46,6 +53,19 @@ function PlaceList(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let userData = await getUserData(currentUser);
+        console.log(userData);
+        setUserZipCode(userData.zipCode);
+
+      } catch (e) {
+        console.log(e);
+        setUserZipCode("07030");
+        alert(
+          "We couldn't locate your zip code. Instead, we'll show you a sample list of places."
+        );
+      }
+
+      try {
         let categoryString = "";
         yelpCategories.forEach(
           (category) =>
@@ -53,7 +73,7 @@ function PlaceList(props) {
         );
 
         let { data } = await axios.get(
-          `https://api.yelp.com/v3/businesses/search?location=07860&${categoryString}sort_by=best_match&limit=20&locale=en_US`,
+          `https://api.yelp.com/v3/businesses/search?location=${userZipCode}&${categoryString}sort_by=best_match&limit=20&locale=en_US`,
           {
             headers: {
               Authorization: `Bearer ${YELP_API_KEY}`,
@@ -83,7 +103,7 @@ function PlaceList(props) {
 
       try {
         const { data } = await axios.get(
-          `https://api.yelp.com/v3/businesses/search?location=07860&term=${searchTerm}&sort_by=best_match&limit=20&locale=en_US`,
+          `https://api.yelp.com/v3/businesses/search?location=${userZipCode}&term=${searchTerm}&sort_by=best_match&limit=20&locale=en_US`,
           {
             headers: {
               Authorization: `Bearer ${YELP_API_KEY}`,
@@ -119,9 +139,9 @@ function PlaceList(props) {
     cardsData =
       placesData &&
       placesData.map((place) => {
-        const aliases =  place.categories.map(category => category.alias);
-        console.log(aliases)
-        if (!aliases.some(alias => deselectedCategories.includes(alias))) {
+        const aliases = place.categories.map((category) => category.alias);
+        console.log(aliases);
+        if (!aliases.some((alias) => deselectedCategories.includes(alias))) {
           return <PlaceListCard place={place} key={place.id} />;
         }
       });

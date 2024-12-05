@@ -41,6 +41,7 @@ async function doSignInWithEmailAndPassword(email, password) {
   const userCredential = await signInWithEmailAndPassword(auth, email, password);
   console.log("user signed in w/ email and pwd")
   console.log("The user's UID is " + userCredential.user.uid);
+  await axios.post(`http://localhost:3001/users/${userCredential.user.uid}`);
 
 }
 

@@ -8,22 +8,16 @@ const exportedMethods = {
         const userList = await userCollection.find({}).toArray();
         return userList;
     },
-
     async getUserById(id) {
         if (id === undefined) throw 'You must provide an ID';
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: id });
 
-
         return user;
     },
     async addUserIfNotExists(uid) {
-
         let user = await this.getUserById(uid);
         if (!user) {
-
-
-
             let newUser = {
                 _id: uid,
                 places: [],
@@ -41,7 +35,6 @@ const exportedMethods = {
             return { signupCompleted: true };
         }
     },
-
     async addPlaceForUser(uid, placeId) {
         const userCollection = await users();
         let result = await userCollection.updateOne({ _id: uid }, { $addToSet: { places: placeId } });
@@ -56,8 +49,47 @@ const exportedMethods = {
             { projection: { _id: 0, 'places.$': 1 } }
         );
         return foundPlaces;
+    },
+    async getUserPhoto(uid) {
+        if (!uid) throw new Error("User ID is required");
+        const userCollection = await users();
+        const user = await userCollection.findOne({ _id: uid }, { projection: { photo: 1 } });
+        return user?.photo || null;
+    },
+    async saveUserPhoto(uid, photo) {
+        if (!uid) throw new Error("User ID is required");
+        if (!photo) throw new Error("Photo is required");
+
+        const userCollection = await users();
+        const updateResult = await userCollection.updateOne(
+            { _id: uid },
+            { $set: { photo } },
+            { upsert: true }
+        );
+
+        if (!updateResult.matchedCount && !updateResult.upsertedCount) {
+            throw new Error("Failed to update user photo");
+        }
+
+        return { success: true, photo };
+    },
+    async updateUserProfile(uid, updateFields) {
+        const userCollection = await users();
+        const updateResult = await userCollection.updateOne(
+            { _id: uid },
+            { $set: updateFields }
+        );
+
+        if (!updateResult.matchedCount) {
+            throw new Error(`User with ID ${uid} not found.`);
+        }
+
+        if (!updateResult.modifiedCount) {
+            throw new Error("No changes made to the user profile.");
+        }
+
+        return { uid, updatedFields: updateFields };
     }
 }
-
 
 export default exportedMethods;

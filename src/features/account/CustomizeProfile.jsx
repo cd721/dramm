@@ -105,7 +105,7 @@ function CustomizeProfile() {
     };
 
     return (
-        <div>
+        <div className='customize-page'>
             <div>
                 <Avatar
                     sx={{ bgcolor: "#73C2BE", width: 56, height: 56 }}

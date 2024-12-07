@@ -16,7 +16,6 @@ function Account() {
         Customize Your Profile
       </button>
       <ChangePassword />
-      <SignOutButton />
     </div>
   );
 }

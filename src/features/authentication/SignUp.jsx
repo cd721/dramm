@@ -1,7 +1,7 @@
 import  {useContext, useState} from 'react';
 import {Navigate} from 'react-router-dom';
-import {doCreateUserWithEmailAndPassword} from '../firebase/FirebaseFunctions';
-import {AuthContext} from '../context/AuthContext';
+import {doCreateUserWithEmailAndPassword} from '../../firebase/FirebaseFunctions';
+import {AuthContext} from '../../context/AuthContext';
 import SocialSignIn from './SocialSignIn';
 
 function SignUp() {

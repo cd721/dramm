@@ -1,4 +1,4 @@
-import {doSignOut} from '../firebase/FirebaseFunctions';
+import {doSignOut} from '../../firebase/FirebaseFunctions';
 
 const SignOut = () => {
   return (

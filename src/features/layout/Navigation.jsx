@@ -1,8 +1,7 @@
 import  {useContext} from 'react';
 import {NavLink} from 'react-router-dom';
-import {AuthContext} from '../context/AuthContext';
-import SignOutButton from './SignOut';
-import './App.css';
+import {AuthContext} from '../../context/AuthContext';
+import SignOutButton from '../authentication/SignOut';
 
 const Navigation = () => {
   const {currentUser} = useContext(AuthContext);

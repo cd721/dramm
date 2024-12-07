@@ -1,19 +1,23 @@
 import "./App.css";
-import Account from "./Account";
-import CustomizeProfile from "./CustomizeProfile";
-import Home from "./Home";
-import Landing from "./Landing";
-import Navigation from "./Navigation";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
-import Places from "./Places";
-import Place from "./Place"
-import ErrorPage from "./ErrorPage";
-import { AuthProvider } from "../context/AuthContext";
-import PrivateRoute from "./PrivateRoute";
+import Account from "./features/account/Account";
+import CustomizeProfile from "./features/account/CustomizeProfile";
+import Home from "./features/layout/Home";
+import Landing from "./features/layout/Landing";
+import Navigation from "./features/layout/Navigation";
+import SignIn from "./features/authentication/SignIn";
+import SignUp from "./features/authentication/SignUp";
+
+import Places from "./features/places/Places";
+import Place from "./features/places/Place"
+
+import ErrorPage from "./features/layout/ErrorPage";
+
+import { AuthProvider } from "./context/AuthContext";
+import PrivateRoute from "./features/layout/PrivateRoute";
 import { Route, Link, Routes, Navigate } from "react-router-dom";
+
 import { ThemeProvider } from "@mui/material";
-import darkTheme from "./theme";
+import darkTheme from "./features/shared/styles/theme";
 
 function App() {
   return (

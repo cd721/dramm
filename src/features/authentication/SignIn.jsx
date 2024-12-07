@@ -1,11 +1,11 @@
 import  {useContext} from 'react';
 import SocialSignIn from './SocialSignIn';
 import {Navigate} from 'react-router-dom';
-import {AuthContext} from '../context/AuthContext';
+import {AuthContext} from '../../context/AuthContext';
 import {
   doSignInWithEmailAndPassword,
   doPasswordReset
-} from '../firebase/FirebaseFunctions';
+} from '../../firebase/FirebaseFunctions';
 
 function SignIn() {
   const {currentUser} = useContext(AuthContext);

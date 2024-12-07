@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import SignOutButton from './SignOut';
-import './App.css';
+import SignOutButton from '../authentication/SignOut';
 import ChangePassword from './ChangePassword';
 
 function Account() {

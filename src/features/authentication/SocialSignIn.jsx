@@ -1,5 +1,5 @@
 
-import {doSocialSignIn} from '../firebase/FirebaseFunctions';
+import {doSocialSignIn} from '../../firebase/FirebaseFunctions';
 
 const SocialSignIn = () => {
   const socialSignOn = async () => {

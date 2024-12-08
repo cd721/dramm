@@ -30,62 +30,58 @@ function ChangePassword() {
   };
 
   if (currentUser.providerData[0].providerId === 'password') {
+
     return (
-      <div>
-        {pwMatch && <h4 className='error'>{pwMatch}</h4>}
-        <h2>Hi {currentUser.displayName}, Change Your Password Below</h2>
+      <div className='form-container'>
+        
         <form onSubmit={submitForm}>
-          <div className='form-group'>
-            <label>
-              Current Password:
-              <input
-                className='form-control'
-                name='currentPassword'
-                id='currentPassword'
-                type='password'
-                placeholder='Current Password'
-                autoComplete='off'
-                required
-              />
-            </label>
+          <h2>Hi {currentUser.displayName}, Change Your Password Below</h2>
+          {pwMatch && <p className='form-error'>{pwMatch}</p>}
+
+          <div className='form-field'>
+            <label>Current Password</label>
+            <input
+              name='currentPassword'
+              id='currentPassword'
+              type='password'
+              placeholder='Current Password'
+              autoComplete='off'
+              required
+            />
           </div>
 
-          <div className='form-group'>
-            <label>
-              New Password:
-              <input
-                className='form-control'
-                name='newPasswordOne'
-                id='newPasswordOne'
-                type='password'
-                placeholder='Password'
-                autoComplete='off'
-                required
-              />
-            </label>
-          </div>
-          <div className='form-group'>
-            <label>
-              Confirm New Password:
-              <input
-                className='form-control'
-                name='newPasswordTwo'
-                id='newPasswordTwo'
-                type='password'
-                placeholder='Confirm Password'
-                autoComplete='off'
-                required
-              />
-            </label>
+          <div className='form-field'>
+            <label>New Password:</label>
+            <input
+              name='newPasswordOne'
+              id='newPasswordOne'
+              type='password'
+              placeholder='Password'
+              autoComplete='off'
+              required
+            />
           </div>
 
-          <button className='button' type='submit'>
-            Change Password
-          </button>
+          <div className='form-field'>
+            <label>Confirm New Password:</label>
+            <input
+              name='newPasswordTwo'
+              id='newPasswordTwo'
+              type='password'
+              placeholder='Confirm Password'
+              autoComplete='off'
+              required
+            />
+          </div>
+          <div className="form-buttons">
+            <button className='button' type='submit'>
+              Change Password
+            </button>
+          </div>
         </form>
-        <br />
       </div>
     );
+
   } else {
     return (
       <div>

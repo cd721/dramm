@@ -47,6 +47,14 @@ function PlaceList(props) {
       setPlacesData([...placesData]);
     }
   };
+
+  const reselectCategory = (category) => {
+    if (deselectedCategories.includes(category)) {
+      setDeselectedCategories(deselectedCategories.filter( cat => cat !== category));
+
+      setPlacesData([...placesData]);
+    }
+  };
   let cardsData = null;
 
   //when component loads, get places

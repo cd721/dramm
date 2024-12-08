@@ -1,0 +1,77 @@
+.landing {
+    width: 100%;
+}
+
+/* //////////// HERO //////////// */
+.landing-hero {
+    min-height: 50vh;
+
+    background-image: url('/photos/summer-dark.jpg');
+    background-size: cover;
+    background-position: center 60%;
+    background-repeat: no-repeat;
+
+    color: var(--primary-white);
+    text-align: right;
+}
+
+.landing-hero > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    height: 100%;
+    padding: 5% 10%;
+}
+
+.landing- h1 {
+    margin: 0;
+
+    font-size: 3.5em;
+}
+
+/* //////////// slogan //////////// */
+.slogan {
+    background-color: var(--primary-orange);
+}
+
+.slogan h2 {
+    margin: 0;
+    padding: 0.8em;
+
+    color: var(--primary-white);
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+/* //////////// features //////////// */
+.features {
+    display: flex;
+    justify-content: center;
+
+    min-height: 30vh;
+    padding: 4vh 10vw;
+
+    gap: 2em;
+}
+
+.feature-item {
+    padding: 1em 2.5em;
+    width: 20%;
+
+    background-color: var(--primary-gray);
+
+    border-radius: 8px;
+    box-shadow: var(--box-shadow);
+
+    text-align: left;
+    color: var(--primary-white);
+}
+
+.feature-item h3 {
+    font-size: 1.3em;
+}
+
+.feature-item img {
+    max-width: 6vw;
+}

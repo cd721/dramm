@@ -1,0 +1,13 @@
+#root {
+  margin: 0;
+  text-align: center;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+}
+
+.customize-page {
+  background-color: rgb(100, 100, 100);
+}

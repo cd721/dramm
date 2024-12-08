@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import noImage from "../img/download.jpeg";
+import noImage from "../../img/download.jpeg";
 import { Link, useParams } from "react-router-dom";
 
 import {

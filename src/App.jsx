@@ -1,28 +1,31 @@
 import "./App.css";
-import Account from "./Account";
-import CustomizeProfile from "./CustomizeProfile";
-import Home from "./Home";
-import Landing from "./Landing";
-import Navigation from "./Navigation";
-import SignIn from "./SignIn";
-import SignUp from "./SignUp";
-import Places from "./Places";
-import Place from "./Place"
-import ErrorPage from "./ErrorPage";
-import { AuthProvider } from "../context/AuthContext";
-import PrivateRoute from "./PrivateRoute";
+import "./features/shared/styles/form.css"
+import './features/shared/styles/layout.css'
+
+import Account from "./features/account/Account";
+import CustomizeProfile from "./features/account/CustomizeProfile";
+import Home from "./features/layout/Home";
+import { Landing } from "./features/layout/Landing";
+import SignIn from "./features/authentication/SignIn";
+import SignUp from "./features/authentication/SignUp";
+
+import Places from "./features/places/Places";
+import Place from "./features/places/Place"
+
+import ErrorPage from "./features/layout/ErrorPage";
+
+import PrivateRoute from "./features/layout/PrivateRoute";
 import { Route, Link, Routes, Navigate } from "react-router-dom";
-import { ThemeProvider } from "@mui/material";
-import darkTheme from "./theme";
+import { Navbar } from "./features/layout/Navbar";
+
+import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider theme={darkTheme}>
-        <div className="App">
-          <header className="App-header card">
-            <Navigation />
-          </header>
+    <div className="layout">
+        <Navbar />
+
+        <main>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/home" element={<PrivateRoute />}>
@@ -45,11 +48,9 @@ function App() {
 
             <Route path="/404" element={<ErrorPage />} />
             <Route path="*" element={<Navigate to='/404' />} />
-
           </Routes>
-        </div>
-      </ThemeProvider>
-    </AuthProvider>
+        </main>
+    </div>
   );
 }
 

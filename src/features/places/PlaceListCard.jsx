@@ -1,4 +1,4 @@
-import noImage from "../img/download.jpeg";
+import noImage from "../../img/download.jpeg";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import Button from "@mui/material/Button";
 
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import axios from "axios";
 

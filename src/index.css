@@ -20,7 +20,10 @@
   --primary-orange: #d96134;
   --secondary-orange: #f7941e;
 
-  --primary-white: #FFFFFF
+  --primary-white: #FFFFFF;
+
+  /* designs */
+  --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 a {

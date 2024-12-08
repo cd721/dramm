@@ -10,13 +10,18 @@ const SocialSignIn = () => {
     }
   };
   return (
-    <div>
-      <img
-        onClick={() => socialSignOn()}
-        alt='google signin'
-        src='/imgs/btn_google_signin.png'
-      />
-    </div>
+    <ul className='socials-logins'>
+      <h4>or</h4>
+
+      <li onClick={() => socialSignOn()}>
+        {/* <a target="_blank" href="https://icons8.com/icon/V5cGWnc9R4xj/google">Google</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a> */}
+        <img
+          alt='google signin'
+          src='./socials/google-48x48.png'
+        />
+        <p>Connect with Google</p>
+      </li>
+    </ul>
   );
 };
 

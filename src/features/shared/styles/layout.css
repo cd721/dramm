@@ -55,6 +55,26 @@
 .topbar-buttons {
     display: flex;
     align-items: center;
+
+    gap: 1em;
+}
+
+.topbar-buttons .login  {
+    background-color: #535353;
     
-    gap: 1rem;
+    transition: all 0.3s;
+}
+.topbar-buttons .login:hover {
+    background-color: #707070;
+}
+
+.topbar-buttons .register,
+.topbar-buttons .sign-out {
+    background-color: var(--primary-orange);
+
+    transition: all 0.3s;
+}
+.topbar-buttons .register:hover,
+.topbar-buttons .sign-out:hover {
+    background-color: var(--secondary-orange);
 }

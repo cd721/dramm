@@ -1,6 +1,6 @@
-import  {useContext} from 'react';
+import  {useContext, useState} from 'react';
 import SocialSignIn from './SocialSignIn';
-import {Navigate} from 'react-router-dom';
+import {Link, Navigate} from 'react-router-dom';
 import {AuthContext} from '../../context/AuthContext';
 import {
   doSignInWithEmailAndPassword,
@@ -9,6 +9,8 @@ import {
 
 function SignIn() {
   const {currentUser} = useContext(AuthContext);
+  const [formError, setFormError] = useState('');
+
   const handleLogin = async (event) => {
     event.preventDefault();
     let {email, password} = event.target.elements;
@@ -16,7 +18,7 @@ function SignIn() {
     try {
       await doSignInWithEmailAndPassword(email.value, password.value);
     } catch (error) {
-      alert(error);
+      setFormError(error.message);
     }
   };
 
@@ -36,52 +38,54 @@ function SignIn() {
     return <Navigate to='/home' />;
   }
   return (
-    <div>
-      <div className='card'>
-        <h1>Log-In</h1>
-        <form className='form' onSubmit={handleLogin}>
-          <div className='form-group'>
-            <label>
-              Email Address:
-              <br />
-              <input
-                name='email'
-                id='email'
-                type='email'
-                placeholder='Email'
-                required
-                autoFocus={true}
-              />
-            </label>
-          </div>
-          <br />
-          <div className='form-group'>
-            <label>
-              Password:
-              <br />
-              <input
-                name='password'
-                type='password'
-                placeholder='Password'
-                autoComplete='off'
-                required
-              />
-            </label>
+    <article className='form-page'>
+      <div className='form-container'>
+        <form id='signin-form' onSubmit={handleLogin}>
+          <h2>Log in to DRAMM</h2>
+          <p className={formError ? 'form-overall-error' : ''}>{formError}</p>
+
+          <div className='form-field'>
+            <label>Email</label>
+            <input
+              name='email'
+              id='email'
+              type='email'
+              placeholder='Enter email'
+              required
+              autoFocus={true}
+            />
           </div>
 
-          <button className='button' type='submit'>
-            Log in
-          </button>
+          <div className='form-field'>
+            <label>Password</label>
+            <input
+              name='password'
+              type='password'
+              placeholder='Enter password'
+              autoComplete='off'
+              required
+            />
 
-          <button className='forgotPassword' onClick={passwordReset}>
-            Forgot Password
-          </button>
+            <a className='forgot-password' onClick={passwordReset}>
+              Forgot your password?
+            </a>
+          </div>
+
+          <div className="form-buttons">
+            <button className='button' type='submit'>
+              Log in
+            </button>
+
+          </div>
+          
         </form>
-
-        <br />
         <SocialSignIn />
       </div>
-    </div>
+
+      <div className='form-switch'>
+        <p>No account yet? <Link to='/signup'>Sign up</Link>.</p>
+      </div>
+    </article>
   );
 }
 

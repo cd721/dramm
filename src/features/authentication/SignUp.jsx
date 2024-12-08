@@ -1,5 +1,5 @@
 import  {useContext, useState} from 'react';
-import {Navigate} from 'react-router-dom';
+import {Link, Navigate} from 'react-router-dom';
 import {doCreateUserWithEmailAndPassword} from '../../firebase/FirebaseFunctions';
 import {AuthContext} from '../../context/AuthContext';
 import SocialSignIn from './SocialSignIn';
@@ -7,11 +7,13 @@ import SocialSignIn from './SocialSignIn';
 function SignUp() {
   const {currentUser} = useContext(AuthContext);
   const [pwMatch, setPwMatch] = useState('');
+  const [formError, setFormError] = useState('');
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     const {displayName, email, passwordOne, passwordTwo} = e.target.elements;
     if (passwordOne.value !== passwordTwo.value) {
-      setPwMatch('Passwords do not match');
+      setPwMatch('Password does not match');
       return false;
     }
 
@@ -22,7 +24,7 @@ function SignUp() {
         displayName.value
       );
     } catch (error) {
-      alert(error);
+      setFormError(error.message);
     }
   };
 
@@ -31,78 +33,74 @@ function SignUp() {
   }
 
   return (
-    <div className='card'>
-      <h1>Sign up</h1>
-      {pwMatch && <h4 className='error'>{pwMatch}</h4>}
-      <form onSubmit={handleSignUp}>
-        <div className='form-group'>
-          <label>
-            Name:
-            <br />
+    <article className='form-page'>
+      <div className='form-container'>
+        <form id='signup-form' onSubmit={handleSignUp}>
+          <h2>Sign up for DRAMM</h2>
+          <p className={formError ? 'form-overall-error' : ''}>{formError}</p>
+        
+          <div className='form-field'>
+            <label>Name</label>
+              <input
+                required
+                name='displayName'
+                type='text'
+                placeholder='Enter name'
+                autoFocus={true}
+              />
+          </div>
+
+          <div className='form-field'>
+            <label>Email</label>
             <input
-              className='form-control'
-              required
-              name='displayName'
-              type='text'
-              placeholder='Name'
-              autoFocus={true}
-            />
-          </label>
-        </div>
-        <div className='form-group'>
-          <label>
-            Email:
-            <br />
-            <input
-              className='form-control'
               required
               name='email'
               type='email'
-              placeholder='Email'
+              placeholder='Enter email'
             />
-          </label>
-        </div>
-        <div className='form-group'>
-          <label>
-            Password:
-            <br />
-            <input
-              className='form-control'
-              id='passwordOne'
-              name='passwordOne'
-              type='password'
-              placeholder='Password'
-              autoComplete='off'
-              required
-            />
-          </label>
-        </div>
-        <div className='form-group'>
-          <label>
-            Confirm Password:
-            <br />
-            <input
-              className='form-control'
-              name='passwordTwo'
-              type='password'
-              placeholder='Confirm Password'
-              autoComplete='off'
-              required
-            />
-          </label>
-        </div>
-        <button
-          className='button'
-          id='submitButton'
-          name='submitButton'
-          type='submit'
-        >
-          Sign Up
-        </button>
-      </form>
-      <br />
-      <SocialSignIn />
-    </div>
+          </div>
+
+          <div className='form-row'>
+            <div className='form-field'>
+              <label>Password</label>
+              <input
+                id='passwordOne'
+                name='passwordOne'
+                type='password'
+                placeholder='Enter password'
+                autoComplete='off'
+                required
+              />
+            </div>
+
+            <div className='form-field'>
+              <label>Confirm Password</label>
+              <input
+                name='passwordTwo'
+                type='password'
+                placeholder='Repeat password'
+                autoComplete='off'
+                required
+              />
+              {pwMatch && <p className='form-error'>{pwMatch}</p>}
+            </div>
+          </div>
+
+
+          <div className="form-buttons">
+            <button className='button' type='submit'>
+              Sign in
+            </button>
+          </div>
+        </form>
+
+        <SocialSignIn />
+      </div>
+
+      <div className='form-switch'>
+        <p>Already have an account? <Link to='/signin'>Sign in</Link>.</p>
+      </div>
+    </article>
   );
 }
 

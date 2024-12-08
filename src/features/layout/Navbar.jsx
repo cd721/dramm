@@ -1,14 +1,17 @@
 import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext"
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 import logo from '../../img/logos/dark-transparent-noText.png';
 import SignOut from "../authentication/SignOut";
 
 import '../shared/styles/layout.css'
+import { doSignOut } from "../../firebase/FirebaseFunctions";
 
 export const Navbar = () => {
     const { currentUser } = useContext(AuthContext);
+
+    const navigate = useNavigate();
 
     return (
         <nav className="topbar">
@@ -19,14 +22,17 @@ export const Navbar = () => {
                 <li>
                     <NavLink to='/'>About</NavLink>
                 </li>
-                <li>
-                    <NavLink to='/places'>Places</NavLink>
-                </li>
+
 
                 {currentUser &&
-                    <li>
-                        <NavLink to="/account">My Account</NavLink>
-                    </li>
+                    <>
+                        <li>
+                            <NavLink to='/places'>Places</NavLink>
+                        </li>
+                        <li>
+                            <NavLink to="/account">My Account</NavLink>
+                        </li>
+                    </>
                 }
             </ul>
 
@@ -42,20 +48,24 @@ export const Navbar = () => {
 
             <div className="topbar-buttons">
                 {!currentUser ? (
-                    <ul className="auth-links">
-                        <li>
-                            <NavLink to="/signup">Sign-up</NavLink>
-                        </li>
-                        <li>
-                            <NavLink to="/signin">Sign-In</NavLink>
-                        </li>
-                    </ul>
+                    <>
+                        <button 
+                            className="login"
+                            onClick={() => navigate('/signin')}>
+                            Log in
+                        </button>
+                        <button 
+                            className="register"
+                            onClick={() => navigate('/signup')}>
+                            Register
+                        </button>
+                    </>
                 ) : (
-                    <ul className="auth-links">
-                        <li>
-                            <SignOut />
-                        </li>
-                    </ul>
+                    <button
+                        className="sign-out" 
+                        onClick={doSignOut}>
+                        Sign Out
+                    </button>
                 )}
             </div>
         </nav>

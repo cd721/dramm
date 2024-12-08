@@ -1,4 +1,5 @@
 import "./App.css";
+import "./features/shared/styles/form.css"
 import './features/shared/styles/layout.css'
 
 import Account from "./features/account/Account";

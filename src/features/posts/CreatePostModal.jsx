@@ -7,11 +7,57 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     const [caption, setCaption] = useState('')
     const [photos, setPhotos] = useState([]);
     const [location, setLocation] = useState('');
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(null);
     const [error, setError] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!caption){
+            setError("Must have a caption")
+            return
+        } 
+        if (typeof caption !== 'string'){
+            setError("Must have string input for caption")
+            return
+        } 
+        setCaption(caption.trim())
+        if ( !isNaN(caption) || caption.length < 50 || caption.length > 2000){
+            setError("Invalid caption length.")
+            return
+        }
+
+        if (!location){
+            setError("Must have a location")
+            return
+        } 
+        if (typeof location !== 'string'){
+            setError("Must have string input for location")
+            return
+        } 
+        setLocation(location.trim())
+        if ( !isNaN(location) || location.length < 5 || location.length > 25){
+            console.log(location)
+            setError("Invalid location length.")
+            return
+        }
+
+        if (!rating){
+            setError("Must have a rating")
+            return
+        } 
+        if (typeof rating !== 'number'){
+            setError("Must have number input for rating")
+            return
+        } 
+        if ( isNaN(rating) || rating < 0 || rating > 10){
+            setError("Invalid rating.")
+            return
+        }
+        
+
+
+
         onClose()
     }
     const handlePhotoChange = (e) => {
@@ -33,9 +79,9 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 </button>
                 <h2>Create Post</h2>
                 <h3>Create a post sharing your outdoor adventures and reccomendations!</h3>
-                {error && <p className = "error">{error}</p>}
+                {error && <p className="error">{error}</p>}
                 <form onSubmit={handleSubmit} >
-                    <div className = "formInput">
+                    <div className="formInput">
                         <label htmlFor="caption">Caption:<span style={{ color: 'red' }}>*</span></label>
                         <textarea
                             id="caption"
@@ -46,7 +92,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                         <small>Min: 50 characters, Max: 2000 characters</small>
                     </div>
 
-                    <div className = "formInput">
+                    <div className="formInput">
                         <label htmlFor="photos">Photos:</label>
                         <input
                             id="photos"
@@ -58,7 +104,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                         <small>Add some pictures if you'd like! You can post up to 5 pictures.</small>
                     </div>
 
-                    <div className = "formInput">
+                    <div className="formInput">
 
                         <label htmlFor="location">Location:<span style={{ color: 'red' }}>*</span></label>
                         <input
@@ -70,7 +116,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                         />
                     </div>
 
-                    <div className = "formInput"> 
+                    <div className="formInput">
 
                         <label htmlFor="rating">Rating (out of 10):<span style={{ color: 'red' }}>*</span></label>
                         <input
@@ -81,6 +127,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             min="0"
                             max="10"
                             required
+                            step = "0.1"
                         />
                     </div>
                     <button type="submit" className="create-post">

@@ -2,18 +2,18 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { Grid2 } from "@mui/material";
-import PlaceListCard from "./PlaceListCard";
-import validation from "../helpers/validation.js";
+import PlaceListCard from "./PlaceListCard.jsx";
+import validation from "../../helpers/validation.js";
 import { useNavigate } from "react-router-dom";
 import SearchPlaces from "./SearchPlaces";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { useContext } from "react";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Categories from "./Categories";
+import Categories from "./Categories.jsx";
 
-import yelpCategories from "../helpers/categories.js";
+import yelpCategories from "../../helpers/categories.js";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
 async function getUserData(currentUser) {

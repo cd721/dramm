@@ -1,6 +1,5 @@
-import './App.css';
 import { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { TextField, Box, Avatar, Button } from '@mui/material';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import axios from 'axios';
@@ -106,7 +105,7 @@ function CustomizeProfile() {
     };
 
     return (
-        <div>
+        <div className='customize-page'>
             <div>
                 <Avatar
                     sx={{ bgcolor: "#73C2BE", width: 56, height: 56 }}

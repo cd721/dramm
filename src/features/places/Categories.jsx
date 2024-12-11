@@ -2,7 +2,7 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 
-import yelpCategories from "../helpers/categories.js";
+import yelpCategories from "../../helpers/categories.js";
 function Categories(props) {
  
   let allCategoriesOfPlacesFound = [];

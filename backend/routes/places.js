@@ -1,5 +1,5 @@
 import { Router } from "express";
-import xss from 'xss'
+import xss from 'xss';
 const router = Router();
 import placeData from "../db/places.js";
 import userData from "../db/users.js"

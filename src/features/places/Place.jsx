@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import noImage from "../../img/download.jpeg";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams,useNavigate } from "react-router-dom";
+import utils from '../../helpers/utils.js'
+import Button from "@mui/material/Button";
 
 import {
   Card,
@@ -11,9 +13,14 @@ import {
   CardHeader,
 } from "@mui/material";
 
+
+
+
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 function Place(props) {
+  const navigate = useNavigate();
+
   const { id } = useParams();
   const [placeData, setPlaceData] = useState(undefined);
   const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] =
@@ -44,17 +51,17 @@ function Place(props) {
 
         const { data: currentWeatherDataForPlace } = await axios.get(
           `https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
-        );
-        console.log("Weather data for place:")
+        );     setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
+        console.log("Weather data for place:");
         console.log(currentWeatherDataForPlace);
-console.log(currentWeatherDataForPlace.main.temp)
-        setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
+        console.log(currentWeatherDataForPlace.main.temp);
+   
 
         //Gives 40 timestamps by default (gives  forecast for every three hours over the next 5 days).
         const { data: weatherForecastForPlace } = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
         );
-        console.log("Weather FORECAST for place:")
+        console.log("Weather FORECAST for place:");
 
         console.log(weatherForecastForPlace);
         setWeatherForecastForPlace(weatherForecastForPlace);
@@ -144,6 +151,12 @@ console.log(currentWeatherDataForPlace.main.temp)
                 </Typography>
                 <Link to="/places">Click here to go back to all places...</Link>
               </Typography>
+              <Button
+              onClick={() => navigate("/AddPlaceReview")}
+              variant="contained"
+            >
+              Add to my places
+            </Button>
             </CardContent>
           </Card>
         </div>
@@ -171,7 +184,7 @@ console.log(currentWeatherDataForPlace.main.temp)
                 fontWeight: "bold",
               }}
             />
-            <CardMedia
+            {/* <CardMedia
               component="img"
               title="show image"
               src={
@@ -182,8 +195,17 @@ console.log(currentWeatherDataForPlace.main.temp)
                   ? `https://openweathermap.org/img/wn/${currentWeatherDataForPlace.weather[0].icon}@2x.png`
                   : noImage
               }
+            /> */}
+            <img
+              src={
+                currentWeatherDataForPlace &&
+                currentWeatherDataForPlace.weather &&
+                currentWeatherDataForPlace.weather[0] &&
+                currentWeatherDataForPlace.weather[0].icon
+                  ? `https://openweathermap.org/img/wn/${currentWeatherDataForPlace.weather[0].icon}@2x.png`
+                  : noImage
+              }
             />
-
             <CardContent>
               <Typography
                 variant="body2"
@@ -198,7 +220,7 @@ console.log(currentWeatherDataForPlace.main.temp)
                   {currentWeatherDataForPlace &&
                   currentWeatherDataForPlace.main &&
                   currentWeatherDataForPlace.main.temp &&
-                  currentWeatherDataForPlace.main.feelsLike
+                  currentWeatherDataForPlace.main.feels_like
                     ? `The temperature is currently ${currentWeatherDataForPlace.main.temp}°F, but it feels like ${currentWeatherDataForPlace.main.feels_like}°F.`
                     : "Sorry, we don't know what the temperature is like in this area."}
                 </Typography>
@@ -212,18 +234,19 @@ console.log(currentWeatherDataForPlace.main.temp)
                 </Typography>
                 <br />
                 <Typography variant="body2" color="textSecondary" component="p">
-                  {placeData.display_phone && placeData.display_phone
-                    ? placeData.display_phone
-                    : "No phone number available."}
+                 
+                  {currentWeatherDataForPlace &&
+                  currentWeatherDataForPlace.sys &&
+                  currentWeatherDataForPlace.sys.sunrise &&
+                  currentWeatherDataForPlace.sys.sundown 
+                    ? `When might be the best time to go? Today, sunrise at this location is ${utils.convertUnixTimestampToTime(currentWeatherDataForPlace.sys.sunrise)}, and sundown is  ${utils.convertUnixTimestampToTime(currentWeatherDataForPlace.sys.sundown)}.`
+                    : ""}
                 </Typography>{" "}
                 <br />
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {placeData.rating && placeData.rating
-                    ? `Yelp Rating: ${placeData.rating}/5`
-                    : "There are no ratings on Yelp for this place."}
-                </Typography>
+              
                 <Link to="/places">Click here to go back to all places...</Link>
               </Typography>
+              
             </CardContent>
           </Card>
         </div>

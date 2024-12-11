@@ -38,7 +38,7 @@ function Categories(props) {
         />
       );
     });
-  return <FormGroup>{categoryCheckboxes}</FormGroup>;
+  return <FormGroup>{categoryCheckboxes&& <p>Select the categories of places that you want to see.</p>}{categoryCheckboxes}</FormGroup>;
 }
 
 export default Categories;

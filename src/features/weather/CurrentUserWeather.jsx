@@ -26,6 +26,7 @@ const CurrentUserWeather = ({ zipCode }) => {
                 let sunset = moment.utc(result.data.sys.sunset, 'X').add(result.data.timezone, 'seconds').format('HH:mm');
                 setSunset(sunset)
                 setLoading(false);
+                console.log(result.data)
 
             } catch (e) {
                 console.log(e);

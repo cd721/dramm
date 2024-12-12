@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import '../shared/styles/layout.css'
 import CreatePostModal from '../posts/CreatePostModal';
+import DisplayReviews from '../posts/DisplayReviews.jsx';
 
 function Home() {
   const { currentUser } = useContext(AuthContext);
@@ -21,7 +22,8 @@ function Home() {
         Create Post
       </button>
       {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)}
-
+      
+      <DisplayReviews/>
 
     </div>
   );

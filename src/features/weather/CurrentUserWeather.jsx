@@ -7,8 +7,6 @@ const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
 const CurrentUserWeather = ({ zipCode }) => {
     const [currentWeatherData, setCurrentWeatherData] = useState(undefined);
-    const [longitude, setLongitude] = useState(null)
-    const [latitutde, setLatitude] = useState(null)
     const [loading, setLoading] = useState(true)
     const [sunrise, setSunrise] = useState("")
     const [sunset, setSunset] = useState("")
@@ -19,23 +17,15 @@ const CurrentUserWeather = ({ zipCode }) => {
                 const { data: currentLocation } = await axios.get(
                     `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${WEATHER_API_KEY}`
                 );
-                setLongitude(currentLocation.lon)
-                setLatitude(currentLocation.lat)
-                console.log(currentLocation)
                 const result = await axios.get(
-                    `https://api.openweathermap.org/data/2.5/weather?lat=${latitutde}&lon=${longitude}&appid=${WEATHER_API_KEY}&units=imperial`
+                    `https://api.openweathermap.org/data/2.5/weather?lat=${currentLocation.lat}&lon=${currentLocation.lon}&appid=${WEATHER_API_KEY}&units=imperial`
                 )
-                console.log(result.data)
                 setCurrentWeatherData(result.data)
-                let sunrise = moment.utc(currentWeatherData.sys.sunrise, 'X').add(currentWeatherData.timezone, 'seconds').format('HH:mm');
+                let sunrise = moment.utc(result.data.sys.sunrise, 'X').add(result.data.timezone, 'seconds').format('HH:mm');
                 setSunrise(sunrise)
-
-                let sunset = moment.utc(currentWeatherData.sys.sunset, 'X').add(currentWeatherData.timezone, 'seconds').format('HH:mm');
+                let sunset = moment.utc(result.data.sys.sunset, 'X').add(result.data.timezone, 'seconds').format('HH:mm');
                 setSunset(sunset)
-
                 setLoading(false);
-                console.log(currentWeatherData)
-
 
             } catch (e) {
                 console.log(e);

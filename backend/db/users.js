@@ -41,12 +41,18 @@ const exportedMethods = {
         console.log(result)
         return result;
     },
+    async removePlaceForUser(uid, placeId) {
+        const userCollection = await users();
+        let result = await userCollection.updateOne({ _id: uid }, { $pull: { places: placeId } });
+        console.log(result)
+        return result;
+    },
     async getPlacesForUser(uid) {
         const userCollection = await users();
 
         const foundPlaces = await userCollection.findOne(
             { _id: uid },
-            { projection: { _id: 0, 'places.$': 1 } }
+            { projection: { _id: 0, places: 1 } }
         );
         return foundPlaces;
     },

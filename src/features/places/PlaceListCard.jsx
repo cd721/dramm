@@ -11,26 +11,57 @@ import {
 import Button from "@mui/material/Button";
 
 import { AuthContext } from "../../context/AuthContext";
-import { useContext } from "react";
+import { useContext, useState,useEffect } from "react";
 import axios from "axios";
-
-async function addPlaceForUser(currentUser, place) {
-  console.log(currentUser.uid);
-  const { data } = await axios.patch(
-    `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`
-  );
-  console.log("hello");
-
-  if (data.modifiedCount) {
-    alert(`You have added ${place.name} to your list of places.`);
-  } else {
-    alert(`${place.name} is already in your list of places.`);
-  }
-}
 
 function PlaceListCard({ place }) {
   const { currentUser } = useContext(AuthContext);
-  console.log(place);
+
+  const [userHasPlace, setUserHasPlace] = useState(false);
+
+  async function addPlaceForUser(place) {
+    console.log(currentUser.uid);
+    const { data } = await axios.patch(
+      `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`
+    );
+
+    if (data.modifiedCount) {
+      alert(`You have added ${place.name} to your list of places.`);
+    } else {
+      alert(`${place.name} is already in your list of places.`);
+    }
+
+    setUserHasPlace(true);
+  }
+
+  async function removePlaceForUser( place) {
+    console.log(currentUser.uid);
+    const { data } = await axios.delete(
+      `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`
+    );
+
+    if (data.modifiedCount) {
+      alert(`You have removed ${place.name} from your list of places.`);
+    } else {
+      alert(`${place.name} could not be removed from your list of places.`);
+    }
+
+    setUserHasPlace(false);
+  }
+ 
+  useEffect(()=> {
+   const fetchData =async () => {
+      const { data: placesForUser } = await axios.get(
+        `http://localhost:3001/users/${currentUser.uid}/places`
+      );
+      setUserHasPlace(placesForUser.places.includes(place.id))
+         ;
+  
+    };
+
+    fetchData()
+;  },[])
+
   return (
     <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={place.id}>
       <Card
@@ -94,12 +125,22 @@ function PlaceListCard({ place }) {
               See more info
             </Button>
             <br />
-            <Button
-              onClick={() => addPlaceForUser(currentUser, place)}
-              variant="contained"
-            >
-              Add to my places
-            </Button>
+            { userHasPlace && (
+              <Button
+                onClick={() => removePlaceForUser( place)}
+                variant="contained"
+              >
+                Remove from my places
+              </Button>
+            )}
+            {( !userHasPlace) && (
+              <Button
+                onClick={() => addPlaceForUser(place)}
+                variant="contained"
+              >
+                Add to my places
+              </Button>
+            )}
           </CardContent>
         </CardActionArea>
       </Card>

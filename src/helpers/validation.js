@@ -18,9 +18,9 @@ const exportedMethods = {
             return false;
         }
 
-        if (!isNaN(strVal)) { 
-           return false;
-            
+        if (!isNaN(strVal)) {
+            return false;
+
         }
         return true;
     },

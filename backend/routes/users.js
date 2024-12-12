@@ -1,6 +1,8 @@
 import users from '../db/users.js';
 import posts from '../db/posts.js';
-
+import moment from "moment"
+import { ObjectId } from 'mongodb';
+import dayjs from 'dayjs';
 // TODO: error handling, figure out photo error handling for posts
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
@@ -105,6 +107,7 @@ const constructorMethod = (app) => {
     });
 
     app.post('/posts/:uid', async (req, res) => {
+        
         let { caption, photo, location, date, rating } = req.body
 
         if (!caption) return res.status(400).json({ error: "You must supply a caption!" });
@@ -122,11 +125,18 @@ const constructorMethod = (app) => {
             return res.status(400).json({ error: "Location must be between 5 and 25 characters" });
         if (!isNaN(location))
             return res.status(400).json({ error: "Location is not a valid value as it only contains digits" });
-
+        console.log(date)
         if (!date) return res.status(400).json({ error: "You must supply a date!" });
-        if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
+
+        const [year, month, day] = date.split("-"); 
+        const formattedDate = `${month}/${day}/${year}`; 
+        const today = dayjs().format("MM/DD/YYYY");
+        if (!dayjs(formattedDate, "MM/DD/YYYY", true).isValid() || dayjs(formattedDate, "MM/DD/YYYY", true).isAfter(today, "day")) {
             return res.status(400).json({ error: "Invalid Date. Must be in MM/DD/YYYY format and before today." });
+            
         }
+
+    
 
         if (!rating) return res.status(400).json({ error: "You must supply a rating!" });
         if (typeof rating !== 'number') {
@@ -138,6 +148,14 @@ const constructorMethod = (app) => {
         const parts = rating.toString().split('.');
         if (parts.length > 1 && parts[1].length > 1) {
             return res.status(400).json({ error: "Rating must only have one decimal point" });
+        }
+        if (photo) {
+            const buffer = Buffer.from(photo.split(",")[1], "base64");
+            console.log("Payload size in bytes:", buffer.length);
+
+            if (buffer.length > MAX_FILE_SIZE) {
+                return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
+            }
         }
 
 
@@ -203,6 +221,16 @@ const constructorMethod = (app) => {
 
             }
 
+            if (updatedFields.has("photo")) {
+                let photo = updatedFields.photo
+                const buffer = Buffer.from(photo.split(",")[1], "base64");
+                console.log("Payload size in bytes:", buffer.length);
+
+                if (buffer.length > MAX_FILE_SIZE) {
+                    return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
+                }
+            }
+
 
             if (updatedFields.has("location")) {
                 let location = updatedFields.location;
@@ -220,6 +248,7 @@ const constructorMethod = (app) => {
                 let date = updatedFields.date;
 
                 if (!date) return res.status(400).json({ error: "You must supply a date!" });
+                const today = moment().format("MM/DD/YYYY");
                 if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
                     return res.status(400).json({ error: "Invalid Date. Must be in MM/DD/YYYY format and before today." });
                 }
@@ -243,7 +272,7 @@ const constructorMethod = (app) => {
             let result = await posts.editPost(postId, updatedFields)
             return res.status(200).json(result);
 
-        } catch (e){
+        } catch (e) {
             return res.status(500).json({ error: e.message });
         }
 
@@ -251,7 +280,7 @@ const constructorMethod = (app) => {
 
     app.patch("/posts/likes/:uid", async (req, res) => {
         let uid = req.params.uid
-        let {postId} = req.body
+        let { postId } = req.body
 
         if (!postId) return res.status(400).json({ error: "Must provide id" });
         if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be string" });
@@ -266,11 +295,11 @@ const constructorMethod = (app) => {
         if (uid.length === 0)
             return res.status(400).json({ error: "ID cant be empty string" });
 
-        try{
+        try {
             let result = await posts.addLike(postId, uid)
             return res.status(200).json(result)
 
-        } catch(e){
+        } catch (e) {
             return res.status(500).json({ error: e.message });
         }
 
@@ -278,7 +307,7 @@ const constructorMethod = (app) => {
 
     app.patch("/posts/comments/:uid", async (req, res) => {
         let uid = req.params.uid
-        let {postId, comment} = req.body
+        let { postId, comment } = req.body
 
         if (!postId) return res.status(400).json({ error: "Must provide id" });
         if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be string" });
@@ -301,11 +330,11 @@ const constructorMethod = (app) => {
         if (comment.length > 50)
             return res.status(400).json({ error: "comment cant be greater than 50 chars" });
 
-        try{
+        try {
             let result = posts.addComment(postId, uid, comment)
             return res.status(200).json(result)
 
-        }catch(e){
+        } catch (e) {
             return res.status(500).json({ error: e.message });
         }
 

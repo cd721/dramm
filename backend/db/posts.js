@@ -1,7 +1,7 @@
 import { posts, users } from '../config/mongoCollections.js'
-import ObjectId from 'mongodb'
+import {ObjectId} from 'mongodb'
 import moment from 'moment'
-
+import dayjs from 'dayjs'
 const exportedMethods = {
     async addPost(uid, caption, photo, location, date, rating) {
         const postCollection = await posts();
@@ -26,10 +26,15 @@ const exportedMethods = {
             throw `Error: location must be between 5 and 25 characters`;
         if (!isNaN(location))
             throw `Error: location is not a valid value for location as it only contains digits`;
-
+        console.log(date)
         if (!date) throw `Error: You must supply a date!`;
-        if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
+
+        const [year, month, day] = date.split("-"); 
+        const formattedDate = `${month}/${day}/${year}`; 
+        const today = dayjs().format("MM/DD/YYYY");
+        if (!dayjs(formattedDate, "MM/DD/YYYY", true).isValid() || dayjs(formattedDate, "MM/DD/YYYY", true).isAfter(today, "day")) {
             throw "Invalid Date. Must be in MM/DD/YYYY format before today.";
+            
         }
 
         if (!rating) throw `Error: You must supply a rating!`;
@@ -49,7 +54,7 @@ const exportedMethods = {
             caption,
             photo,
             location,
-            date,
+            date: formattedDate,
             rating,
             likes: [],
             comments: []
@@ -140,6 +145,7 @@ const exportedMethods = {
             let date = updatedFields.date
 
             if (!date) throw `Error: You must supply a date!`;
+            const today = moment().format("MM/DD/YYYY");
             if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
                 throw "Invalid Date. Must be in MM/DD/YYYY format before today.";
             }

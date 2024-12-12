@@ -37,7 +37,7 @@ const DisplayReviews = () => {
         <h3>No reviews to view yet!</h3> 
       ) : (
         <ul>
-          {posts.map((post) => (
+          {reviews.map((post) => (
             <Review post = {post}/>
           ))}
         </ul>

@@ -13,7 +13,6 @@ const CurrentUserWeather = ({ zipCode }) => {
                 const { data: currentLocation } = await axios.get(
                     `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${WEATHER_API_KEY}`
                 );
-                console.log(currentLocation.lon)
                 setLongitude(currentLocation.lon)
                 setLatitude(currentLocation.lat)
 

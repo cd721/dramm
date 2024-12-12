@@ -23,6 +23,14 @@ router.patch("/:uid/places/:placeId", async (req, res) => {
     }
 });
 
+router.delete("/:uid/places/:placeId", async (req, res) => {
+    try {
+        const result = await users.removePlaceForUser(req.params.uid, req.params.placeId);
+        return res.status(200).json(result);
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
 router.get("/", async (req, res) => {
     try {
         const allUsers = await users.getAllUsers();

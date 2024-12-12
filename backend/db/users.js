@@ -102,8 +102,8 @@ const exportedMethods = {
         if (!caption) throw `Error: You must supply a caption!`;
         if (typeof caption !== 'string') throw `Error: caption must be a string!`;
         caption = caption.trim();
-        if (caption.length < 50 || caption.length > 2000)
-            throw `Error: caption must be between 50 and 2000 characters`;
+        if (caption.length < 50 || caption.length > 500)
+            throw `Error: caption must be between 50 and 500 characters`;
         if (!isNaN(caption))
             throw `Error: caption is not a valid value for caption as it only contains digits`;
 
@@ -197,8 +197,8 @@ const exportedMethods = {
             if (!caption) throw `Error: You must supply a caption!`;
             if (typeof caption !== 'string') throw `Error: caption must be a string!`;
             caption = caption.trim();
-            if (caption.length < 50 || caption.length > 2000)
-                throw `Error: caption must be between 50 and 2000 characters`;
+            if (caption.length < 50 || caption.length > 500)
+                throw `Error: caption must be between 50 and 500 characters`;
             if (!isNaN(caption))
                 throw `Error: caption is not a valid value for caption as it only contains digits`;
 

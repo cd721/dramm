@@ -24,7 +24,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
             return
         } 
         setCaption(caption.trim())
-        if ( !isNaN(caption) || caption.length < 50 || caption.length > 2000){
+        if ( !isNaN(caption) || caption.length < 50 || caption.length > 500){
             setError("Invalid caption length.")
             return
         }
@@ -82,7 +82,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             onChange={(e) => setCaption(e.target.value)}
                             required
                         />
-                        <small>Min: 50 characters, Max: 2000 characters</small>
+                        <small>Min: 50 characters, Max: 500 characters</small>
                     </div>
 
                     <div className="formInput">

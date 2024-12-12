@@ -17,7 +17,7 @@ export const Navbar = () => {
         <nav className="topbar">
             <ul className="topbar-links">
                 <li>
-                    <NavLink to='/'>Home</NavLink>
+                    <NavLink to='/home'>Home</NavLink>
                 </li>
                 <li>
                     <NavLink to='/'>About</NavLink>

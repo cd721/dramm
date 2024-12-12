@@ -3,12 +3,14 @@ import '../shared/styles/layout.css'
 import "../shared/styles/posts.css"
 
 const CreatePostModal = ({ isOpen, onClose }) => {
-
+    //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
-    const [photos, setPhotos] = useState([]);
+    const [photos, setPhotos] = useState('');
     const [location, setLocation] = useState('');
     const [rating, setRating] = useState(null);
     const [error, setError] = useState('');
+    const [date, setDate] = useState('');
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -60,16 +62,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
 
         onClose()
     }
-    const handlePhotoChange = (e) => {
-        const files = Array.from(e.target.files);
-        if (files.length > 5) {
-            setError('You can upload a maximum of 5 photos.');
-            return;
-        }
-        setPhotos(files);
-        setError('');
-    };
-
+ 
 
     return (
         <div className="modal-overlay">
@@ -98,10 +91,9 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             id="photos"
                             type="file"
                             accept="image/*"
-                            multiple
-                            onChange={handlePhotoChange}
+                            onChange={(e) => setPhotos(e.target.files[0])}
                         />
-                        <small>Add some pictures if you'd like! You can post up to 5 pictures.</small>
+                        <small>Add a picture if you'd like!</small>
                     </div>
 
                     <div className="formInput">
@@ -112,6 +104,18 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div className="formInput">
+
+                        <label htmlFor="date">Date:<span style={{ color: 'red' }}>*</span></label>
+                        <input
+                            id="date"
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
                             required
                         />
                     </div>

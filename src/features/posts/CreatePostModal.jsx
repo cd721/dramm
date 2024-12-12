@@ -70,12 +70,12 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                 <button className="modal-close" onClick={onClose}>
                     &times;
                 </button>
-                <h2>Create Post</h2>
-                <h3>Create a post sharing your outdoor adventures and reccomendations!</h3>
+                <h2>Create Review</h2>
+                <h3>Create a review to share your thoughts on an outdoor location!</h3>
                 {error && <p className="error">{error}</p>}
                 <form onSubmit={handleSubmit} >
                     <div className="formInput">
-                        <label htmlFor="caption">Caption:<span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="caption">Review Caption:<span style={{ color: 'red' }}>*</span></label>
                         <textarea
                             id="caption"
                             value={caption}

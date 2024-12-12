@@ -1,5 +1,7 @@
 import users from '../db/users.js';
-// TODO: error handling
+import posts from '../db/posts.js';
+
+// TODO: error handling, figure out photo error handling for posts
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 
@@ -101,6 +103,213 @@ const constructorMethod = (app) => {
             return res.status(500).json({ error: e.message });
         }
     });
+
+    app.post('/posts/:uid', async (req, res) => {
+        let { caption, photo, location, date, rating } = req.body
+
+        if (!caption) return res.status(400).json({ error: "You must supply a caption!" });
+        if (typeof caption !== 'string') return res.status(400).json({ error: "Caption must be a string!" });
+        caption = caption.trim();
+        if (caption.length < 50 || caption.length > 500)
+            return res.status(400).json({ error: "Caption must be between 50 and 500 characters" });
+        if (!isNaN(caption))
+            return res.status(400).json({ error: "Caption is not a valid value as it only contains digits" });
+
+        if (!location) return res.status(400).json({ error: "You must supply a location!" });
+        if (typeof location !== 'string') return res.status(400).json({ error: "Location must be a string!" });
+        location = location.trim();
+        if (location.length < 5 || location.length > 25)
+            return res.status(400).json({ error: "Location must be between 5 and 25 characters" });
+        if (!isNaN(location))
+            return res.status(400).json({ error: "Location is not a valid value as it only contains digits" });
+
+        if (!date) return res.status(400).json({ error: "You must supply a date!" });
+        if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
+            return res.status(400).json({ error: "Invalid Date. Must be in MM/DD/YYYY format and before today." });
+        }
+
+        if (!rating) return res.status(400).json({ error: "You must supply a rating!" });
+        if (typeof rating !== 'number') {
+            return res.status(400).json({ error: "Rating must be a number" });
+        }
+        if (isNaN(rating) || rating < 0 || rating > 10) {
+            return res.status(400).json({ error: "Invalid rating" });
+        }
+        const parts = rating.toString().split('.');
+        if (parts.length > 1 && parts[1].length > 1) {
+            return res.status(400).json({ error: "Rating must only have one decimal point" });
+        }
+
+
+        try {
+            const result = await posts.addPost(req.params.uid, caption, photo, location, date, rating);
+            return res.status(200).json(result);
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.get("/posts", async (req, res) => {
+        try {
+            const allPosts = await posts.getAllPosts();
+            return res.status(200).json(allPosts);
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.delete("/posts/:id", async (req, res) => {
+        let postId = req.params.id
+        if (!postId) return res.status(400).json({ error: "Must provide id" });
+        if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be string" });
+        postId = postId.trim();
+        if (postId.length === 0)
+            return res.status(400).json({ error: "ID cant be empty string" });
+        if (!ObjectId.isValid(postId)) return res.status(400).json({ error: "Invalid object ID" });
+
+        try {
+            const deletedPost = await posts.deletePost(postId)
+            return res.status(200).json(deletedPost);
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    });
+
+    app.patch("/posts/:id", async (req, res) => {
+        let postId = req.params.id
+        let { updatedFields } = req.params.body
+
+        try {
+            if (!postId) return res.status(400).json({ error: "You must provide an id to search for" });
+            if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be a string" });
+            postId = postId.trim();
+            if (postId.length === 0)
+                return res.status(400).json({ error: "ID cannot be an empty string or just spaces" });
+            if (!ObjectId.isValid(postId)) return res.status(400).json({ error: "Invalid object ID" });
+            if (Object.keys(updatedFields).length === 0) return res.status(400).json({ error: "No fields to update" });
+
+            if (!updatedFields) return res.status(400).json({ error: "Must have updated fields!" });
+
+            if (updatedFields.has("caption")) {
+                let caption = updatedFields.caption;
+
+                if (!caption) return res.status(400).json({ error: "You must supply a caption!" });
+                if (typeof caption !== 'string') return res.status(400).json({ error: "Caption must be a string!" });
+                caption = caption.trim();
+                if (caption.length < 50 || caption.length > 500)
+                    return res.status(400).json({ error: "Caption must be between 50 and 500 characters" });
+                if (!isNaN(caption))
+                    return res.status(400).json({ error: "Caption is not a valid value as it only contains digits" });
+
+            }
+
+
+            if (updatedFields.has("location")) {
+                let location = updatedFields.location;
+
+                if (!location) return res.status(400).json({ error: "You must supply a location!" });
+                if (typeof location !== 'string') return res.status(400).json({ error: "Location must be a string!" });
+                location = location.trim();
+                if (location.length < 5 || location.length > 25)
+                    return res.status(400).json({ error: "Location must be between 5 and 25 characters" });
+                if (!isNaN(location))
+                    return res.status(400).json({ error: "Location is not a valid value as it only contains digits" });
+            }
+
+            if (updatedFields.has("date")) {
+                let date = updatedFields.date;
+
+                if (!date) return res.status(400).json({ error: "You must supply a date!" });
+                if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
+                    return res.status(400).json({ error: "Invalid Date. Must be in MM/DD/YYYY format and before today." });
+                }
+            }
+
+            if (updatedFields.has("rating")) {
+                let rating = updatedFields.rating;
+                if (!rating) return res.status(400).json({ error: "You must supply a rating!" });
+                if (typeof rating !== 'number') {
+                    return res.status(400).json({ error: "Rating must be a number" });
+                }
+                if (isNaN(rating) || rating < 0 || rating > 10) {
+                    return res.status(400).json({ error: "Invalid rating" });
+                }
+                const parts = rating.toString().split('.');
+                if (parts.length > 1 && parts[1].length > 1) {
+                    return res.status(400).json({ error: "Rating must only have one decimal point" });
+                }
+            }
+
+            let result = await posts.editPost(postId, updatedFields)
+            return res.status(200).json(result);
+
+        } catch (e){
+            return res.status(500).json({ error: e.message });
+        }
+
+    });
+
+    app.patch("/posts/likes/:uid", async (req, res) => {
+        let uid = req.params.uid
+        let {postId} = req.body
+
+        if (!postId) return res.status(400).json({ error: "Must provide id" });
+        if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be string" });
+        postId = postId.trim();
+        if (postId.length === 0)
+            return res.status(400).json({ error: "ID cant be empty string" });
+        if (!ObjectId.isValid(postId)) return res.status(400).json({ error: "Invalid object ID" });
+
+        if (!uid) return res.status(400).json({ error: "Must provide id" });
+        if (typeof uid !== 'string') return res.status(400).json({ error: "ID must be string" });
+        uid = uid.trim();
+        if (uid.length === 0)
+            return res.status(400).json({ error: "ID cant be empty string" });
+
+        try{
+            let result = await posts.addLike(postId, uid)
+            return res.status(200).json(result)
+
+        } catch(e){
+            return res.status(500).json({ error: e.message });
+        }
+
+    });
+
+    app.patch("/posts/comments/:uid", async (req, res) => {
+        let uid = req.params.uid
+        let {postId, comment} = req.body
+
+        if (!postId) return res.status(400).json({ error: "Must provide id" });
+        if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be string" });
+        postId = postId.trim();
+        if (postId.length === 0)
+            return res.status(400).json({ error: "ID cant be empty string" });
+        if (!ObjectId.isValid(postId)) return res.status(400).json({ error: "Invalid object ID" });
+
+        if (!uid) return res.status(400).json({ error: "Must provide id" });
+        if (typeof uid !== 'string') return res.status(400).json({ error: "ID must be string" });
+        uid = uid.trim();
+        if (uid.length === 0)
+            return res.status(400).json({ error: "ID cant be empty string" });
+
+        if (!comment) return res.status(400).json({ error: "Must provide comment" });
+        if (typeof comment !== 'string') return res.status(400).json({ error: "comment must be string" });
+        comment = comment.trim();
+        if (comment.length === 0)
+            return res.status(400).json({ error: "comment cant be empty string" });
+        if (comment.length > 50)
+            return res.status(400).json({ error: "comment cant be greater than 50 chars" });
+
+        try{
+            let result = posts.addComment(postId, uid, comment)
+            return res.status(200).json(result)
+
+        }catch(e){
+            return res.status(500).json({ error: e.message });
+        }
+
+    })
 
     app.use('*', (req, res) => {
         res.redirect('/');

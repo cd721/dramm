@@ -306,8 +306,9 @@ const constructorMethod = (app) => {
     });
 
     app.patch("/posts/comments/:uid", async (req, res) => {
+        console.log(req.body)
         let uid = req.params.uid
-        let { postId, comment } = req.body
+        let { postId, comment, name } = req.body
 
         if (!postId) return res.status(400).json({ error: "Must provide id" });
         if (typeof postId !== 'string') return res.status(400).json({ error: "ID must be string" });
@@ -330,13 +331,23 @@ const constructorMethod = (app) => {
         if (comment.length > 50)
             return res.status(400).json({ error: "comment cant be greater than 50 chars" });
 
+        name = name.trim();
+        if (name.length === 0)
+            return res.status(400).json({ error: "name cant be empty string" });
+        if (name.length > 25)
+            return res.status(400).json({ error: "name cant be greater than 25 chars" });
+
         try {
-            let result = posts.addComment(postId, uid, comment)
+            let result = posts.addComment(postId, uid, comment, name)
             return res.status(200).json(result)
 
         } catch (e) {
             return res.status(500).json({ error: e.message });
         }
+
+       
+
+        
 
     })
 

@@ -10,6 +10,7 @@ const Review = ({ post }) => {
   const [profilePic, setProfilePic] = useState("");
   const [username, setUsername] = useState("")
 
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -21,19 +22,52 @@ const Review = ({ post }) => {
         console.error("Error fetching user data:", error);
       }
     };
-
     fetchUserData();
   }, [currentUser.uid]);
 
-  const handleCommentSubmit = (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
+
+    if (!newComment) {
+      alert("Must have a comment")
+      return
+    }
+    if (typeof newComment !== 'string') {
+      alert("comment must be a string")
+      return
+    }
+    setNewComment(newComment.trim())
+    if (newComment.length === 0) {
+      alert("comment cant be empty")
+      return
+    }
+
+    if (newComment.length > 50) {
+      alert("comment cant be more than 50 chars")
+      return
+    }
+
+    try {
+      const response = await axios.patch(`http://localhost:3001/posts/comments/${currentUser.uid}`, {
+        postId: post._id,
+        comment: newComment,
+        name: currentUser.displayName
+      });
+      console.log(response.data)
+
+    } catch (e) {
+      alert("Error: something went wrong.");
+      console.log(e)
+      return
+    }
+    setNewComment("")
 
   };
 
   return (
     <div className="review-card">
       <div className="review-content">
-        <div className = "header">
+        <div className="header">
           <div className="top">
             <Avatar
               sx={{ bgcolor: "#73C2BE", width: 56, height: 56 }}
@@ -63,7 +97,7 @@ const Review = ({ post }) => {
         <h3>Comments</h3>
         <ul className="comments-list">
           {post.comments.map((comment, index) => (
-            <li key={index}>{comment}</li>
+            <li key={index}>{comment.name} said "{comment.comment}"</li>
           ))}
         </ul>
         <form onSubmit={handleCommentSubmit}>

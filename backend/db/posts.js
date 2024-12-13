@@ -75,7 +75,7 @@ const exportedMethods = {
 
         const postCollection = await posts();
         try {
-            const result = await postCollection.findOneAndDelete({ _id: postId });
+            const result = await postCollection.findOneAndDelete({ _id: new ObjectId(postId) });
             if (!result.value) {
                 throw "item not deleted"
             }
@@ -103,7 +103,7 @@ const exportedMethods = {
         if (Object.keys(updatedFields).length === 0) throw 'no fields to update'
 
         const postCollection = await posts();
-        const post = await postCollection.findOne({ _id: postId });
+        const post = await postCollection.findOne({ _id: new ObjectId(postId) });
         if (!post) throw "post not found"
 
         let update = {}
@@ -170,7 +170,7 @@ const exportedMethods = {
         }
 
         const updateResult = await postCollection.updateOne(
-            { _id: postId },
+            { _id: new ObjectId(postId) },
             { $set: update }
         );
 
@@ -194,14 +194,14 @@ const exportedMethods = {
             throw 'Error: id cannot be an empty string or just spaces';
 
         const postCollection = await posts();
-        const post = await postCollection.findOne({ _id: postId });
+        const post = await postCollection.findOne({ _id: new ObjectId(postId) });
         if (!post) throw "post not found"
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: uid });
         if (!user) throw "invalid user"
         try{
-            let updated = await post.updateOne(
-                {_id: postId},
+            let updated = await postCollection.updateOne(
+                {_id: new ObjectId(postId)},
                 {$push: {likes: uid}}
             )
             if (!updated.modifiedCount) {
@@ -214,7 +214,7 @@ const exportedMethods = {
         return {updated: true}
         
     },
-    async addComment(postId, uid, comment ){
+    async addComment(postId, uid, comment, name ){
         if (!postId) throw 'Error: You must provide an id to search for';
         if (typeof postId !== 'string') throw 'Error: id must be a string';
         postId = postId.trim();
@@ -235,19 +235,29 @@ const exportedMethods = {
         if (comment.length > 50)
             throw "comment must be less than 50 chars"
 
+        if (!name) throw "must provide name"
+        if (typeof name !== 'string') throw 'Error: name must be a string';
+        name = name.trim();
+        if (name.length === 0)
+            throw 'Error: name cannot be an empty string or just spaces';
+        if (name.length > 25)
+            throw "name must be less than 50 chars"
+
+
         const postCollection = await posts();
-        const post = await postCollection.findOne({ _id: postId });
+        const post = await postCollection.findOne({ _id: new ObjectId(postId) });
         if (!post) throw "post not found"
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: uid });
         if (!user) throw "invalid user"
         const newComment = {
             userId : uid,
+            name,
             comment
         }
         try{
-            let updated = await post.updateOne(
-                {_id: postId},
+            let updated = await postCollection.updateOne(
+                {_id: new ObjectId(postId)},
                 {$push: {comments: newComment}}
             )
             if (!updated.modifiedCount) {

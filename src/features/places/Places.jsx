@@ -5,16 +5,25 @@ import { Grid2 } from "@mui/material";
 import PlaceListCard from "./PlaceListCard.jsx";
 import validation from "../../helpers/validation.js";
 import { useNavigate } from "react-router-dom";
-import SearchPlaces from "./SearchPlaces.jsx";
+import SearchPlaces from "./SearchPlaces";
+import { AuthContext } from "../../context/AuthContext";
+import { useContext } from "react";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Categories from "./Categories.jsx";
 
-import {AuthContext} from '../../context/AuthContext.jsx';
-import  {useContext} from 'react';
-
+import yelpCategories from "../../helpers/categories.js";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
+async function getUserData(currentUser) {
+  const { data } = await axios.get(
+    `http://localhost:3001/users/${currentUser.uid}`
+  );
+  return data;
+}
 function PlaceList(props) {
-  const {currentUser} = useContext(AuthContext);
-
+  const { currentUser } = useContext(AuthContext);
   const { page } = useParams();
   const navigate = useNavigate();
 
@@ -28,21 +37,58 @@ function PlaceList(props) {
   const [placesData, setPlacesData] = useState(undefined);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const [userZipCode, setUserZipCode] = useState("07030");
+
+  const [deselectedCategories, setDeselectedCategories] = useState([]);
+  const addDeselectedCategory = (newCategory) => {
+    if (!deselectedCategories.includes(newCategory)) {
+      setDeselectedCategories([...deselectedCategories, newCategory]);
+
+      setPlacesData([...placesData]);
+    }
+  };
+
+  const reselectCategory = (category) => {
+    if (deselectedCategories.includes(category)) {
+      setDeselectedCategories(deselectedCategories.filter( cat => cat !== category));
+
+      setPlacesData([...placesData]);
+    }
+  };
   let cardsData = null;
 
   //when component loads, get places
   useEffect(() => {
     const fetchData = async () => {
       try {
+        let userData = await getUserData(currentUser);
+        console.log(userData);
+        setUserZipCode(userData.zipCode);
+
+      } catch (e) {
+        console.log(e);
+        setUserZipCode("07030");
+        alert(
+          "We couldn't locate your zip code. Instead, we'll show you a sample list of places."
+        );
+      }
+
+      try {
+        let categoryString = "";
+        yelpCategories.forEach(
+          (category) =>
+            (categoryString = categoryString.concat(`categories=${category}&`))
+        );
+
         let { data } = await axios.get(
-          `https://api.yelp.com/v3/businesses/search?location=07860&term=farm&sort_by=best_match&limit=20&locale=en_US`,
+          `https://api.yelp.com/v3/businesses/search?location=${userZipCode}&${categoryString}sort_by=best_match&limit=20&locale=en_US`,
           {
             headers: {
               Authorization: `Bearer ${YELP_API_KEY}`,
             },
           }
         );
-        console.log(data);
+
         setPlacesData(data.businesses);
         if (data.total > 20) {
           setNextPageExists(true);
@@ -57,8 +103,6 @@ function PlaceList(props) {
     };
 
     fetchData();
-
-   
   }, [navigate]);
   //search
   useEffect(() => {
@@ -67,7 +111,7 @@ function PlaceList(props) {
 
       try {
         const { data } = await axios.get(
-          `https://api.yelp.com/v3/businesses/search?location=07860&term=farm&sort_by=best_match&limit=20&locale=en_US`,
+          `https://api.yelp.com/v3/businesses/search?location=${userZipCode}&term=${searchTerm}&sort_by=best_match&limit=20&locale=en_US`,
           {
             headers: {
               Authorization: `Bearer ${YELP_API_KEY}`,
@@ -79,7 +123,6 @@ function PlaceList(props) {
         } else {
           setSearchData(data.businesses);
         }
-        console.log(data);
         setLoading(false);
       } catch (e) {
         console.log(e);
@@ -104,7 +147,11 @@ function PlaceList(props) {
     cardsData =
       placesData &&
       placesData.map((place) => {
-        return <PlaceListCard place={place} key={place.id} />;
+        const aliases = place.categories.map((category) => category.alias);
+        console.log(aliases);
+        if (!aliases.some((alias) => deselectedCategories.includes(alias))) {
+          return <PlaceListCard place={place} key={place.id} />;
+        }
       });
   }
 
@@ -125,7 +172,7 @@ function PlaceList(props) {
         {page >= 2 && !searchTerm && (
           <Link to={`/places/page/${previousPage}`}>Go to Previous Page</Link>
         )}
-        {searchTerm && (
+        {searchTerm && !validation.isValidSearchTerm(searchTerm) && (
           <p>
             Your search term must contain characters other than whitespace and
             must not consist only of special characters. Please clear your
@@ -146,6 +193,10 @@ function PlaceList(props) {
             <h3>There were no results for your search</h3>
           )}
         <br />
+        <Categories
+          placesData={placesData}
+          updateDeselections={addDeselectedCategory}
+        ></Categories>
         <br />
         <Grid2
           container

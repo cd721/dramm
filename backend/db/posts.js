@@ -31,7 +31,6 @@ const exportedMethods = {
         if (locationId.length === 0)
             throw `Error: invalid locationId`;
         
-        console.log(date)
         if (!date) throw `Error: You must supply a date!`;
 
         const [year, month, day] = date.split("-"); 
@@ -105,11 +104,9 @@ const exportedMethods = {
         placeId = placeId.trim();
         if (placeId.length === 0)
             throw 'Error: id cannot be an empty string or just spaces';
-        console.log(placeId)
         const postCollection = await posts();
         try {
             const result = await postCollection.find({ locationId: placeId }).toArray();
-            console.log(result)
             return result
         } catch (e) {
             throw e

@@ -72,7 +72,6 @@ const constructorMethod = (app) => {
             }
 
             const buffer = Buffer.from(photo.split(",")[1], "base64");
-            console.log("Payload size in bytes:", buffer.length);
 
             if (buffer.length > MAX_FILE_SIZE) {
                 return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
@@ -81,7 +80,6 @@ const constructorMethod = (app) => {
             const result = await users.updateUserProfile(req.params.uid, { photo });
             return res.status(200).json({ success: true, result });
         } catch (e) {
-            console.error("Error updating photo:", e.message);
             return res.status(500).json({ error: e.message });
         }
     });
@@ -107,9 +105,7 @@ const constructorMethod = (app) => {
     });
 
     app.get("/posts/byLocation/:id", async (req, res) =>{
-        console.log("req")
         let placeId = req.params.id
-        console.log(placeId)
         if (!placeId) return res.status(400).json({ error: "Must provide id" });
         if (typeof placeId !== 'string') return res.status(400).json({ error: "ID must be string" });
         placeId = placeId.trim();
@@ -118,7 +114,6 @@ const constructorMethod = (app) => {
 
         try {
             const postPlace = await posts.getPostsByPlace(placeId)
-            console.log(postPlace)
             return res.status(200).json(postPlace);
         } catch (e) {
             return res.status(500).json({ error: e.message });
@@ -149,7 +144,6 @@ const constructorMethod = (app) => {
         if (locationId.length === 0)
             return res.status(400).json({ error: "locationId invalid" });
         
-        console.log(date)
         if (!date) return res.status(400).json({ error: "You must supply a date!" });
 
         const [year, month, day] = date.split("-"); 
@@ -175,8 +169,6 @@ const constructorMethod = (app) => {
         }
         if (photo) {
             const buffer = Buffer.from(photo.split(",")[1], "base64");
-            console.log("Payload size in bytes:", buffer.length);
-
             if (buffer.length > MAX_FILE_SIZE) {
                 return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
             }
@@ -250,8 +242,6 @@ const constructorMethod = (app) => {
             if (updatedFields.has("photo")) {
                 let photo = updatedFields.photo
                 const buffer = Buffer.from(photo.split(",")[1], "base64");
-                console.log("Payload size in bytes:", buffer.length);
-
                 if (buffer.length > MAX_FILE_SIZE) {
                     return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
                 }
@@ -332,7 +322,6 @@ const constructorMethod = (app) => {
     });
 
     app.patch("/posts/comments/:uid", async (req, res) => {
-        console.log(req.body)
         let uid = req.params.uid
         let { postId, comment, name } = req.body
 

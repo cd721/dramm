@@ -101,10 +101,10 @@ function Account() {
                       {userData.displayName || "User"}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Based in {location || "No location available"}
+                      {"Based in " + location || "No location available"}
                   </Typography>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
-                      Bio: {userData.bio || "No bio available"}
+                      {userData.bio || "No bio available"}
                   </Typography>
 
                   <Box sx={{ display: "flex", flexDirection: "column", gap: "1em", marginTop: "1em" }}>

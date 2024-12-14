@@ -7,6 +7,7 @@ import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 import { updateProfile } from "firebase/auth";
 import "../shared/styles/profile.css";
+import zipcodes from "zipcodes";
 
 const lightTheme = createTheme({
     palette: {
@@ -30,6 +31,22 @@ function CustomizeProfile() {
     const [uploading, setUploading] = useState(false);
 
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
+
+    const validateDisplayName = (name) => {
+        const trimmedName = name.trim();
+        const validCharacters = /^[a-zA-Z0-9 ]+$/;
+        return trimmedName.length <= 20 && validCharacters.test(trimmedName);
+    };
+
+    const validateZipCode = (zip) => {
+        return zipcodes.lookup(zip) !== undefined;
+    };
+
+    const validateBio = (bioText) => {
+        const trimmedBio = bioText.trim();
+        const validCharacters = /^[a-zA-Z0-9.,!? ]+$/;
+        return trimmedBio.length <= 250 && validCharacters.test(trimmedBio);
+    };
 
     const compressImage = (file, maxWidth = 800, quality = 0.8) => {
         return new Promise((resolve, reject) => {
@@ -104,13 +121,37 @@ function CustomizeProfile() {
 
     const handleTextUpdate = async () => {
         try {
+            if (!validateDisplayName(displayName)) {
+                alert("Invalid display name. Must be at most 20 characters, no special characters.");
+                return;
+            }
+
+            if (!validateZipCode(zipCode)) {
+                alert("Invalid ZIP code.");
+                return;
+            }
+
+            if (!validateBio(bio)) {
+                alert("Invalid bio. Must be at most 250 characters, no special characters.");
+                return;
+            }
+
             if (displayName !== currentUser.displayName) {
                 await updateProfile(currentUser, { displayName });
                 console.log("Updated display name in Firebase");
             }
 
-            const updatedData = { displayName, zipCode, bio };
-            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}/details`, updatedData);
+            const updatedData = {
+                displayName: displayName.trim(),
+                zipCode: zipCode.trim(),
+                bio: bio.trim(),
+            };
+
+            const response = await axios.patch(
+                `http://localhost:3001/users/${currentUser.uid}/details`,
+                updatedData
+            );
+
             if (response.data.success) {
                 alert("Details updated successfully!");
             }

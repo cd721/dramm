@@ -5,7 +5,7 @@ import axios from "axios"
 import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs'
 //NEED TO SHARE CONTEXTS FOR AFTER POST SUBMISSION
-const CreatePostModal = ({ isOpen, onClose, place }) => {
+const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
     //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
     const [photos, setPhotos] = useState('');
@@ -16,10 +16,12 @@ const CreatePostModal = ({ isOpen, onClose, place }) => {
     const [photoBase64, setPhotoBase64] = useState("");
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
     const { currentUser } = useContext(AuthContext);
+    const [locationId, setLocationId] = useState("")
 
     useEffect(() => {
         if (isOpen) {
           setLocation(place);
+          setLocationId(placeId)
         }
       }, [isOpen, place]); 
 
@@ -98,6 +100,7 @@ const CreatePostModal = ({ isOpen, onClose, place }) => {
                 rating,
                 date,
                 photo: compressedBase64,
+                locationId
             });
 
             

@@ -1,14 +1,17 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import '../shared/styles/layout.css'
 import CreatePostModal from '../posts/CreatePostModal';
 import DisplayReviews from '../posts/DisplayReviews.jsx';
+import axios from "axios"
 
 function Home() {
   const { currentUser } = useContext(AuthContext);
-  const [isModalVisible, setIsModalVisible] = useState(false)
-
+  
   console.log(currentUser);
+
+  
+
   return (
     <div className='home'>
       <h2>
@@ -22,8 +25,8 @@ function Home() {
         Create Post
       </button>
       {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)} */}
-      
-      <DisplayReviews/>
+      <h2>Your Feed</h2>
+      <DisplayReviews unique = {undefined}/>
 
     </div>
   );

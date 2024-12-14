@@ -106,9 +106,28 @@ const constructorMethod = (app) => {
         }
     });
 
+    app.get("/posts/byLocation/:id", async (req, res) =>{
+        console.log("req")
+        let placeId = req.params.id
+        console.log(placeId)
+        if (!placeId) return res.status(400).json({ error: "Must provide id" });
+        if (typeof placeId !== 'string') return res.status(400).json({ error: "ID must be string" });
+        placeId = placeId.trim();
+        if (placeId.length === 0)
+            return res.status(400).json({ error: "ID cant be empty string" });
+
+        try {
+            const postPlace = await posts.getPostsByPlace(placeId)
+            console.log(postPlace)
+            return res.status(200).json(postPlace);
+        } catch (e) {
+            return res.status(500).json({ error: e.message });
+        }
+    })
+
     app.post('/posts/:uid', async (req, res) => {
         
-        let { caption, photo, location, date, rating } = req.body
+        let { caption, photo, location, date, rating, locationId } = req.body
 
         if (!caption) return res.status(400).json({ error: "You must supply a caption!" });
         if (typeof caption !== 'string') return res.status(400).json({ error: "Caption must be a string!" });
@@ -121,10 +140,15 @@ const constructorMethod = (app) => {
         if (!location) return res.status(400).json({ error: "You must supply a location!" });
         if (typeof location !== 'string') return res.status(400).json({ error: "Location must be a string!" });
         location = location.trim();
-        if (location.length < 5 || location.length > 25)
-            return res.status(400).json({ error: "Location must be between 5 and 25 characters" });
-        if (!isNaN(location))
-            return res.status(400).json({ error: "Location is not a valid value as it only contains digits" });
+        if (location.length === 0)
+            return res.status(400).json({ error: "Location invalid" });
+
+        if (!locationId) return res.status(400).json({ error: "You must supply a locationId!" });
+        if (typeof locationId !== 'string') return res.status(400).json({ error: "locationId must be a string!" });
+        locationId = locationId.trim();
+        if (locationId.length === 0)
+            return res.status(400).json({ error: "locationId invalid" });
+        
         console.log(date)
         if (!date) return res.status(400).json({ error: "You must supply a date!" });
 
@@ -160,7 +184,7 @@ const constructorMethod = (app) => {
 
 
         try {
-            const result = await posts.addPost(req.params.uid, caption, photo, location, date, rating);
+            const result = await posts.addPost(req.params.uid, caption, photo, location, date, rating, locationId);
             return res.status(200).json(result);
         } catch (e) {
             return res.status(500).json({ error: e.message });
@@ -175,6 +199,8 @@ const constructorMethod = (app) => {
             return res.status(500).json({ error: e.message });
         }
     });
+
+   
 
     app.delete("/posts/:id", async (req, res) => {
         let postId = req.params.id

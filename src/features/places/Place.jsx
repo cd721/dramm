@@ -4,6 +4,7 @@ import noImage from "../../img/download.jpeg";
 import { Link, useParams } from "react-router-dom";
 import CreatePostModal from "../posts/CreatePostModal.jsx";
 import '../shared/styles/layout.css'
+import DisplayReviews from "../posts/DisplayReviews.jsx";
 
 import {
   Card,
@@ -165,8 +166,13 @@ function Place(props) {
                 }}>
                 Create Review
               </button>
-              {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} />)}
+              {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id}/>)}
               <br></br>
+              <Typography variant="h4" color="textSecondary" component="p">
+                Reviews
+              </Typography>
+              <DisplayReviews unique = {placeData.id}/>
+
               <Link to="/places">Click here to go back to all places...</Link>
             </Typography>
           </CardContent>

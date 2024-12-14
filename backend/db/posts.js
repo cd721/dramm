@@ -3,7 +3,7 @@ import {ObjectId} from 'mongodb'
 import moment from 'moment'
 import dayjs from 'dayjs'
 const exportedMethods = {
-    async addPost(uid, caption, photo, location, date, rating) {
+    async addPost(uid, caption, photo, location, date, rating, locationId) {
         const postCollection = await posts();
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: uid });
@@ -22,10 +22,15 @@ const exportedMethods = {
         if (!location) throw `Error: You must supply a location!`;
         if (typeof location !== 'string') throw `Error: location must be a string!`;
         location = location.trim();
-        if (location.length < 5 || location.length > 25)
-            throw `Error: location must be between 5 and 25 characters`;
-        if (!isNaN(location))
-            throw `Error: location is not a valid value for location as it only contains digits`;
+        if (location.length === 0)
+            throw `Error: invalid location`;
+
+        if (!locationId) throw `Error: You must supply a locationId!`;
+        if (typeof locationId !== 'string') throw `Error: locationId must be a string!`;
+        locationId = locationId.trim();
+        if (locationId.length === 0)
+            throw `Error: invalid locationId`;
+        
         console.log(date)
         if (!date) throw `Error: You must supply a date!`;
 
@@ -54,6 +59,7 @@ const exportedMethods = {
             caption,
             photo,
             location,
+            locationId,
             date: formattedDate,
             rating,
             comments: [],
@@ -92,6 +98,23 @@ const exportedMethods = {
         const postCollection = await posts();
         const postList = await postCollection.find({}).toArray();
         return postList;
+    },
+    async getPostsByPlace(placeId) {
+        if (!placeId) throw 'Error: You must provide an id to search for';
+        if (typeof placeId !== 'string') throw 'Error: id must be a string';
+        placeId = placeId.trim();
+        if (placeId.length === 0)
+            throw 'Error: id cannot be an empty string or just spaces';
+        console.log(placeId)
+        const postCollection = await posts();
+        try {
+            const result = await postCollection.find({ locationId: placeId }).toArray();
+            console.log(result)
+            return result
+        } catch (e) {
+            throw e
+        }
+
     },
     async editPost(postId, updatedFields) {
         if (!postId) throw 'Error: You must provide an id to search for';

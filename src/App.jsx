@@ -20,6 +20,7 @@ import { Route, Link, Routes, Navigate } from "react-router-dom";
 import { Navbar } from "./features/layout/Navbar";
 
 import './App.css';
+import { CalendarPage } from "./features/calendar/CalendarPage";
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
             <Route path="/place/:id" element={<Place />} />
             <Route path="/AddPlaceReview" element={<AddPlaceReview />} />
 
+            <Route path='/calendar' element={<CalendarPage />} />
 
             <Route path="/404" element={<ErrorPage />} />
             <Route path="*" element={<Navigate to='/404' />} />

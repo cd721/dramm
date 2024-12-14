@@ -27,7 +27,7 @@ const DisplayReviews = ({ unique }) => {
           console.log(response)
         }
       } catch (err) {
-        setError("Error fetching posts");
+        setError("Error fetching reviews");
         console.error(err);
       } finally {
         setLoading(false);

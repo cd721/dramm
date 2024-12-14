@@ -1,15 +1,6 @@
 import noImage from "../../img/download.jpeg";
 import { Link } from "react-router-dom";
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  CardMedia,
-  Grid,
-  Typography,
-} from "@mui/material";
-import Button from "@mui/material/Button";
-
+import '../shared/styles/places.css'
 import { AuthContext } from "../../context/AuthContext";
 import { useContext, useState,useEffect } from "react";
 import axios from "axios";
@@ -26,9 +17,9 @@ function PlaceListCard({ place }) {
     );
 
     if (data.modifiedCount) {
-      alert(`You have added ${place.name} to your list of places.`);
+      console.log(`You have added ${place.name} to your list of places.`);
     } else {
-      alert(`${place.name} is already in your list of places.`);
+      console.log(`${place.name} is already in your list of places.`);
     }
 
     setUserHasPlace(true);
@@ -41,9 +32,9 @@ function PlaceListCard({ place }) {
     );
 
     if (data.modifiedCount) {
-      alert(`You have removed ${place.name} from your list of places.`);
+      console.log(`You have removed ${place.name} from your list of places.`);
     } else {
-      alert(`${place.name} could not be removed from your list of places.`);
+      console.log(`${place.name} could not be removed from your list of places.`);
     }
 
     setUserHasPlace(false);
@@ -54,97 +45,61 @@ function PlaceListCard({ place }) {
       const { data: placesForUser } = await axios.get(
         `http://localhost:3001/users/${currentUser.uid}/places`
       );
-      setUserHasPlace(placesForUser.places.includes(place.id))
-         ;
-  
+      setUserHasPlace(placesForUser.places.includes(place.id));
     };
 
-    fetchData()
-;  },[])
+    fetchData();  
+  },[])
 
   return (
-    <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={place.id}>
-      <Card
-        variant="outlined"
-        sx={{
-          maxWidth: 250,
-          height: "auto",
-          marginLeft: "auto",
-          marginRight: "auto",
-          borderRadius: 5,
-          border: "1px solid #1e8678",
-          boxShadow:
-            "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-        }}
-      >
-        <CardActionArea>
-          <CardMedia
-            sx={{
-              height: "100%",
-              width: "100%",
-            }}
-            component="img"
-            image={place.image_url ? place.image_url : noImage}
-            title="place image"
-          />
+    <div className="place-card">
+      <img
+          src={place.image_url || noImage}
+          alt={place.name}
+          className="place-card-image"
+      />
 
-          <CardContent>
-            <Typography
-              sx={{
-                borderBottom: "1px solid #1e8678",
-                fontWeight: "bold",
-              }}
-              gutterBottom
-              variant="h5"
-              component="h3"
-            >
-              {place.name}
-            </Typography>
+      <div className="place-card-overlay">
+        <div className="place-card-info">
+            <div className="place-card-header">
+              <div>
+                <h3>{place.name}</h3>
+                <p>
+                  {place.location?.display_address?.[0] || "No Address available"}
+                  {" "}
+                  {place.location?.display_address?.[1] || null}
+                </p>
+              </div>
+              
+              <p className="place-rating"><span>{place.rating}</span>/5</p>
+            </div>
+            
+            <ul className="place-card-categories">
+              {place.categories?.map((category, index) => (
+                <li key={index}>
+                  <span className="category-title">{category.title}</span>
+                </li>
+              )) || "No categories available"}
+            </ul>
+        </div>
 
-            <Typography variant="body2" color="textSecondary" component="p">
-              {place.location &&
-              place.location.display_address &&
-              place.location.display_address[0]
-                ? place.location.display_address[0]
-                : "No Address available"}
-            </Typography>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {place.location &&
-              place.location.display_address &&
-              place.location.display_address[1]
-                ? place.location.display_address[1]
-                : "No other location info available"}
-            </Typography>
-            <br />
-
-            <Button
-              variant="outlined"
-              component={Link}
-              to={`/place/${place.id}`}
-            >
-              See more info
-            </Button>
-            <br />
-            { userHasPlace && (
-              <Button
-                onClick={() => removePlaceForUser( place)}
-                variant="contained"
-              >
-                Remove from my places
-              </Button>
-            )}
-            {( !userHasPlace) && (
-              <Button
-                onClick={() => addPlaceForUser(place)}
-                variant="contained"
-              >
-                Add to my places
-              </Button>
-            )}
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </Grid>
+        <div className="place-card-buttons">
+          <Link to={`/place/${place.id}`} className="place-card-button more">
+              More Info
+          </Link>
+          
+          {userHasPlace ? (
+            <div className="place-card-icon unsave" onClick={() => removePlaceForUser(place)}>
+              <img src="/icons/saved.png" alt="Unsave" />
+            </div>
+          ) : (
+            <div className="place-card-icon save" onClick={() => addPlaceForUser(place)}>
+              <img src="/icons/notsaved.png" alt="Save" />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 

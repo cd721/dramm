@@ -31,6 +31,60 @@ function CustomizeProfile() {
 
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
 
+    const compressImage = (file, maxWidth = 800, quality = 0.8) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+
+                    const scaleFactor = maxWidth / img.width;
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scaleFactor;
+
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+                    resolve(compressedBase64);
+                };
+                img.onerror = (error) => reject(error);
+            };
+            reader.onerror = (error) => reject(error);
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const handleImageUpload = async (file) => {
+        if (!file) return;
+
+        console.log("File size in bytes:", file.size);
+
+        if (file.size > MAX_FILE_SIZE) {
+            alert("File size exceeds 2 MB. Please upload a smaller file.");
+            return;
+        }
+
+        try {
+            const compressedBase64 = await compressImage(file);
+            console.log("Compressed Base64 size:", compressedBase64.length);
+
+            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}/photo`, {
+                photo: compressedBase64,
+            });
+
+            if (response.data.success) {
+                alert("Profile photo updated successfully!");
+                setPhotoBase64(compressedBase64);
+            }
+        } catch (error) {
+            console.error("Error updating photo:", error);
+            alert("Failed to update photo.");
+        }
+    };
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -87,6 +141,7 @@ function CustomizeProfile() {
                             accept="image/*"
                             hidden
                             id="file-input"
+                            onChange={(e) => handleImageUpload(e.target.files[0])}
                         />
                     </Button>
                 </div>

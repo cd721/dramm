@@ -155,7 +155,7 @@ function Place(props) {
               onClick={() => navigate("/AddPlaceReview")}
               variant="contained"
             >
-              Add to my places
+              Add to Visited Places
             </Button>
             </CardContent>
           </Card>

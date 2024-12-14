@@ -130,7 +130,7 @@ function PlaceListCard({ place }) {
                 onClick={() => removePlaceForUser( place)}
                 variant="contained"
               >
-                Remove from my places
+                Remove Bookmark
               </Button>
             )}
             {( !userHasPlace) && (
@@ -138,7 +138,7 @@ function PlaceListCard({ place }) {
                 onClick={() => addPlaceForUser(place)}
                 variant="contained"
               >
-                Add to my places
+                Bookmark
               </Button>
             )}
           </CardContent>

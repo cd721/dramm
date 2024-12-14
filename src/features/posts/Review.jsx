@@ -18,6 +18,7 @@ const Review = ({ post }) => {
         const userData = response.data;
         if (userData.photo) setProfilePic(userData.photo);
         setUsername(userData.displayName)
+        console.log(response)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
@@ -74,7 +75,7 @@ const Review = ({ post }) => {
               alt={username}
               src={profilePic || "/broken-image.jpg"}
             />
-            <p className="username">{username}</p>
+            <p className="username">{username || 'user'}</p>
           </div>
 
           <p><strong>Location:</strong> {post.location}</p>

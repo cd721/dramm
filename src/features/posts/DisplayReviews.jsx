@@ -5,7 +5,7 @@ import Review from './Review.jsx'
 const DisplayReviews = () => {
   const [reviews, setReviews] = useState([])
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -34,12 +34,15 @@ const DisplayReviews = () => {
     <div>
       <h2>Your Feed</h2>
       {reviews.length === 0 ? (
-        <h3>No reviews to view yet!</h3> 
+        <h3>No reviews to view yet!</h3>
       ) : (
         <ul>
-          {reviews.map((post) => (
-            <Review post = {post}/>
-          ))}
+          {reviews
+            .slice() 
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) 
+            .map((post) => (
+              <Review key={post.id} post={post} />
+            ))}
         </ul>
       )}
 

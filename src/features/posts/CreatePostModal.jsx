@@ -10,7 +10,7 @@ const CreatePostModal = ({ isOpen, onClose, place }) => {
     const [caption, setCaption] = useState('')
     const [photos, setPhotos] = useState('');
     const [location, setLocation] = useState('');
-    const [rating, setRating] = useState(null);
+    const [rating, setRating] = useState(undefined);
     const [error, setError] = useState('');
     const [date, setDate] = useState('');
     const [photoBase64, setPhotoBase64] = useState("");

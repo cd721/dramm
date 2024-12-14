@@ -14,14 +14,14 @@ function Home() {
       <h2>
         Welcome {currentUser && currentUser.displayName}!
       </h2>
-      <button
+      {/* <button
         className="create-post"
         onClick={() => {
           setIsModalVisible(true)
         }}>
         Create Post
       </button>
-      {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)}
+      {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)} */}
       
       <DisplayReviews/>
 

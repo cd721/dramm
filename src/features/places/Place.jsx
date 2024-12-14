@@ -163,7 +163,7 @@ function Place(props) {
                 onClick={() => {
                   setIsModalVisible(true)
                 }}>
-                Create Post
+                Create Review
               </button>
               {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} />)}
               <br></br>

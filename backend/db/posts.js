@@ -56,8 +56,8 @@ const exportedMethods = {
             location,
             date: formattedDate,
             rating,
-            likes: [],
-            comments: []
+            comments: [],
+            createdAt: new Date().toISOString()
         };
         const newInsertInformation = await postCollection.insertOne(newPost);
         if (!newInsertInformation.insertedId) {

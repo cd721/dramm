@@ -5,7 +5,7 @@ import axios from "axios"
 import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs'
 //NEED TO SHARE CONTEXTS FOR AFTER POST SUBMISSION
-const CreatePostModal = ({ isOpen, onClose }) => {
+const CreatePostModal = ({ isOpen, onClose, place }) => {
     //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
     const [photos, setPhotos] = useState('');
@@ -17,7 +17,11 @@ const CreatePostModal = ({ isOpen, onClose }) => {
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
     const { currentUser } = useContext(AuthContext);
 
-
+    useEffect(() => {
+        if (isOpen) {
+          setLocation(place);
+        }
+      }, [isOpen, place]); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -139,7 +143,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                     &times;
                 </button>
                 <h2>Create Review</h2>
-                <h3>Create a review to share your thoughts on an outdoor location!</h3>
+                <h3>Create a review to share your thoughts on this location!</h3>
                 {error && <p className="error">{error}</p>}
                 <form onSubmit={handleSubmit} >
                     <div className="formInput">
@@ -164,7 +168,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                         <small>Add a picture if you'd like!</small>
                     </div>
 
-                    <div className="formInput">
+                    {/* <div className="formInput">
 
                         <label htmlFor="location">Location:<span style={{ color: 'red' }}>*</span></label>
                         <input
@@ -174,7 +178,7 @@ const CreatePostModal = ({ isOpen, onClose }) => {
                             onChange={(e) => setLocation(e.target.value)}
                             required
                         />
-                    </div>
+                    </div> */}
 
                     <div className="formInput">
 

@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import noImage from "../../img/download.jpeg";
 import { Link, useParams } from "react-router-dom";
+import CreatePostModal from "../posts/CreatePostModal.jsx";
+import '../shared/styles/layout.css'
 
 import {
   Card,
@@ -19,6 +21,7 @@ function Place(props) {
   const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [weatherForecastForPlace, setWeatherForecastForPlace] = useState(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     console.log("show use effect fired");
@@ -47,11 +50,11 @@ function Place(props) {
         setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
 
         //Gives 40 timestamps by default (gives  forecast for every three hours over the next 5 days).
-        const {data: weatherForecastForPlace} = await axios.get(
+        const { data: weatherForecastForPlace } = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
         );
 
-        
+
         console.log(weatherForecastForPlace);
         setWeatherForecastForPlace(weatherForecastForPlace);
 
@@ -114,15 +117,15 @@ function Place(props) {
             >
               <Typography variant="body2" color="textSecondary" component="p">
                 {placeData.location &&
-                placeData.location.display_address &&
-                placeData.location.display_address[0]
+                  placeData.location.display_address &&
+                  placeData.location.display_address[0]
                   ? placeData.location.display_address[0]
                   : "No Address available"}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
                 {placeData.location &&
-                placeData.location.display_address &&
-                placeData.location.display_address[1]
+                  placeData.location.display_address &&
+                  placeData.location.display_address[1]
                   ? placeData.location.display_address[1]
                   : "No other location info available"}
               </Typography>
@@ -154,6 +157,16 @@ function Place(props) {
                 <p>Place City not available</p>
               )}
             */}
+
+              <button
+                className="create-post"
+                onClick={() => {
+                  setIsModalVisible(true)
+                }}>
+                Create Post
+              </button>
+              {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} />)}
+              <br></br>
               <Link to="/places">Click here to go back to all places...</Link>
             </Typography>
           </CardContent>

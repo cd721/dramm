@@ -89,9 +89,6 @@ const Review = ({ post }) => {
         </div>
       )}
       <div className="review-actions">
-        <button className="like-button" >
-          Like {post.likes > 0 && `(${post.likes})`}
-        </button>
       </div>
       <div className="comment-section">
         <h3>Comments</h3>

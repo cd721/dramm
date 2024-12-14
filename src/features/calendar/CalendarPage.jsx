@@ -15,18 +15,27 @@ export const CalendarPage = () => {
     const renderTileContent = ({ date, view }) => {
         if (view === 'month') {
             const formattedDate = date.toISOString().split('T')[0];
+            const todayFormatted = currentDate.toISOString().split('T')[0];
+
+            if (formattedDate === todayFormatted) {
+                return (
+                    <div>
+                        <p>+ Add a review today!</p>
+                    </div>
+                );
+            }
             const places = testPlaces.filter((place) => place.visited === formattedDate);
       
             // renders this block per date with a review on it
             if (places.length > 0) {
                 return (
-                    <div>
+                    <ul>
                         {places.map((place, index) => (
-                            <div key={index}>
+                            <li key={index}>
                                 <a href={place.url}>{place.name}</a>
-                            </div>
+                            </li>     
                         ))}
-                    </div>
+                    </ul>
                 );
             }
 
@@ -36,10 +45,12 @@ export const CalendarPage = () => {
     };
 
     return (
-        <div>
+        <div className="calendar-page">
             <Calendar
                 value={currentDate}
                 minDetail="year"
+
+                minDate={new Date('2024-11-02')}
                 maxDate={new Date()}
                 showFixedNumberOfWeeks={true}
 
@@ -47,15 +58,25 @@ export const CalendarPage = () => {
 
                 // for styling days that have a review
                 tileClassName={({ date, view }) => {
+                    if (date > new Date()) {
+                        return "future-date";
+                    }
+
                     if (view === 'month') {
                         const formattedDate = date.toISOString().split('T')[0];
 
                         const hasReview = testPlaces.some((place) => place.visited === formattedDate);
-                        return hasReview ? 'day-with-review' : null;
+                        return hasReview ? 'has-review' : null;
                     }
 
                     return null;
                 }}
+
+                prevLabel="< PREV"
+                nextLabel="NEXT >"
+
+                prev2Label={null}
+                next2Label={null}
             />
         </div>
     );

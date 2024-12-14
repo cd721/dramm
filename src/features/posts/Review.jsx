@@ -9,6 +9,7 @@ const Review = ({ post }) => {
   const { currentUser } = useContext(AuthContext);
   const [profilePic, setProfilePic] = useState("");
   const [username, setUsername] = useState("")
+  const [comments, setComments] = useState([])
 
 
   useEffect(() => {
@@ -19,9 +20,11 @@ const Review = ({ post }) => {
         if (userData.photo) setProfilePic(userData.photo);
         setUsername(userData.displayName)
         console.log(response)
+        setComments(post.comments)
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
+      
     };
     fetchUserData();
   }, [currentUser.uid]);
@@ -61,6 +64,8 @@ const Review = ({ post }) => {
       console.log(e)
       return
     }
+    const newCommentData = { name: currentUser.displayName, comment: newComment };
+    setComments(prevComments => [...prevComments, newCommentData]);
     setNewComment("")
 
   };
@@ -94,8 +99,8 @@ const Review = ({ post }) => {
       <div className="comment-section">
         <h3>Comments</h3>
         <ul className="comments-list">
-          {post.comments.map((comment, index) => (
-            <li key={index}>{comment.name} said "{comment.comment}"</li>
+          {comments.map((comment, index) => (
+            <li key={index}>{comment.name}- {comment.comment}</li>
           ))}
         </ul>
         <form onSubmit={handleCommentSubmit}>

@@ -289,7 +289,7 @@ const exportedMethods = {
         } catch(e){
             throw e
         }
-        return {updated: true}
+        return newComment
 
     }
 }

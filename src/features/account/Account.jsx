@@ -4,6 +4,7 @@ import { Card, CardContent, Typography, Avatar, Button, Box, ThemeProvider, crea
 import { AuthContext } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
+import DisplayReviews from '../posts/DisplayReviews';
 
 const lightTheme = createTheme({
     palette: {
@@ -112,11 +113,12 @@ function Account() {
             minHeight: "100vh",
             backgroundColor: "#f5f5f5",
             padding: "2em",
+            textAlign: "center",
           }}
         >
           <Card
             sx={{
-              width: "1000px",
+              width: "500px",
               padding: "2em",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
               borderRadius: "12px",
@@ -155,7 +157,7 @@ function Account() {
 
           <Card
             sx={{
-              width: "650px",
+              width: "500px",
               padding: "2em",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
               borderRadius: "12px",
@@ -177,15 +179,22 @@ function Account() {
               </ToggleButtonGroup>
 
               {places.length > 0 ? (
-                <Grid container spacing={2}>
+              <Grid
+                container
+                spacing={2}
+                justifyContent="center"
+                alignItems="stretch"
+                sx={{ margin: "0 auto", maxWidth: "100%" }}
+              >
                   {places.map((place) => (
-                    <Grid item xs={12} sm={6} md={4} key={place.placeId}>
+                    <Grid item xs={24} sm={12} md={8} key={place.placeId}>
                       <Card
                         sx={{
                           height: "auto",
-                          padding: "1em",
                           borderRadius: "8px",
                           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                          alignItems: "center",
+                          textAlign: "center",
                         }}
                       >
                         <CardContent>
@@ -219,7 +228,38 @@ function Account() {
               )}
             </CardContent>
           </Card>
-        </Box>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          marginTop: "2em",
+          marginBottom: "2em",
+        }}
+      >
+        <Card
+          sx={{
+            width: "800px",
+            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+            borderRadius: "12px",
+            padding: "1em",
+          }}
+        >
+          <CardContent>
+            <Typography
+              variant="h6"
+              align="center"
+              gutterBottom
+              sx={{ fontWeight: "bold", marginBottom: "1em" }}
+            >
+              Past Reviews
+            </Typography>
+            <DisplayReviews type="user" uniqueId={userData.id} />
+          </CardContent>
+        </Card>
+      </Box>
     </ThemeProvider>
   );
 }

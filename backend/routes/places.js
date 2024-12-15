@@ -16,9 +16,9 @@ router
     .route("/:pid/newReview")
     .post(async (req, res) => {
         try {
-            let poster_id = req.body.uid;
+            let poster_id = xss(req.body.uid);
             let post = xss(req.body.post);
-            let placeId = req.params.pid;
+            let placeId = xss(req.params.pid);
             const result = await placeData.addReviewToPlace(placeId, post, poster_id);
             return res.status(200).json(result);
         } catch (e) {
@@ -41,7 +41,7 @@ router
     })
     .post(async (req, res) => {
         try {
-            let place_id = req.params.pid;
+            let place_id = xss(req.params.pid);
             let name = xss(req.body.name);
 
             

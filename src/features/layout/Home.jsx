@@ -1,12 +1,16 @@
-import  {useContext, useState, useEffect} from 'react';
-import {AuthContext} from '../../context/AuthContext';
+import { useContext, useState, useEffect } from 'react';
+import { AuthContext } from '../../context/AuthContext';
+import '../shared/styles/layout.css'
+import CreatePostModal from '../posts/CreatePostModal';
+import DisplayReviews from '../posts/DisplayReviews.jsx';
 import CurrentUserWeather from '../weather/CurrentUserWeather';
 import axios from "axios"
 
 function Home() {
-  const {currentUser} = useContext(AuthContext);
-  console.log(currentUser);
+  const { currentUser } = useContext(AuthContext);
   const [zipCode, setZipCode] = useState("");
+
+  console.log(currentUser);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -24,17 +28,24 @@ function Home() {
 }, [currentUser.uid]);
 
   return (
-    <div className='card'>
-      {/* <h2>
-        Hello {currentUser && currentUser.displayName}, this is the Protected
-        Home page
-      </h2> */}
+    <div className='home'>
+      <h2>
+        Welcome {currentUser && currentUser.displayName}!
+      </h2>
       {zipCode ? <CurrentUserWeather zipCode = {zipCode}/>
         : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
-      
-      
-    </div>
-  );
+      {/* <button
+        className="create-post"
+        onClick={() => {
+          setIsModalVisible(true)
+        }}>
+        Create Post
+      </button>
+      {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)} */}
+      <h2>Your Feed</h2>
+      <DisplayReviews unique = {undefined}/>
+  </div>
+  )
 }
 
 export default Home;

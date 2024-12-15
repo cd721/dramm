@@ -1,4 +1,9 @@
 import users from '../db/users.js';
+import posts from '../db/posts.js';
+import moment from "moment"
+import { ObjectId } from 'mongodb';
+import dayjs from 'dayjs';
+// TODO: error handling, figure out photo error handling for posts
 // TODO: error handling
 import { Router } from "express";
 
@@ -110,6 +115,60 @@ router.patch('/:uid/details', async (req, res) => {
         return res.status(500).json({ error: e.message });
     }
 });
+
+
+
+router.get("/:uid/photo", async (req, res) => {
+    try {
+        const photo = await users.getUserPhoto(req.params.uid);
+        if (!photo) return res.status(404).json({ error: "User photo not found" });
+        return res.status(200).json({ photo });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
+router.patch('/:uid/photo', async (req, res) => {
+    try {
+        const { photo } = req.body;
+
+        if (!photo) {
+            return res.status(400).json({ error: "Photo is required in the request body" });
+        }
+
+        const buffer = Buffer.from(photo.split(",")[1], "base64");
+
+        if (buffer.length > MAX_FILE_SIZE) {
+            return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
+        }
+
+        const result = await users.updateUserProfile(req.params.uid, { photo });
+        return res.status(200).json({ success: true, result });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
+router.patch('/:uid/details', async (req, res) => {
+    try {
+        const { displayName, zipCode, bio } = req.body;
+
+        const updateFields = {};
+        if (displayName) updateFields.displayName = displayName;
+        if (zipCode) updateFields.zipCode = zipCode;
+        if (bio) updateFields.bio = bio;
+
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(400).json({ error: "No fields to update" });
+        }
+
+        const result = await users.updateUserProfile(req.params.uid, updateFields);
+        return res.status(200).json({ success: true, result });
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+});
+
 
 
 export default router;

@@ -2,7 +2,7 @@ import { places } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import redis from 'redis';
 const client = redis.createClient();
-client.connect().then(() => { });
+await client.connect().then(() => { });
 
 let exportedMethods = {
     async getAllPlaces() {

@@ -35,26 +35,91 @@ const exportedMethods = {
             return { signupCompleted: true };
         }
     },
-    async addPlaceForUser(uid, placeId) {
+    async addPlaceForUser(
+        uid,
+        placeId,
+        isBookmarked = false,
+        isVisited = false,
+        name = "Unknown Place",
+        image = "",
+        location = [],
+        city = "Unknown City",
+        state = "Unknown State"
+    ) {
         const userCollection = await users();
-        let result = await userCollection.updateOne({ _id: uid }, { $addToSet: { places: placeId } });
-        console.log(result)
-        return result;
+
+        const user = await userCollection.findOne({ _id: uid, "places.placeId": placeId });
+
+        if (user) {
+            // Update existing place
+            const result = await userCollection.updateOne(
+                { _id: uid, "places.placeId": placeId },
+                {
+                    $set: {
+                        "places.$.isBookmarked": isBookmarked,
+                        "places.$.isVisited": isVisited,
+                        "places.$.name": name || "Unknown Place",
+                        "places.$.image": image || "",
+                        "places.$.location": location.length > 0 ? location : ["No Address Available"],
+                        "places.$.city": city || "Unknown City",
+                        "places.$.state": state || "Unknown State",
+                    }
+                }
+            );
+            return result;
+        } else {
+            // Add a new place
+            const result = await userCollection.updateOne(
+                { _id: uid },
+                {
+                    $addToSet: {
+                        places: {
+                            placeId,
+                            isBookmarked,
+                            isVisited,
+                            name: name || "Unknown Place",
+                            image: image || "",
+                            location: location.length > 0 ? location : ["No Address Available"],
+                            city: city || "Unknown City",
+                            state: state || "Unknown State",
+                        }
+                    }
+                }
+            );
+            return result;
+        }
     },
     async removePlaceForUser(uid, placeId) {
         const userCollection = await users();
-        let result = await userCollection.updateOne({ _id: uid }, { $pull: { places: placeId } });
-        console.log(result)
+
+        const result = await userCollection.updateOne(
+            { _id: uid },
+            { $pull: { places: { placeId } } }
+        );
+
         return result;
     },
-    async getPlacesForUser(uid) {
+    async getPlacesForUser(uid, type) {
         const userCollection = await users();
 
-        const foundPlaces = await userCollection.findOne(
+        const foundUser = await userCollection.findOne(
             { _id: uid },
             { projection: { _id: 0, places: 1 } }
         );
-        return foundPlaces;
+
+        if (!foundUser || !foundUser.places) {
+            return [];
+        }
+
+        const places = foundUser.places;
+
+        if (type === "bookmarked") {
+            return places.filter(place => place.isBookmarked);
+        } else if (type === "visited") {
+            return places.filter(place => place.isVisited);
+        }
+
+        return places;
     },
     async getUserPhoto(uid) {
         if (!uid) throw new Error("User ID is required");

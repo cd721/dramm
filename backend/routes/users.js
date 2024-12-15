@@ -23,7 +23,13 @@ const validateBio = (bio) => {
 
 router.get("/:uid/places", async (req, res) => {
     try {
-        const places = await users.getPlacesForUser(req.params.uid);
+        const { type } = req.query;
+
+        if (type && !["bookmarked", "visited"].includes(type)) {
+            return res.status(400).json({ error: "Invalid type. Must be 'bookmarked' or 'visited'." });
+        }
+
+        const places = await users.getPlacesForUser(req.params.uid, type);
         return res.status(200).json(places);
     } catch (e) {
         return res.status(500).json({ error: e.message });
@@ -32,9 +38,27 @@ router.get("/:uid/places", async (req, res) => {
 
 router.patch("/:uid/places/:placeId", async (req, res) => {
     try {
-        const result = await users.addPlaceForUser(req.params.uid, req.params.placeId);
+        const { isBookmarked, isVisited, name, image, location, city, state } = req.body;
+
+        if (isBookmarked === undefined && isVisited === undefined) {
+            return res.status(400).json({ error: "At least one flag (isBookmarked or isVisited) must be provided." });
+        }
+
+        const result = await users.addPlaceForUser(
+            req.params.uid,
+            req.params.placeId,
+            isBookmarked || false,
+            isVisited || false,
+            name,
+            image,
+            location,
+            city,
+            state
+        );
+
         return res.status(200).json(result);
     } catch (e) {
+        console.error("Error updating place for user:", e.message);
         return res.status(500).json({ error: e.message });
     }
 });

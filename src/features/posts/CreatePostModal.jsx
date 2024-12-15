@@ -215,7 +215,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
 
                     <div className="formInput">
 
-                        <label htmlFor="date">Date:<span style={{ color: 'red' }}>*</span></label>
+                        <label htmlFor="date">Visited Date:<span style={{ color: 'red' }}>*</span></label>
                         <input
                             id="date"
                             type="date"

@@ -11,6 +11,7 @@
         "start": " node ./server/index.js"
     },
     "dependencies": {
+        "redis": "^4.7.0",
         "xss": "^1.0.15"
     }
 }

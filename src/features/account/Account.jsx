@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Button, Box, ThemeProvider, createTheme, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Card, CardContent, Typography, Avatar, Button, Box, ThemeProvider, createTheme, ToggleButton, ToggleButtonGroup, Grid, Link } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
@@ -177,11 +177,40 @@ function Account() {
               </ToggleButtonGroup>
 
               {places.length > 0 ? (
-                <ul>
-                  {places.map((place, index) => (
-                    <li key={index}>{place.placeId}</li>
+                <Grid container spacing={2}>
+                  {places.map((place) => (
+                    <Grid item xs={12} sm={6} md={4} key={place.placeId}>
+                      <Card
+                        sx={{
+                          height: "auto",
+                          padding: "1em",
+                          borderRadius: "8px",
+                          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <CardContent>
+                          <Typography variant="h6" gutterBottom>
+                            {place.name || "Unknown Place"}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {place.city || "Unknown City"}, {place.state || "Unknown State"}
+                          </Typography>
+                        </CardContent>
+                        <CardContent>
+                          <Button
+                            variant="outlined"
+                            color="primary"
+                            sx={{ marginTop: "0.5em" }}
+                            onClick={() => navigate(`/place/${place.placeId}`)}
+                            fullWidth
+                          >
+                            View Details
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </Grid>
                   ))}
-                </ul>
+                </Grid>
               ) : (
                 <Typography>No places found.</Typography>
               )}

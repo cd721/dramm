@@ -1,40 +1,43 @@
-import { users } from '../config/mongoCollections.js'
+import { users } from '../config/mongoCollections.js';
 
-
-//TODO: error handling + photo error handling? for posts
+// TODO: error handling + photo error handling for posts
 const exportedMethods = {
     async getAllUsers() {
         const userCollection = await users();
         const userList = await userCollection.find({}).toArray();
         return userList;
     },
+
     async getUserById(id) {
-        if (id === undefined) throw 'You must provide an ID';
+        if (!id) throw new Error('You must provide an ID');
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: id });
-
+        if (!user) throw new Error(`User with ID ${id} not found`);
         return user;
     },
+
     async addUserIfNotExists(uid) {
+        if (!uid) throw new Error('User ID is required');
         let user = await this.getUserById(uid);
         if (!user) {
-            let newUser = {
+            const newUser = {
                 _id: uid,
                 places: [],
-                streak: 0
+                streak: 0,
             };
 
             const userCollection = await users();
             const newInsertInformation = await userCollection.insertOne(newUser);
 
             if (!newInsertInformation.insertedId) {
-                throw "Insert failed!";
+                throw new Error('Insert failed!');
             }
-
 
             return { signupCompleted: true };
         }
+        return { signupCompleted: false };
     },
+
     async addPlaceForUser(
         uid,
         placeId,
@@ -42,16 +45,19 @@ const exportedMethods = {
         isVisited = false,
         name = "Unknown Place",
         image = "",
-        location = [],
+        location = ["No Address Available"],
         city = "Unknown City",
         state = "Unknown State"
     ) {
+        if (!uid || !placeId) {
+            throw new Error("User ID and Place ID are required");
+        }
+
         const userCollection = await users();
 
         const user = await userCollection.findOne({ _id: uid, "places.placeId": placeId });
 
         if (user) {
-            // Update existing place
             const result = await userCollection.updateOne(
                 { _id: uid, "places.placeId": placeId },
                 {
@@ -63,12 +69,15 @@ const exportedMethods = {
                         "places.$.location": location.length > 0 ? location : ["No Address Available"],
                         "places.$.city": city || "Unknown City",
                         "places.$.state": state || "Unknown State",
-                    }
+                    },
                 }
             );
-            return result;
+
+            if (!result.modifiedCount) {
+                throw new Error("Place update failed");
+            }
+            return { updated: true };
         } else {
-            // Add a new place
             const result = await userCollection.updateOne(
                 { _id: uid },
                 {
@@ -82,14 +91,23 @@ const exportedMethods = {
                             location: location.length > 0 ? location : ["No Address Available"],
                             city: city || "Unknown City",
                             state: state || "Unknown State",
-                        }
-                    }
+                        },
+                    },
                 }
             );
-            return result;
+
+            if (!result.modifiedCount && !result.upsertedCount) {
+                throw new Error("Place insertion failed");
+            }
+            return { inserted: true };
         }
     },
+
     async removePlaceForUser(uid, placeId) {
+        if (!uid || !placeId) {
+            throw new Error("User ID and Place ID are required");
+        }
+
         const userCollection = await users();
 
         const result = await userCollection.updateOne(
@@ -97,9 +115,16 @@ const exportedMethods = {
             { $pull: { places: { placeId } } }
         );
 
-        return result;
+        if (!result.modifiedCount) {
+            throw new Error("Failed to remove place");
+        }
+
+        return { removed: true };
     },
+
     async getPlacesForUser(uid, type) {
+        if (!uid) throw new Error("User ID is required");
+
         const userCollection = await users();
 
         const foundUser = await userCollection.findOne(
@@ -121,12 +146,14 @@ const exportedMethods = {
 
         return places;
     },
+
     async getUserPhoto(uid) {
         if (!uid) throw new Error("User ID is required");
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: uid }, { projection: { photo: 1 } });
         return user?.photo || null;
     },
+
     async saveUserPhoto(uid, photo) {
         if (!uid) throw new Error("User ID is required");
         if (!photo) throw new Error("Photo is required");
@@ -144,7 +171,12 @@ const exportedMethods = {
 
         return { success: true, photo };
     },
+
     async updateUserProfile(uid, updateFields) {
+        if (!uid || !updateFields) {
+            throw new Error("User ID and fields to update are required");
+        }
+
         const userCollection = await users();
         const updateResult = await userCollection.updateOne(
             { _id: uid },
@@ -160,8 +192,7 @@ const exportedMethods = {
         }
 
         return { uid, updatedFields: updateFields };
-    }
-    
-}
+    },
+};
 
 export default exportedMethods;

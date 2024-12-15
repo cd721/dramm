@@ -47,7 +47,7 @@ function Place(props) {
         );
 
         setPlaceData(placeData);
-        console.log(placeData);
+        console.log("place", placeData);
 
         const latitude = placeData.coordinates.latitude;
         const longitude = placeData.coordinates.longitude;
@@ -263,7 +263,7 @@ function Place(props) {
           }}>
           Create Review
         </button>
-        {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} />)}
+        {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} city={placeData.location.city} state={placeData.location.state} />)}
         <br></br>
         <Typography variant="h4" color="textSecondary" component="p">
           Reviews

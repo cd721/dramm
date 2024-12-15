@@ -5,7 +5,7 @@ import axios from "axios"
 import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs'
 //NEED TO SHARE CONTEXTS FOR AFTER POST SUBMISSION
-const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
+const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
     //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
     const [photos, setPhotos] = useState('');
@@ -20,8 +20,8 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
 
     useEffect(() => {
         if (isOpen) {
-          setLocation(place);
-          setLocationId(placeId)
+            setLocation(place);
+            setLocationId(placeId);
         }
       }, [isOpen, place]); 
 
@@ -71,7 +71,6 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
             setError("File size exceeds 2 MB. Please upload a smaller file.");
             return;
         }
-      
 
         if (!date) {
             setError("Must have date")
@@ -103,6 +102,8 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
                 locationId
             });
 
+            await updatePlaceForUser();
+
             
         } catch (error) {
             console.error( error);
@@ -111,6 +112,40 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
         }
         onClose()
     }
+
+    const updatePlaceForUser = async () => {
+        try {
+            const { data: placesForUser } = await axios.get(
+                `http://localhost:3001/users/${currentUser.uid}/places`
+            );
+
+            const isAlreadyVisited = placesForUser.some(
+                (userPlace) =>
+                    userPlace.placeId === placeId && userPlace.isVisited === true
+            );
+
+            if (!isAlreadyVisited) {
+                await axios.patch(
+                    `http://localhost:3001/users/${currentUser.uid}/places/${placeId}`,
+                    {
+                        isVisited: true,
+                        isBookmarked: false,
+                        name: place || "Unknown Place",
+                        image: photos ? photos.name : "No Image",
+                        location: location || "Unknown Location",
+                        city: city || "Unknown City",
+                        state: state || "Unknown State"
+                    }
+                );
+                console.log(`${place} has been added to your visited places.`);
+            } else {
+                console.log(`${place} is already marked as visited.`);
+            }
+        } catch (error) {
+            console.error("Error updating user's places:", error);
+            setError("Error: something went wrong while updating places.");
+        }
+    };
 
     const compressImage = (file, maxWidth = 800, quality = 0.8) => {
         return new Promise((resolve, reject) => {
@@ -170,18 +205,6 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId }) => {
                         />
                         <small>Add a picture if you'd like!</small>
                     </div>
-
-                    {/* <div className="formInput">
-
-                        <label htmlFor="location">Location:<span style={{ color: 'red' }}>*</span></label>
-                        <input
-                            id="location"
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            required
-                        />
-                    </div> */}
 
                     <div className="formInput">
 

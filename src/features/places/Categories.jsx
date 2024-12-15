@@ -11,12 +11,7 @@ function Categories({ activeCategories, setActiveCategories }) {
   };
 
   return (
-    <div className="categories-container">
-      <div className="categories-header">
-        <h2>CATEGORIES</h2>
-        <p>Select the categories of places that you want to see.</p>
-      </div>
-      
+    <div className="categories-container">      
       <div className="categories-list">
         {yelpCategories.map((category, index) => (
             <label 

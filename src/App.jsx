@@ -11,6 +11,7 @@ import SignUp from "./features/authentication/SignUp";
 
 import Places from "./features/places/Places";
 import Place from "./features/places/Place"
+import AddPlaceReview from "./features/places/AddPlaceReview"
 
 import ErrorPage from "./features/layout/ErrorPage";
 
@@ -44,6 +45,7 @@ function App() {
 
             <Route path="/places" element={<Places />} />
             <Route path="/place/:id" element={<Place />} />
+            <Route path="/AddPlaceReview" element={<AddPlaceReview />} />
 
 
             <Route path="/404" element={<ErrorPage />} />

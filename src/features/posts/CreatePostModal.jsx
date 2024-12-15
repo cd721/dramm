@@ -102,7 +102,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                 locationId
             });
 
-            await updatePlaceForUser();
+            await updatePlaceForUser(rating);
 
             
         } catch (error) {
@@ -113,18 +113,26 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
         onClose()
     }
 
-    const updatePlaceForUser = async () => {
+    const updatePlaceForUser = async (rating) => {
         try {
             const { data: placesForUser } = await axios.get(
                 `http://localhost:3001/users/${currentUser.uid}/places`
             );
 
-            const isAlreadyVisited = placesForUser.some(
-                (userPlace) =>
-                    userPlace.placeId === placeId && userPlace.isVisited === true
+            const existingPlace = placesForUser.find(
+                (userPlace) => userPlace.placeId === placeId
             );
 
-            if (!isAlreadyVisited) {
+            if (existingPlace) {
+                await axios.patch(
+                    `http://localhost:3001/users/${currentUser.uid}/places/${placeId}`,
+                    {
+                        isVisited: true,
+                        rating,
+                    }
+                );
+                console.log(`${place} has been updated with a new rating.`);
+            } else {
                 await axios.patch(
                     `http://localhost:3001/users/${currentUser.uid}/places/${placeId}`,
                     {
@@ -134,12 +142,11 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                         image: photos ? photos.name : "No Image",
                         location: location || "Unknown Location",
                         city: city || "Unknown City",
-                        state: state || "Unknown State"
+                        state: state || "Unknown State",
+                        rating,
                     }
                 );
                 console.log(`${place} has been added to your visited places.`);
-            } else {
-                console.log(`${place} is already marked as visited.`);
             }
         } catch (error) {
             console.error("Error updating user's places:", error);

@@ -38,6 +38,7 @@ const exportedMethods = {
         return { signupCompleted: false };
     },
 
+    
     async addPlaceForUser(
         uid,
         placeId,
@@ -47,7 +48,8 @@ const exportedMethods = {
         image = "",
         location = ["No Address Available"],
         city = "Unknown City",
-        state = "Unknown State"
+        state = "Unknown State",
+        rating = null
     ) {
         if (!uid || !placeId) {
             throw new Error("User ID and Place ID are required");
@@ -55,50 +57,68 @@ const exportedMethods = {
 
         const userCollection = await users();
 
-        const user = await userCollection.findOne({ _id: uid, "places.placeId": placeId });
+        console.log("Updating place for user:", {
+            uid,
+            placeId,
+            isBookmarked,
+            isVisited,
+            name,
+            image,
+            location,
+            city,
+            state,
+            rating,
+        });
 
-        if (user) {
+        // Check if the place already exists for the user
+        const existingPlace = await userCollection.findOne({
+            _id: uid,
+            "places.placeId": placeId,
+        });
+
+        if (existingPlace) {
+            // Update existing place with only provided fields
+            const updateFields = {
+                "places.$.isBookmarked": isBookmarked,
+                "places.$.isVisited": isVisited,
+                ...(rating !== null && { "places.$.rating": rating }), // Update rating only if provided
+            };
+
             const result = await userCollection.updateOne(
                 { _id: uid, "places.placeId": placeId },
-                {
-                    $set: {
-                        "places.$.isBookmarked": isBookmarked,
-                        "places.$.isVisited": isVisited,
-                        "places.$.name": name || "Unknown Place",
-                        "places.$.image": image || "",
-                        "places.$.location": location.length > 0 ? location : ["No Address Available"],
-                        "places.$.city": city || "Unknown City",
-                        "places.$.state": state || "Unknown State",
-                    },
-                }
+                { $set: updateFields }
             );
 
             if (!result.modifiedCount) {
-                throw new Error("Place update failed");
+                throw new Error("Failed to update place for user");
             }
+
+            console.log("Existing place updated successfully:", result);
             return { updated: true };
         } else {
+            // Add a new place
+            const newPlace = {
+                placeId,
+                isBookmarked,
+                isVisited,
+                name: name || "Unknown Place",
+                image: image || "",
+                location: location.length > 0 ? location : ["No Address Available"],
+                city: city || "Unknown City",
+                state: state || "Unknown State",
+                rating,
+            };
+
             const result = await userCollection.updateOne(
                 { _id: uid },
-                {
-                    $addToSet: {
-                        places: {
-                            placeId,
-                            isBookmarked,
-                            isVisited,
-                            name: name || "Unknown Place",
-                            image: image || "",
-                            location: location.length > 0 ? location : ["No Address Available"],
-                            city: city || "Unknown City",
-                            state: state || "Unknown State",
-                        },
-                    },
-                }
+                { $addToSet: { places: newPlace } }
             );
 
-            if (!result.modifiedCount && !result.upsertedCount) {
-                throw new Error("Place insertion failed");
+            if (!result.modifiedCount) {
+                throw new Error("Failed to add new place for user");
             }
+
+            console.log("New place added successfully:", result);
             return { inserted: true };
         }
     },

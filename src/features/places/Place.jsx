@@ -268,7 +268,7 @@ function Place(props) {
         <Typography variant="h4" color="textSecondary" component="p">
           Reviews
         </Typography>
-        <DisplayReviews unique={placeData.id} />
+        <DisplayReviews type="place" uniqueId={placeData.id} />
 
       </div>
     );

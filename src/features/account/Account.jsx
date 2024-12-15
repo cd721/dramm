@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Button, Box, ThemeProvider, createTheme, ToggleButton, ToggleButtonGroup, Grid, Link } from '@mui/material';
+import { Card, CardContent, Typography, Avatar, Button, Box, ThemeProvider, createTheme, ToggleButton, ToggleButtonGroup, Grid, Link, Rating } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
@@ -155,7 +155,7 @@ function Account() {
 
           <Card
             sx={{
-              width: "600px",
+              width: "650px",
               padding: "2em",
               boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
               borderRadius: "12px",
@@ -195,6 +195,9 @@ function Account() {
                           <Typography variant="body2" color="text.secondary">
                             {place.city || "Unknown City"}, {place.state || "Unknown State"}
                           </Typography>
+                          {place.rating && (
+                            <Rating name="half-rating-read" value={place.rating} precision={0.1} readOnly />
+                          )}
                         </CardContent>
                         <CardContent>
                           <Button

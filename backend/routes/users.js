@@ -44,7 +44,7 @@ router.get("/:uid/places", async (req, res) => {
 
 router.patch("/:uid/places/:placeId", async (req, res) => {
     try {
-        const { isBookmarked, isVisited, name, image, location, city, state } = req.body;
+        const { isBookmarked, isVisited, name, image, location, city, state, rating } = req.body;
 
         if (isBookmarked === undefined && isVisited === undefined) {
             return res.status(400).json({ error: "At least one flag (isBookmarked or isVisited) must be provided." });
@@ -59,7 +59,8 @@ router.patch("/:uid/places/:placeId", async (req, res) => {
             image,
             location,
             city,
-            state
+            state,
+            rating
         );
 
         return res.status(200).json(result);

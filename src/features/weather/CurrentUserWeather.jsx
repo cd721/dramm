@@ -15,7 +15,7 @@ const CurrentUserWeather = ({ zipCode }) => {
         const fetchData = async () => {
             try {
                 const { data: currentLocation } = await axios.get(
-                    `http://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${WEATHER_API_KEY}`
+                    `https://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${WEATHER_API_KEY}`
                 );
                 const result = await axios.get(
                     `https://api.openweathermap.org/data/2.5/weather?lat=${currentLocation.lat}&lon=${currentLocation.lon}&appid=${WEATHER_API_KEY}&units=imperial`

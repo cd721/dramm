@@ -23,10 +23,6 @@
     margin-top: 20px;
 }
 
-.attractions-filter {
-    display: flex;
-}
-
 /* /////////////////////// filters /////////////////////// */
 .search-container,
 .categories-container {
@@ -38,12 +34,13 @@
     width: 100%;
 
     padding: 0.9em;
+
+    background-color: var(--secondary-gray);
 }
 
 .search-header,
 .categories-header {
-    margin: 0 auto 30px;
-    padding-bottom: 10px;
+    padding-bottom: 20px;
     width: 100%;
 
     text-align: center;
@@ -54,6 +51,7 @@
 .search-header h2,
 .categories-header h2 {
     font-size: 1.8em;
+    margin-top: 0;
     margin-bottom: 10px;
 
     color: var(--primary-orange);
@@ -62,7 +60,7 @@
 
 .search-header p,
 .categories-header p {
-    margin: 0;
+    margin: 10px;
 }
 
 /* search */
@@ -204,7 +202,7 @@
     text-align: left;
 }   
 
-.place-rating {
+.place-card .place-rating {
     padding: 3px;
     margin: 5px;
 
@@ -219,6 +217,11 @@
 .place-card-info h3,
 .place-card-info p {
     margin: 0;
+}
+
+.place-card-header .distance {
+    font-size: 0.8em;
+    color: rgb(110, 110, 110);
 }
 
 /* categories */
@@ -244,7 +247,6 @@
 
     background: var(--semi-transparent);
 }
-
 
 /* buttons */
 .place-card-buttons {
@@ -272,7 +274,7 @@
     text-decoration: underline;
 }
 
-.place-card-icon {
+.place-save-icon {
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -282,15 +284,14 @@
     background: var(--semi-transparent);
     border-radius: 8px;
 }
-.place-card-icon:hover {
+.place-save-icon:hover {
     background: rgba(200, 200, 200, 0.8);
 }
 
-.place-card-icon img {
+.place-save-icon img {
     max-width: 30px;
     max-height: 30px;
 }
-
 
 /* /////////////////////// pagination /////////////////////// */
 .pagination {
@@ -302,4 +303,211 @@
 
 .pagination button {
     margin: 0 20px;
+}
+
+/* /////////////////////// place profile /////////////////////// */
+.place-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+}
+
+.place-header {
+    display: flex;
+    justify-content: center;
+
+    padding: 2% 0;
+    width: 100%;
+    gap: 20px;
+
+    background-color: var(--primary-gray);
+}
+
+.place-profile .header-left {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px
+}
+
+.place-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background-color: white;
+    border-radius: 8px;
+
+    padding: 0.7em;
+
+    min-height: 160px;
+}
+
+.place-title .title-top {
+    display: flex;
+    justify-content: space-between;
+}
+.place-title .title-top h1 {
+    font-size: 1.6em;
+    text-align: left;
+
+    margin: 0;
+}
+
+/* ratings */
+.place-profile-rating {
+    display: flex;
+    flex-direction: column;
+}
+
+.stars-container {
+    display: flex;
+    gap: 5px;
+}
+
+.stars-container .star {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50px;
+
+    background-color: var(--primary-gray);
+}
+.star.filled {
+    background-color: var(--primary-orange);
+}
+.place-profile-rating .star img {
+    max-width: 20px;
+    max-height: 20px;
+}
+
+.place-profile-rating .rating-text {
+    text-align: right;
+}
+
+.place-profile-rating span {
+    font-weight: bold;
+}
+
+.place-profile-rating p {
+    margin: 0;
+}
+
+/* secondary images */
+.place-profile .secondary-images {
+    display: flex;
+
+    gap: 20px
+}
+
+.place-image {
+    object-fit: cover;
+
+    width: 360px;
+    height: 270px;
+
+    border-radius: 8px;
+}
+
+.place-image.main {
+    object-fit: cover;
+
+    width: 600px;
+    height: 450px;
+}
+
+/* additionals */
+.place-information {
+    display: flex;
+}
+
+#place-buttons,
+.place-info-container {
+    background: rgba(224, 226, 230, 0.25);
+    border: 1px solid black;
+    border-radius: 20px;
+}
+
+.place-info-container {
+    height: 250px;
+    width: 500px;
+
+    margin: 20px;
+    padding: 20px;
+}
+
+.info-table,
+.hours-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#attraction-info h4,
+#place-hours h4 {
+    margin: 0 0 2px;
+    text-align: left;
+
+    font-size: 1.1em;
+}
+
+/* buttons */
+#place-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+    width: 70%;
+    margin: 2em;
+    padding: 1.1em;
+}
+
+#place-buttons .left-buttons {
+    display: flex;
+
+    gap: 20px;
+}
+#place-buttons button {
+    height: 45px;
+}
+
+#place-buttons .place-save-icon {
+    background-color: var(--primary-gray);
+}
+#place-buttons .place-save-icon p {
+    color: var(--primary-white);
+    margin-left: 5px;
+}
+
+/* info */
+.info-table td {
+    padding: 10px;
+    font-size: 0.9em;
+}
+
+.info-table td {
+    text-align: right;
+}
+.info-table .label {
+    text-align: left;
+}
+
+/* hours */
+.hours-table td {
+    padding: 4px;
+
+    font-size: 0.8em;
+}
+
+.hours-table .day {
+    text-align: left;
+}
+.hours-table .hours {
+    text-align: right;
 }

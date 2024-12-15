@@ -19,11 +19,11 @@ function Categories({ activeCategories, setActiveCategories }) {
               className={`category-item ${
                 activeCategories.includes(category) ? "active" : null
               }`}
-              onChange={() => handleCategoryToggle(category)}
             >
               <input
                 type="checkbox"
                 checked={activeCategories.includes(category)}
+                onChange={() => handleCategoryToggle(category)}
               />
               <img 
                 src={`/icons/categories/${category}.png`}

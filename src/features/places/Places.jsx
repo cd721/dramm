@@ -80,7 +80,7 @@ function PlaceList(props) {
 
   return (
     <div className="place-list">
-      <div>
+      <div className="attractions-filter">
         <div className="search-header">
           <h2>Welcome, {currentUser && currentUser.displayName}.</h2>
           <p>Search attractions, or select categories of places you want to see!</p>
@@ -95,7 +95,6 @@ function PlaceList(props) {
           setActiveCategories={setActiveCategories}
         />
       </div>
-
 
       {/* place cards */}
       <div className="places-grid">

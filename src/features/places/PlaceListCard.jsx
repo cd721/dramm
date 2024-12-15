@@ -69,6 +69,9 @@ function PlaceListCard({ place }) {
                   {" "}
                   {place.location?.display_address?.[1] || null}
                 </p>
+                {place.distance && 
+                  <p className="distance">{place.distance.toFixed(0)} m away</p>
+                }
               </div>
               
               <p className="place-rating"><span>{place.rating}</span>/5</p>
@@ -89,13 +92,13 @@ function PlaceListCard({ place }) {
           </Link>
           
           {userHasPlace ? (
-            <div className="place-card-icon unsave" onClick={() => removePlaceForUser(place)}>
-              <img src="/icons/saved.png" alt="Unsave" />
-            </div>
+            <button className="place-save-icon unsave" onClick={() => removePlaceForUser(place)}>
+              <img src="/icons/places/saved.png" alt="Unsave" />
+            </button>
           ) : (
-            <div className="place-card-icon save" onClick={() => addPlaceForUser(place)}>
-              <img src="/icons/notsaved.png" alt="Save" />
-            </div>
+            <button className="place-save-icon save" onClick={() => addPlaceForUser(place)}>
+              <img src="/icons/places/notsaved.png" alt="Save" />
+            </button>
           )}
         </div>
       </div>

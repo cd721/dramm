@@ -5,6 +5,7 @@ import { AuthContext } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
 import DisplayReviews from '../posts/DisplayReviews';
+import { useTitle } from '../shared/hooks/commonHooks';
 
 const lightTheme = createTheme({
     palette: {
@@ -20,6 +21,8 @@ const lightTheme = createTheme({
 });
 
 function Account() {
+  useTitle('My Account');
+
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const [userData, setUserData] = useState({

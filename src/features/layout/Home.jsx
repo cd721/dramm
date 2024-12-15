@@ -5,8 +5,11 @@ import CreatePostModal from '../posts/CreatePostModal';
 import DisplayReviews from '../posts/DisplayReviews.jsx';
 import CurrentUserWeather from '../weather/CurrentUserWeather';
 import axios from "axios"
+import { useTitle } from '../shared/hooks/commonHooks.js';
 
 function Home() {
+  useTitle('Home');
+
   const { currentUser } = useContext(AuthContext);
   const [zipCode, setZipCode] = useState("");
 

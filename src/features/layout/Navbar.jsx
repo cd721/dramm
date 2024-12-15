@@ -3,7 +3,6 @@ import { AuthContext } from "../../context/AuthContext"
 import { NavLink, useNavigate } from "react-router-dom";
 
 import logo from '../../img/logos/dark-transparent-noText.png';
-import SignOut from "../authentication/SignOut";
 
 import '../shared/styles/layout.css'
 import { doSignOut } from "../../firebase/FirebaseFunctions";
@@ -19,10 +18,6 @@ export const Navbar = () => {
                 <li>
                     <NavLink to='/home'>Home</NavLink>
                 </li>
-                <li>
-                    <NavLink to='/'>About</NavLink>
-                </li>
-
 
                 {currentUser &&
                     <>

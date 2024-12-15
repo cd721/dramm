@@ -1,6 +1,9 @@
+import { useTitle } from '../shared/hooks/commonHooks';
 import '../shared/styles/miscPages.css';
 
 export const Landing = () => {
+  useTitle(null);
+
   return (
     <div className="landing">
 

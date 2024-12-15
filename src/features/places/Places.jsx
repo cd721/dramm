@@ -6,6 +6,7 @@ import SearchPlaces from "./SearchPlaces";
 import Categories from "./Categories.jsx";
 import { AuthContext } from "../../context/AuthContext";
 import yelpCategories from "../../helpers/categories.js";
+import { useTitle } from "../shared/hooks/commonHooks.js";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
 async function getUserData(currentUser) {
@@ -16,6 +17,8 @@ async function getUserData(currentUser) {
 }
 
 function PlaceList(props) {
+  useTitle('Places');
+
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 

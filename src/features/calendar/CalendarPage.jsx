@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Calendar from "react-calendar";
 import '../shared/styles/calendar.css';
+import { useTitle } from "../shared/hooks/commonHooks";
 
 const testPlaces = [
     { name: 'Union Square Greenmarket', url: '/place/ZhCpgCXmOVl6zYPnnipdRw', visited: '2024-12-12' },
@@ -10,6 +11,8 @@ const testPlaces = [
 
 // https://www.npmjs.com/package/react-calendar?activeTab=readme
 export const CalendarPage = () => {
+    useTitle('Calendar');
+
     const [currentDate, setCurrentDate] = useState(new Date());
 
     const renderTileContent = ({ date, view }) => {

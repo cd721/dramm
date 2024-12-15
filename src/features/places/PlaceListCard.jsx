@@ -19,48 +19,74 @@ function PlaceListCard({ place }) {
 
   const [userHasPlace, setUserHasPlace] = useState(false);
 
-  async function addPlaceForUser(place) {
-    console.log(currentUser.uid);
-    const { data } = await axios.patch(
-      `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`
-    );
+  async function bookmarkPlaceForUser(place) {
+      try {
+          const { data } = await axios.patch(
+              `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+              {
+                  isBookmarked: true,
+                  name: place.name || "Unknown Place",
+                  image: place.image_url || noImage,
+                  location: place.location?.display_address || ["No Address Available"],
+                  city: place.location?.city || "Unknown City",
+                  state: place.location?.state || "Unknown State"
+              }
+          );
 
-    if (data.modifiedCount) {
-      alert(`You have added ${place.name} to your list of places.`);
-    } else {
-      alert(`${place.name} is already in your list of places.`);
-    }
+          if (data.modifiedCount || data.upsertedCount) {
+              alert(`You have added ${place.name} to your bookmarks.`);
+          } else {
+              alert(`${place.name} is already bookmarked.`);
+          }
 
-    setUserHasPlace(true);
+          setUserHasPlace(true);
+      } catch (error) {
+          console.error("Error bookmarking place:", error);
+          alert("An error occurred while bookmarking the place. Please try again.");
+      }
   }
 
-  async function removePlaceForUser( place) {
-    console.log(currentUser.uid);
-    const { data } = await axios.delete(
-      `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`
-    );
+  async function removeBookmarkForUser(place) {
+      try {
+          const { data } = await axios.patch(
+              `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+              {
+                  isBookmarked: false
+              }
+          );
 
-    if (data.modifiedCount) {
-      alert(`You have removed ${place.name} from your list of places.`);
-    } else {
-      alert(`${place.name} could not be removed from your list of places.`);
-    }
+          if (data.modifiedCount) {
+              alert(`You have removed ${place.name} from your bookmarks.`);
+          } else {
+              alert(`${place.name} could not be removed from your bookmarks.`);
+          }
 
-    setUserHasPlace(false);
+          setUserHasPlace(false);
+      } catch (error) {
+          console.error("Error removing bookmark:", error);
+          alert("An error occurred while removing the bookmark. Please try again.");
+      }
   }
  
-  useEffect(()=> {
-   const fetchData =async () => {
-      const { data: placesForUser } = await axios.get(
-        `http://localhost:3001/users/${currentUser.uid}/places`
-      );
-      setUserHasPlace(placesForUser.places.includes(place.id))
-         ;
-  
-    };
+  useEffect(() => {
+      const fetchData = async () => {
+          try {
+              const { data: placesForUser } = await axios.get(
+                  `http://localhost:3001/users/${currentUser.uid}/places`
+              );
 
-    fetchData()
-;  },[])
+              const bookmarked = placesForUser.some(
+                  userPlace => userPlace.placeId === place.id && userPlace.isBookmarked
+              );
+
+              setUserHasPlace(bookmarked);
+          } catch (error) {
+              console.error("Error fetching user places:", error);
+          }
+      };
+
+      fetchData();
+  }, [currentUser.uid, place.id]);
 
   return (
     <Grid item xs={12} sm={7} md={5} lg={4} xl={3} key={place.id}>
@@ -127,18 +153,18 @@ function PlaceListCard({ place }) {
             <br />
             { userHasPlace && (
               <Button
-                onClick={() => removePlaceForUser( place)}
+                onClick={() => removeBookmarkForUser( place)}
                 variant="contained"
               >
-                Remove from my places
+                Remove Bookmark
               </Button>
             )}
             {( !userHasPlace) && (
               <Button
-                onClick={() => addPlaceForUser(place)}
+                onClick={() => bookmarkPlaceForUser(place)}
                 variant="contained"
               >
-                Add to my places
+                Bookmark
               </Button>
             )}
           </CardContent>

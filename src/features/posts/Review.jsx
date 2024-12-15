@@ -85,7 +85,7 @@ const Review = ({ post }) => {
 
           <p><strong>Location:</strong> {post.location}</p>
           <p><strong>Rating:</strong> {post.rating} / 10</p>
-          <p><strong>Date:</strong> {post.date}</p>
+          <p><strong>Visited Date:</strong> {post.date}</p>
         </div>
         <p>{post.caption}</p>
       </div>

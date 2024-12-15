@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from "axios"
 import Review from './Review.jsx'
 
-const DisplayReviews = ({ unique }) => {
+const DisplayReviews = ({ type, uniqueId }) => {
   const [reviews, setReviews] = useState([])
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -11,20 +11,25 @@ const DisplayReviews = ({ unique }) => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        if (unique === undefined) {
+        if (uniqueId === undefined) {
           console.log("hi")
           const response = await axios.get("http://localhost:3001/posts");
           setReviews(response.data);
         }
-        else {
+        else if (type === "place") {
           //posts/byLocation/:id
-          setPlaceId(unique)
+          setPlaceId(uniqueId)
           console.log(placeId)
-          const response = await axios.get(`http://localhost:3001/posts/byLocation/${unique}`);
+          const response = await axios.get(`http://localhost:3001/posts/byLocation/${uniqueId}`);
           if (response.data){
             setReviews(response.data);
           }
           console.log(response)
+        } else if (type === "user") {
+          const response = await axios.get(`http://localhost:3001/posts/byUser/${uniqueId}`);
+          if (response.data){
+            setReviews(response.data);
+          }
         }
       } catch (err) {
         setError("Error fetching reviews");

@@ -17,9 +17,6 @@ let exportedMethods = {
     },
 
     async addPlace(place_id, name) {
-
-
-
         let newplace = {
             _id: place_id,
             name: name, reviews: [], rating: null
@@ -34,7 +31,6 @@ let exportedMethods = {
         }
 
         return await this.getPlaceById(newInsertInformation.insertedId.toString());
-
     },
 
     async addReviewToPlace(placeId,post,poster_id) {

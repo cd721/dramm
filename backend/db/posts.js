@@ -113,6 +113,20 @@ const exportedMethods = {
         }
 
     },
+    async getPostsByUser(userId) {
+        if (!userId) throw 'Error: You must provide an id to search for';
+        if (typeof userId !== 'string') throw 'Error: id must be a string';
+        userId = userId.trim();
+        if (userId.length === 0)
+            throw 'Error: id cannot be an empty string or just spaces';
+        const postCollection = await posts();
+        try {
+            const result = await postCollection.find({ userId }).toArray();
+            return result
+        } catch (e) {
+            throw e
+        }
+    },
     async editPost(postId, updatedFields) {
         if (!postId) throw 'Error: You must provide an id to search for';
         if (typeof postId !== 'string') throw 'Error: id must be a string';

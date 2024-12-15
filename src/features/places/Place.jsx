@@ -47,7 +47,7 @@ function Place(props) {
         );
 
         setPlaceData(placeData);
-        console.log(placeData);
+        console.log("place", placeData);
 
         const latitude = placeData.coordinates.latitude;
         const longitude = placeData.coordinates.longitude;
@@ -156,11 +156,11 @@ function Place(props) {
                 <Link to="/places">Click here to go back to all places...</Link>
               </Typography>
               <Button
-                onClick={() => navigate("/AddPlaceReview")}
-                variant="contained"
-              >
-                Add to my places
-              </Button>
+              onClick={() => navigate("/AddPlaceReview")}
+              variant="contained"
+            >
+              Add to Visited Places
+            </Button>
             </CardContent>
           </Card>
         </div>
@@ -263,12 +263,12 @@ function Place(props) {
           }}>
           Create Review
         </button>
-        {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} />)}
+        {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} city={placeData.location.city} state={placeData.location.state} />)}
         <br></br>
         <Typography variant="h4" color="textSecondary" component="p">
           Reviews
         </Typography>
-        <DisplayReviews unique={placeData.id} />
+        <DisplayReviews type="place" uniqueId={placeData.id} />
 
       </div>
     );

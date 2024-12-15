@@ -29,7 +29,7 @@ router
 router
     .route("/:pid")
     .get(async (req, res) => {
-        let placeId = req.params.pid;
+        let placeId = xss(req.params.pid);
         try {
             const place = await placeData.getPlaceById(placeId.toString());
             return res.status(200).json(place);

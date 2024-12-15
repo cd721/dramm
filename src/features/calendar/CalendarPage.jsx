@@ -20,7 +20,7 @@ export const CalendarPage = () => {
             if (formattedDate === todayFormatted) {
                 return (
                     <div>
-                        <p>+ Add a review today!</p>
+                        <a href='/places'>Add a review!</a>
                     </div>
                 );
             }

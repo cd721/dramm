@@ -205,7 +205,7 @@ function Account() {
                             {place.city || "Unknown City"}, {place.state || "Unknown State"}
                           </Typography>
                           {place.rating && (
-                            <Rating name="half-rating-read" value={place.rating} precision={0.1} readOnly />
+                            <Rating name="half-rating-read" value={place.rating / 2} precision={0.1} readOnly />
                           )}
                         </CardContent>
                         <CardContent>

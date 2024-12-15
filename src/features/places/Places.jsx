@@ -85,7 +85,7 @@ function PlaceList(props) {
     <div className="place-list">
       <div className="attractions-filter">
         <div className="search-header">
-          <h2>Welcome, {currentUser && currentUser.displayName}.</h2>
+          <h1>Welcome, {currentUser && currentUser.displayName}.</h1>
           <p>Search attractions, or select categories of places you want to see!</p>
         </div>
 
@@ -99,35 +99,55 @@ function PlaceList(props) {
         />
       </div>
 
-      {/* place cards */}
-      <div className="places-grid">
-        {placesData.map((place) => (
-          <PlaceListCard key={place.id} place={place} />
-        ))}
-      </div>
+      <h2>
+        {searchTerm ? `Results for ${searchTerm}...` : 'Here are your best matches!'}
+      </h2>
 
-      {/* pagination */}
-      <div className="pagination">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
+      {activeCategories.length === 0 ? (
+        <div>
+          <h3>Select a category to see places!</h3>
+        </div>
+      ) : (
+        <>
+          {/* place cards */}
+          <div className="places-grid">
+            {placesData.length > 0 ? (
+              placesData.map((place) => (
+                <PlaceListCard key={place.id} place={place} />
+              ))
+            ) : (
+              <div>
+                <h3>No places found for the selected categories.</h3>
+              </div>
+            )}
+          </div>
 
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
-        
-        <button
-          onClick={() =>
-            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-          }
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
-      </div>
+          {/* pagination */}
+          {placesData.length > 0 && (
+            <div className="pagination">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

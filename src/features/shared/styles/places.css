@@ -48,9 +48,9 @@
     border-bottom: 2px solid var(--primary-gray);
 }
 
-.search-header h2,
-.categories-header h2 {
-    font-size: 1.8em;
+.search-header h1,
+.categories-header h1 {
+    font-size: 3em;
     margin-top: 0;
     margin-bottom: 10px;
 

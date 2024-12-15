@@ -1,4 +1,5 @@
 import { users } from '../config/mongoCollections.js';
+import redis from "redis";
 const client = redis.createClient();
 client.connect().then(() => { });
 // TODO: error handling + photo error handling for posts

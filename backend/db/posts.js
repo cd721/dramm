@@ -2,7 +2,7 @@ import { posts, users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import dayjs from 'dayjs'
-
+import redis from 'redis'
 const client = redis.createClient();
 
 const exportedMethods = {

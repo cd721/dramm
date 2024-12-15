@@ -48,7 +48,7 @@
 .features {
     display: flex;
     justify-content: center;
-
+    color: var(--primary-white) !important; 
     min-height: 30vh;
     padding: 4vh 10vw;
 

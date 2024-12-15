@@ -8,7 +8,7 @@ import { AuthContext } from "../../context/AuthContext";
 import yelpCategories from "../../helpers/categories.js";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
-async function getUserData(currentUser) {
+export async function getUserData(currentUser) {
   const { data } = await axios.get(
     `http://localhost:3001/users/${currentUser.uid}`
   );

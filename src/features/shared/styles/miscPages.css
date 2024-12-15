@@ -24,10 +24,14 @@
     padding: 5% 10%;
 }
 
-.landing- h1 {
+.landing-hero h1 {
     margin: 0;
 
     font-size: 3.5em;
+}
+
+.landing-hero p {
+    color: var(--primary-white);
 }
 
 /* //////////// slogan //////////// */
@@ -68,6 +72,11 @@
     color: var(--primary-white);
 }
 
+.feature-item h3,
+.feature-item p {
+    color: var(--primary-white);
+}
+
 .feature-item h3 {
     font-size: 1.3em;
 }
@@ -81,6 +90,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    z-index: 100;
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);

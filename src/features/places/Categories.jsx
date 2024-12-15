@@ -1,44 +1,41 @@
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-
 import yelpCategories from "../../helpers/categories.js";
-function Categories(props) {
- 
-  let allCategoriesOfPlacesFound = [];
-  for (const place of props.placesData) {
-    for (const category of place.categories) {
 
-      const alias = category.alias;
-      if (
-        yelpCategories.includes(alias) &&
-        !allCategoriesOfPlacesFound.includes(alias)
-      ) {
-        allCategoriesOfPlacesFound.push(alias);
-      }
+function Categories({ activeCategories, setActiveCategories }) {
+
+  const handleCategoryToggle = (category) => {
+    if (activeCategories.includes(category)) {
+      setActiveCategories(activeCategories.filter((cat) => cat !== category));
+    } else {
+      setActiveCategories([...activeCategories, category]);
     }
-  }
+  };
 
-  console.log(allCategoriesOfPlacesFound);
-  let categoryCheckboxes =
-    allCategoriesOfPlacesFound &&
-    allCategoriesOfPlacesFound.map((category, index) => {
-      return (
-        <FormControlLabel
-          key={index}
-          control={<Checkbox defaultChecked />}
-          label={category}
-          onChange={(e) =>{
-
-            if (!e.target.checked) {
-              props.updateDeselections(category);
-            }
-
-          }}
-        />
-      );
-    });
-  return <FormGroup>{categoryCheckboxes&& <p>Select the categories of places that you want to see.</p>}{categoryCheckboxes}</FormGroup>;
+  return (
+    <div className="categories-container">      
+      <div className="categories-list">
+        {yelpCategories.map((category, index) => (
+            <label 
+              key={index} 
+              className={`category-item ${
+                activeCategories.includes(category) ? "active" : null
+              }`}
+            >
+              <input
+                type="checkbox"
+                checked={activeCategories.includes(category)}
+                onChange={() => handleCategoryToggle(category)}
+              />
+              <img 
+                src={`/icons/categories/${category}.png`}
+                alt={category}
+                className="category-icon"
+              />
+              <p>{category}</p>
+            </label>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default Categories;

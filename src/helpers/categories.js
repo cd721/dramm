@@ -1,5 +1,7 @@
 //A List of valid category aliases for the US locale present in YELP
 //https://docs.developer.yelp.com/docs/resources-categories
+
+// TODO: add labels
 const categoryList = [
 "markets",
 "beaches",

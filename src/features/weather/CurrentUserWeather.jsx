@@ -65,18 +65,18 @@ const CurrentUserWeather = ({ zipCode }) => {
                     </div>
                     <div className="timings">
                         <div className="up">
-                            <img alt="sunrise" className="sunrise" src="icons/sunrise.png" />
+                            <img alt="sunrise" className="sunrise" src="/icons/sunrise.png" />
                             <span className="timingsText">{sunrise}</span>
                         </div>
                         <div className="up">
-                            <img alt="sunset" className="sunset" src="icons/sunset.png" />
+                            <img alt="sunset" className="sunset" src="/icons/sunset.png" />
                             <span className="timingsText">{sunset}</span>
                         </div>
                     </div>
 
 
                 </div>
-                <img alt="weather" className="weather-icon" src={`icons/${currentWeatherData.weather[0].icon}.png`} />
+                <img alt="weather" className="weather-icon" src={`/icons/${currentWeatherData.weather[0].icon}.png`} />
             </div>
 
             <div className="details">

@@ -49,9 +49,12 @@ const ForYou = ({ zipCode }) => {
         <div>
             <h2>Outdoor Reccomendations For You Near {userZipCode}!</h2>
             <div className="places-grid">
-                {placesData.map((place) => (
-                    <Reccomendation key={place.id} place={place} />
-                ))}
+                {placesData
+                    .sort((a, b) => a.distance.toFixed(0) - b.distance.toFixed(0))
+                    .map((place) => (
+                        <Reccomendation key={place.id} place={place} />
+                    ))}
+
             </div>
         </div>
     )

@@ -26,6 +26,22 @@ router.get("/byLocation/:id", async (req, res) =>{
     }
 })
 
+router.get("/byUser/:id", async (req, res) => {
+    let uid = req.params.id
+    if (!uid) return res.status(400).json({ error: "Must provide id" });
+    if (typeof uid !== 'string') return res.status(400).json({ error: "ID must be string" });
+    uid = uid.trim();
+    if (uid.length === 0)
+        return res.status(400).json({ error: "ID cant be empty string" });
+
+    try {
+        const postUser = await posts.getPostsByUser(uid)
+        return res.status(200).json(postUser);
+    } catch (e) {
+        return res.status(500).json({ error: e.message });
+    }
+})
+
 router.post('/:uid', async (req, res) => {
     
     let { caption, photo, location, date, rating, locationId } = req.body

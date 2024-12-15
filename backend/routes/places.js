@@ -26,10 +26,6 @@ router
         }
     });
 
-
-
-
-
 router
     .route("/:pid")
     .get(async (req, res) => {

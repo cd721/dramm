@@ -4,6 +4,7 @@ import './features/shared/styles/layout.css'
 
 import Account from "./features/account/Account";
 import CustomizeProfile from "./features/account/CustomizeProfile";
+import ChangePassword from "./features/account/ChangePassword";
 import Home from "./features/layout/Home";
 import { Landing } from "./features/layout/Landing";
 import SignIn from "./features/authentication/SignIn";
@@ -40,7 +41,11 @@ function App() {
             <Route path="/customize-profile" element={<PrivateRoute />}>
               <Route path="/customize-profile" element={<CustomizeProfile />} />
             </Route>
-
+            
+            <Route path="/change-password" element={<PrivateRoute />}>
+              <Route path="/change-password" element={<ChangePassword />} />
+            </Route>
+          
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
 

@@ -26,7 +26,8 @@
     "react-calendar": "^5.1.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
-    "xss": "^1.0.15"
+    "xss": "^1.0.15",
+    "zipcodes": "^8.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

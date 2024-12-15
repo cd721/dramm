@@ -1,23 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import noImage from "../../img/download.jpeg";
 import CreatePostModal from "../posts/CreatePostModal.jsx";
 import '../shared/styles/layout.css'
 import DisplayReviews from "../posts/DisplayReviews.jsx";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import utils from '../../helpers/utils.js'
-import Button from "@mui/material/Button";
-
-import {
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-  CardHeader,
-} from "@mui/material";
-
-
-
+import CurrentUserWeather from "../weather/CurrentUserWeather.jsx";
+import { HoursTable } from "./HoursTable.jsx";
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
@@ -25,12 +15,65 @@ function Place(props) {
   const navigate = useNavigate();
 
   const { id } = useParams();
-  const [placeData, setPlaceData] = useState(undefined);
-  const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] =
-    useState(undefined);
+
+  const { currentUser } = useContext(AuthContext);
+  const [userHasPlace, setUserHasPlace] = useState(false);
+
+  const [placeData, setPlaceData] = useState(null);
+  const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] = useState(undefined);
   const [loading, setLoading] = useState(true);
   const [weatherForecastForPlace, setWeatherForecastForPlace] = useState(undefined);
-  const [isModalVisible, setIsModalVisible] = useState(false)
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  async function bookmarkPlaceForUser(place) {
+    try {
+        const { data } = await axios.patch(
+            `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+            {
+                isBookmarked: true,
+                name: place.name || "Unknown Place",
+                image: place.image_url || noImage,
+                location: place.location?.display_address || ["No Address Available"],
+                city: place.location?.city || "Unknown City",
+                state: place.location?.state || "Unknown State"
+            }
+        );
+
+        // if (data.modifiedCount || data.upsertedCount) {
+        //     alert(`You have added ${place.name} to your bookmarks.`);
+        // } else {
+        //     alert(`${place.name} is already bookmarked.`);
+        // }
+
+        setUserHasPlace(true);
+    } catch (error) {
+        console.error("Error bookmarking place:", error);
+        alert("An error occurred while bookmarking the place. Please try again.");
+    }
+  }
+
+  async function removeBookmarkForUser(place) {
+    try {
+        const { data } = await axios.patch(
+            `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+            {
+                isBookmarked: false
+            }
+        );
+
+        // if (data.modifiedCount) {
+        //     alert(`You have removed ${place.name} from your bookmarks.`);
+        // } else {
+        //     alert(`${place.name} could not be removed from your bookmarks.`);
+        // }
+
+        setUserHasPlace(false);
+    } catch (error) {
+        console.error("Error removing bookmark:", error);
+        alert("An error occurred while removing the bookmark. Please try again.");
+    }
+  }
 
   useEffect(() => {
     console.log("show use effect fired");
@@ -78,201 +121,167 @@ function Place(props) {
     fetchData();
   }, [id]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!placeData || !placeData.id) return;
+
+        const { data: placesForUser } = await axios.get(
+            `http://localhost:3001/users/${currentUser.uid}/places`
+        );
+
+        const bookmarked = placesForUser.some(
+            userPlace => userPlace.placeId === placeData.id && userPlace.isBookmarked
+        );
+
+        setUserHasPlace(bookmarked);
+      } catch (error) {
+          console.error("Error fetching user places:", error);
+      }
+    };
+
+    fetchData();
+  }, [currentUser.uid, placeData]);
+
   if (loading) {
     return (
       <div>
         <h2>loading...</h2>
       </div>
     );
-  } else {
-    return (
-      <div>
-        <div>
-          {" "}
-          <Card
-            variant="outlined"
-            sx={{
-              maxWih3h: 550,
-              height: "auto",
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 5,
-              border: "1px solid #1e8678",
-              boxShadow:
-                "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-            }}
-          >
-            <CardHeader
-              title={placeData.name}
-              sx={{
-                borderBottom: "1px solid #1e8678",
-                fontWeight: "bold",
-              }}
-            />
-            <CardMedia
-              component="img"
-              image={
-                placeData && placeData.image_url ? placeData.image_url : noImage
-              }
-              title="show image"
-            />
-
-            <CardContent>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="span"
-                sx={{
-                  borderBottom: "1px solid #1e8678",
-                  fontWeight: "bold",
-                }}
-              >
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {placeData.location &&
-                    placeData.location.display_address &&
-                    placeData.location.display_address[0]
-                    ? placeData.location.display_address[0]
-                    : "No Address available"}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {placeData.location &&
-                    placeData.location.display_address &&
-                    placeData.location.display_address[1]
-                    ? placeData.location.display_address[1]
-                    : "No other location info available"}
-                </Typography>
-                <br />
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {placeData.display_phone && placeData.display_phone
-                    ? placeData.display_phone
-                    : "No phone number available."}
-                </Typography>{" "}
-                <br />
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {placeData.rating && placeData.rating
-                    ? `Yelp Rating: ${placeData.rating}/5`
-                    : "There are no ratings on Yelp for this place."}
-                </Typography>
-                <Link to="/places">Click here to go back to all places...</Link>
-              </Typography>
-              <Button
-              onClick={() => navigate("/AddPlaceReview")}
-              variant="contained"
-            >
-              Add to Visited Places
-            </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div>
-          {" "}
-          <Card
-            variant="outlined"
-            sx={{
-              maxWih3h: 550,
-              height: "auto",
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 5,
-              border: "1px solid #1e8678",
-              boxShadow:
-                "0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);",
-            }}
-          >
-            <CardHeader
-              title={`Weather for ${placeData.name} located in 
-            ${placeData.location.city}, ${placeData.location.state}`}
-              sx={{
-                borderBottom: "1px solid #1e8678",
-                fontWeight: "bold",
-              }}
-            />
-            {/* <CardMedia
-              component="img"
-              title="show image"
-              src={
-                currentWeatherDataForPlace &&
-                currentWeatherDataForPlace.weather &&
-                currentWeatherDataForPlace.weather[0] &&
-                currentWeatherDataForPlace.weather[0].icon
-                  ? `https://openweathermap.org/img/wn/${currentWeatherDataForPlace.weather[0].icon}@2x.png`
-                  : noImage
-              }
-            /> */}
-            <img
-              src={
-                currentWeatherDataForPlace &&
-                  currentWeatherDataForPlace.weather &&
-                  currentWeatherDataForPlace.weather[0] &&
-                  currentWeatherDataForPlace.weather[0].icon
-                  ? `https://openweathermap.org/img/wn/${currentWeatherDataForPlace.weather[0].icon}@2x.png`
-                  : noImage
-              }
-            />
-            <CardContent>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="span"
-                sx={{
-                  borderBottom: "1px solid #1e8678",
-                  fontWeight: "bold",
-                }}
-              >
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {currentWeatherDataForPlace &&
-                    currentWeatherDataForPlace.main &&
-                    currentWeatherDataForPlace.main.temp &&
-                    currentWeatherDataForPlace.main.feels_like
-                    ? `The temperature is currently ${currentWeatherDataForPlace.main.temp}°F, but it feels like ${currentWeatherDataForPlace.main.feels_like}°F.`
-                    : "Sorry, we don't know what the temperature is like in this area."}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {currentWeatherDataForPlace &&
-                    currentWeatherDataForPlace.weather &&
-                    currentWeatherDataForPlace.weather[0] &&
-                    currentWeatherDataForPlace.weather[0].description
-                    ? `The weather today is characterized by: ${currentWeatherDataForPlace.weather[0].description}.`
-                    : ""}
-                </Typography>
-                <br />
-                <Typography variant="body2" color="textSecondary" component="p">
-
-                  {currentWeatherDataForPlace &&
-                    currentWeatherDataForPlace.sys &&
-                    currentWeatherDataForPlace.sys.sunrise &&
-                    currentWeatherDataForPlace.sys.sundown
-                    ? `When might be the best time to go? Today, sunrise at this location is ${utils.convertUnixTimestampToTime(currentWeatherDataForPlace.sys.sunrise)}, and sundown is  ${utils.convertUnixTimestampToTime(currentWeatherDataForPlace.sys.sundown)}.`
-                    : ""}
-                </Typography>{" "}
-                <br />
-
-
-
-                <Link to="/places">Click here to go back to all places...</Link>
-              </Typography>
-
-            </CardContent>
-          </Card>
-        </div>
-        <button
-          className="create-post"
-          onClick={() => {
-            setIsModalVisible(true)
-          }}>
-          Create Review
-        </button>
-        {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} city={placeData.location.city} state={placeData.location.state} />)}
-        <br></br>
-        <Typography variant="h4" color="textSecondary" component="p">
-          Reviews
-        </Typography>
-        <DisplayReviews type="place" uniqueId={placeData.id} />
-
-      </div>
-    );
   }
+
+  return (
+    <div className="place-profile">
+      <div className="place-header">
+        <div className="header-left">
+          <div className="place-title">
+            <div className="title-top">
+              <h1>{placeData.name}</h1>
+
+              <div className="place-profile-rating">
+                <div className="stars-container">
+                  {Array.from({ length: 5 }, (_, index) => (
+                    <div
+                      key={index}
+                      className={`star ${index < Math.floor(placeData.rating) ? "filled" : ""}`}
+                    >
+                      <img
+                        src="/icons/places/star.png"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="rating-text"><span>{placeData.rating}</span> ({placeData.review_count} reviews)</p>
+              </div>
+            </div>
+
+            <ul className="place-card-categories">
+              {placeData.categories?.map((category, index) => (
+                <li key={index}>
+                  <span className="category-title">{category.title}</span>
+                </li>
+              )) || "No categories available"}
+            </ul>
+          </div>
+          
+          <div className="secondary-images">
+            <img 
+              className="place-image"
+              src={placeData && placeData.photos[1] ? placeData.photos[1] : noImage}
+            />
+            <img 
+              className="place-image"
+              src={placeData && placeData.photos[2] ? placeData.photos[2] : noImage}
+            />
+          </div>
+        </div>
+        <img 
+          className="place-image main"
+          src={placeData && placeData.image_url ? placeData.image_url : noImage}
+        />
+      </div>
+
+      {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} city={placeData.location.city} state={placeData.location.state} />)}
+      <div id="place-buttons">
+        <div className="left-buttons">
+          <button
+              className="create-post"
+              onClick={() => {
+                setIsModalVisible(true)
+              }}>
+              Write Review
+          </button>
+
+          {userHasPlace ? (
+            <button className="place-save-icon unsave" onClick={() => removeBookmarkForUser(placeData)}>
+              <img src="/icons/places/saved.png" alt="Unsave" />
+              <p>Unsave</p>
+            </button>
+          ) : (
+            <button className="place-save-icon save" onClick={() => bookmarkPlaceForUser(placeData)}>
+              <img src="/icons/places/notsaved.png" alt="Save" />
+              <p>Save</p>
+            </button>
+          )}
+        </div>
+
+        <div className="right-buttons">
+          <button onClick={() => navigate('/places')}>
+            Back to all places
+          </button>
+        </div>
+      </div>
+
+      <div className="place-information">
+        {placeData.location.zip_code &&
+          <CurrentUserWeather zipCode={placeData.location.zip_code} />
+        }
+
+        <div className="place-info-container" id="attraction-info">
+          <h4>Attraction Information</h4>
+
+          <table className="info-table">
+            <tbody>
+            {placeData.url &&
+              <tr>
+                <td className="label">Website:</td>
+                <td><a href={placeData.url}>Yelp</a></td>
+              </tr>
+            }
+
+            {placeData.display_phone &&
+              <tr>
+                <td className="label">Phone:</td>
+                <td>{placeData.display_phone}</td>
+              </tr>
+            }
+
+            {placeData.location &&
+              <tr>
+                <td className="label">Location:</td>
+                <td>{placeData.location.display_address[0]} {placeData.location.display_address[1]}</td>
+              </tr>
+            }
+            </tbody>
+          </table>
+        </div>
+        
+        <div className="place-info-container" id="place-hours">
+          <h4>Hours</h4>
+          {placeData.hours ? (
+            <HoursTable hours={placeData.hours} />
+          ) : (
+            <p>No provided operational hours</p>
+          )}
+        </div>
+      </div>
+
+
+      <h4>Reviews</h4>
+      <DisplayReviews type="place" uniqueId={placeData.id} />
+    </div>
+  );
 }
 
 export default Place;

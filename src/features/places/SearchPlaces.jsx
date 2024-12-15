@@ -1,40 +1,31 @@
-const SearchAttractions = (props) => {
+const SearchPlaces = ({ searchValue }) => {
+  return (
+    <div className="search-container">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          searchValue(e.target[0].value);
+          e.target.reset();
+        }}
+      > 
+        <div className="search-bar">
+          <input type="text" autoComplete="off" />
 
-  return (    <div>
+          <button type="submit">Submit</button>
 
-    <form
-      method="POST"
-      onSubmit={(e) => {
-        e.preventDefault();
-        props.searchValue(e.target[0].value);
-        e.target.reset();
+          {/* clearing the search */}
+          <button
+            onClick={() => {
+              searchValue("");
+            }}
+          >
+            Clear
+          </button>
+        </div>
 
-      }}
-      name="formName"
-      className="center"
-    >
-      <label>
-        <span>Search Attractions: </span>
-        <input
-          autoComplete="off"
-          type="text"
-          name="searchTerm"
-        />
-      </label>
-      <button type="submit">Submit</button>
-    </form>
-    <form
-      method="POST"
-      onSubmit={(e) => {
-        e.preventDefault();
-        props.searchValue("");
-      }}
-      name="formName"
-      className="center">
-    <button type="submit">Clear Search</button>
-    </form>
+      </form>
     </div>
   );
 };
 
-export default SearchAttractions;
+export default SearchPlaces;

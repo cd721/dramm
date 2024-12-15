@@ -5,7 +5,7 @@ import { AuthContext } from "../../context/AuthContext";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 import PlaceListCard from '../places/PlaceListCard.jsx';
 import yelpCategories from "../../helpers/categories.js";
-
+import Reccomendation from './Reccomendation.jsx';
 
 const ForYou = ({ zipCode }) => {
     const { currentUser } = useContext(AuthContext);
@@ -48,7 +48,11 @@ const ForYou = ({ zipCode }) => {
     return (
         <div>
             <h2>Outdoor Reccomendations For You Near {userZipCode}!</h2>
-
+            <div className="places-grid">
+                {placesData.map((place) => (
+                    <Reccomendation key={place.id} place={place} />
+                ))}
+            </div>
         </div>
     )
 }

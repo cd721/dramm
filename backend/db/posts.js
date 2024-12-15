@@ -1,7 +1,10 @@
 import { posts, users } from '../config/mongoCollections.js'
-import {ObjectId} from 'mongodb'
+import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import dayjs from 'dayjs'
+import redis from 'redis'
+const client = redis.createClient();
+await client.connect().then(() => { });
 const exportedMethods = {
     async addPost(uid, caption, photo, location, date, rating, locationId) {
         const postCollection = await posts();
@@ -30,15 +33,15 @@ const exportedMethods = {
         locationId = locationId.trim();
         if (locationId.length === 0)
             throw `Error: invalid locationId`;
-        
+
         if (!date) throw `Error: You must supply a date!`;
 
-        const [year, month, day] = date.split("-"); 
-        const formattedDate = `${month}/${day}/${year}`; 
+        const [year, month, day] = date.split("-");
+        const formattedDate = `${month}/${day}/${year}`;
         const today = dayjs().format("MM/DD/YYYY");
         if (!dayjs(formattedDate, "MM/DD/YYYY", true).isValid() || dayjs(formattedDate, "MM/DD/YYYY", true).isAfter(today, "day")) {
             throw "Invalid Date. Must be in MM/DD/YYYY format before today.";
-            
+
         }
 
         if (!rating) throw `Error: You must supply a rating!`;
@@ -68,6 +71,7 @@ const exportedMethods = {
         if (!newInsertInformation.insertedId) {
             throw "Insert failed!";
         }
+        await client.flushDb();
         return { signupCompleted: true };
     },
     async deletePost(postId) {
@@ -79,15 +83,16 @@ const exportedMethods = {
         if (!ObjectId.isValid(postId)) throw 'Error: invalid object ID';
 
         const postCollection = await posts();
-        try {
-            const result = await postCollection.findOneAndDelete({ _id: new ObjectId(postId) });
-            if (!result.value) {
-                throw "item not deleted"
-            }
-        } catch (e) {
-            throw e
+
+        //Try catch block here has been removed. If an error is thrown, it will
+        //automatically "bubble up" to calling function. Same thing has been done 
+        //with other try/catches in this file.
+        const result = await postCollection.findOneAndDelete({ _id: new ObjectId(postId) });
+        if (!result.value) {
+            throw "item not deleted"
         }
 
+        await client.flushDb();
 
         return { deleted: true }
 
@@ -99,33 +104,50 @@ const exportedMethods = {
         return postList;
     },
     async getPostsByPlace(placeId) {
-        if (!placeId) throw 'Error: You must provide an id to search for';
-        if (typeof placeId !== 'string') throw 'Error: id must be a string';
+        if (!placeId) { throw 'Error: You must provide an id to search for' };
+        if (typeof placeId !== 'string') { throw 'Error: id must be a string' };
         placeId = placeId.trim();
-        if (placeId.length === 0)
-            throw 'Error: id cannot be an empty string or just spaces';
-        const postCollection = await posts();
-        try {
-            const result = await postCollection.find({ locationId: placeId }).toArray();
-            return result
-        } catch (e) {
-            throw e
+        if (placeId.length === 0) {
+            throw 'Error: id cannot be an empty string or just spaces'
+        };
+
+        const redisKey = `postsForPlace:${placeId}`;
+        const postsByPlaceExists = await client.json.get(redisKey);
+        if (postsByPlaceExists) {
+            const postsByPlace = await client.json.set(redisKey, '$', postsByPlace);
+
+            return postsByPlace;
         }
+
+        const postCollection = await posts();
+
+        const result = await postCollection.find({ locationId: placeId }).toArray();
+        await client.json.set(redisKey, '$', result);
+        return result;
+
 
     },
     async getPostsByUser(userId) {
-        if (!userId) throw 'Error: You must provide an id to search for';
-        if (typeof userId !== 'string') throw 'Error: id must be a string';
+        if (!userId) { throw 'Error: You must provide an id to search for' };
+        if (typeof userId !== 'string') { throw 'Error: id must be a string' };
         userId = userId.trim();
-        if (userId.length === 0)
+        if (userId.length === 0) {
             throw 'Error: id cannot be an empty string or just spaces';
-        const postCollection = await posts();
-        try {
-            const result = await postCollection.find({ userId }).toArray();
-            return result
-        } catch (e) {
-            throw e
         }
+        const redisKey = `postsForUser:${userId}`;
+
+        const postsByUserExists = await client.json.exists(redisKey);
+        if (postsByUserExists) {
+            const postsByUser = await client.json.get(redisKey)
+
+            return postsByUser;
+        }
+        const postCollection = await posts();
+
+        const result = await postCollection.find({ userId }).toArray();
+        await client.json.set(redisKey, '$', result);
+        return result;
+
     },
     async editPost(postId, updatedFields) {
         if (!postId) throw 'Error: You must provide an id to search for';
@@ -211,9 +233,12 @@ const exportedMethods = {
         if (!updateResult.modifiedCount) {
             throw "no changes made";
         }
+
+        await client.flushDb();
+
         return { postId, updatedFields: update };
     },
-    async addLike(postId, uid){
+    async addLike(postId, uid) {
         if (!postId) throw 'Error: You must provide an id to search for';
         if (typeof postId !== 'string') throw 'Error: id must be a string';
         postId = postId.trim();
@@ -233,22 +258,21 @@ const exportedMethods = {
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: uid });
         if (!user) throw "invalid user"
-        try{
-            let updated = await postCollection.updateOne(
-                {_id: new ObjectId(postId)},
-                {$push: {likes: uid}}
-            )
-            if (!updated.modifiedCount) {
-                throw "no changes made";
-            }
 
-        } catch(e){
-            throw e
+        let updated = await postCollection.updateOne(
+            { _id: new ObjectId(postId) },
+            { $push: { likes: uid } }
+        )
+        if (!updated.modifiedCount) {
+            throw "The like could not be added to the post.";
         }
-        return {updated: true}
-        
+
+        await client.flushDb();
+
+        return { updated: true }
+
     },
-    async addComment(postId, uid, comment, name ){
+    async addComment(postId, uid, comment, name) {
         if (!postId) throw 'Error: You must provide an id to search for';
         if (typeof postId !== 'string') throw 'Error: id must be a string';
         postId = postId.trim();
@@ -285,22 +309,22 @@ const exportedMethods = {
         const user = await userCollection.findOne({ _id: uid });
         if (!user) throw "invalid user"
         const newComment = {
-            userId : uid,
+            userId: uid,
             name,
             comment
         }
-        try{
-            let updated = await postCollection.updateOne(
-                {_id: new ObjectId(postId)},
-                {$push: {comments: newComment}}
-            )
-            if (!updated.modifiedCount) {
-                throw "no changes made";
-            }
-        } catch(e){
-            throw e
+
+        let updated = await postCollection.updateOne(
+            { _id: new ObjectId(postId) },
+            { $push: { comments: newComment } }
+        )
+        if (!updated.modifiedCount) {
+            throw "The commend could not be added to the post.";
         }
-        return newComment
+
+        await client.flushDb();
+
+        return newComment;
 
     }
 }

@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import noImage from "../../img/download.jpeg";
-import { Link, useParams,useNavigate } from "react-router-dom";
+import CreatePostModal from "../posts/CreatePostModal.jsx";
+import '../shared/styles/layout.css'
+import DisplayReviews from "../posts/DisplayReviews.jsx";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import utils from '../../helpers/utils.js'
 import Button from "@mui/material/Button";
 
@@ -26,8 +29,8 @@ function Place(props) {
   const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] =
     useState(undefined);
   const [loading, setLoading] = useState(true);
-  const [weatherForecastForPlace, setWeatherForecastForPlace] =
-    useState(undefined);
+  const [weatherForecastForPlace, setWeatherForecastForPlace] = useState(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false)
 
   useEffect(() => {
     console.log("show use effect fired");
@@ -51,17 +54,18 @@ function Place(props) {
 
         const { data: currentWeatherDataForPlace } = await axios.get(
           `https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
-        );     setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
+        ); setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
         console.log("Weather data for place:");
         console.log(currentWeatherDataForPlace);
         console.log(currentWeatherDataForPlace.main.temp);
-   
+
 
         //Gives 40 timestamps by default (gives  forecast for every three hours over the next 5 days).
         const { data: weatherForecastForPlace } = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
         );
         console.log("Weather FORECAST for place:");
+
 
         console.log(weatherForecastForPlace);
         setWeatherForecastForPlace(weatherForecastForPlace);
@@ -125,15 +129,15 @@ function Place(props) {
               >
                 <Typography variant="body2" color="textSecondary" component="p">
                   {placeData.location &&
-                  placeData.location.display_address &&
-                  placeData.location.display_address[0]
+                    placeData.location.display_address &&
+                    placeData.location.display_address[0]
                     ? placeData.location.display_address[0]
                     : "No Address available"}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
                   {placeData.location &&
-                  placeData.location.display_address &&
-                  placeData.location.display_address[1]
+                    placeData.location.display_address &&
+                    placeData.location.display_address[1]
                     ? placeData.location.display_address[1]
                     : "No other location info available"}
                 </Typography>
@@ -152,11 +156,11 @@ function Place(props) {
                 <Link to="/places">Click here to go back to all places...</Link>
               </Typography>
               <Button
-              onClick={() => navigate("/AddPlaceReview")}
-              variant="contained"
-            >
-              Add to my places
-            </Button>
+                onClick={() => navigate("/AddPlaceReview")}
+                variant="contained"
+              >
+                Add to my places
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -199,9 +203,9 @@ function Place(props) {
             <img
               src={
                 currentWeatherDataForPlace &&
-                currentWeatherDataForPlace.weather &&
-                currentWeatherDataForPlace.weather[0] &&
-                currentWeatherDataForPlace.weather[0].icon
+                  currentWeatherDataForPlace.weather &&
+                  currentWeatherDataForPlace.weather[0] &&
+                  currentWeatherDataForPlace.weather[0].icon
                   ? `https://openweathermap.org/img/wn/${currentWeatherDataForPlace.weather[0].icon}@2x.png`
                   : noImage
               }
@@ -218,38 +222,54 @@ function Place(props) {
               >
                 <Typography variant="body2" color="textSecondary" component="p">
                   {currentWeatherDataForPlace &&
-                  currentWeatherDataForPlace.main &&
-                  currentWeatherDataForPlace.main.temp &&
-                  currentWeatherDataForPlace.main.feels_like
+                    currentWeatherDataForPlace.main &&
+                    currentWeatherDataForPlace.main.temp &&
+                    currentWeatherDataForPlace.main.feels_like
                     ? `The temperature is currently ${currentWeatherDataForPlace.main.temp}°F, but it feels like ${currentWeatherDataForPlace.main.feels_like}°F.`
                     : "Sorry, we don't know what the temperature is like in this area."}
                 </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
                   {currentWeatherDataForPlace &&
-                  currentWeatherDataForPlace.weather &&
-                  currentWeatherDataForPlace.weather[0] &&
-                  currentWeatherDataForPlace.weather[0].description
+                    currentWeatherDataForPlace.weather &&
+                    currentWeatherDataForPlace.weather[0] &&
+                    currentWeatherDataForPlace.weather[0].description
                     ? `The weather today is characterized by: ${currentWeatherDataForPlace.weather[0].description}.`
                     : ""}
                 </Typography>
                 <br />
                 <Typography variant="body2" color="textSecondary" component="p">
-                 
+
                   {currentWeatherDataForPlace &&
-                  currentWeatherDataForPlace.sys &&
-                  currentWeatherDataForPlace.sys.sunrise &&
-                  currentWeatherDataForPlace.sys.sundown 
+                    currentWeatherDataForPlace.sys &&
+                    currentWeatherDataForPlace.sys.sunrise &&
+                    currentWeatherDataForPlace.sys.sundown
                     ? `When might be the best time to go? Today, sunrise at this location is ${utils.convertUnixTimestampToTime(currentWeatherDataForPlace.sys.sunrise)}, and sundown is  ${utils.convertUnixTimestampToTime(currentWeatherDataForPlace.sys.sundown)}.`
                     : ""}
                 </Typography>{" "}
                 <br />
-              
+
+
+
                 <Link to="/places">Click here to go back to all places...</Link>
               </Typography>
-              
+
             </CardContent>
           </Card>
         </div>
+        <button
+          className="create-post"
+          onClick={() => {
+            setIsModalVisible(true)
+          }}>
+          Create Review
+        </button>
+        {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} place={placeData.name} placeId={placeData.id} />)}
+        <br></br>
+        <Typography variant="h4" color="textSecondary" component="p">
+          Reviews
+        </Typography>
+        <DisplayReviews unique={placeData.id} />
+
       </div>
     );
   }

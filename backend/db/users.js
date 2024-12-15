@@ -1,7 +1,7 @@
 import { users } from '../config/mongoCollections.js'
-import ObjectId from 'mongodb'
 
-//TODO: error handling
+
+//TODO: error handling + photo error handling? for posts
 const exportedMethods = {
     async getAllUsers() {
         const userCollection = await users();
@@ -96,6 +96,7 @@ const exportedMethods = {
 
         return { uid, updatedFields: updateFields };
     }
+    
 }
 
 export default exportedMethods;

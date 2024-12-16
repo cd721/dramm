@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import '../shared/styles/layout.css'
+import '../shared/styles/home.css'
 import CreatePostModal from '../posts/CreatePostModal';
 import DisplayReviews from '../posts/DisplayReviews.jsx';
 import CurrentUserWeather from '../weather/CurrentUserWeather';
@@ -33,16 +33,28 @@ function Home() {
 
   return (
     <div className='home'>
-      <h2>
-        Welcome {currentUser && currentUser.displayName}!
-      </h2>
-      {zipCode ? <CurrentUserWeather zipCode = {zipCode}/>
-        : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
-      <h2>Your Feed</h2>
-      <DisplayReviews unique = {undefined}/>
-      {zipCode ? <ForYou zipCode = {zipCode}/>
-        : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
-      
+      <div className='left-side'>
+        <h2>
+          Welcome {currentUser && currentUser.displayName}!
+        </h2>
+
+        {zipCode ? <CurrentUserWeather zipCode = {zipCode}/>
+          : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
+
+
+        <h2>Your Feed</h2>
+        <DisplayReviews unique = {undefined}/>
+      </div>
+
+      <div className='right-side'>
+        <div className='fyp-header'>
+          <h2>Outdoor Locations For You!</h2>
+          <p>Browse through the best places based on your preferences and the current weather!</p>
+        </div>
+
+        {zipCode ? <ForYou zipCode = {zipCode}/>
+          : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
+      </div>
   </div>
   )
 }

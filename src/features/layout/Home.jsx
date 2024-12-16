@@ -35,14 +35,6 @@ function Home() {
       </h2>
       {zipCode ? <CurrentUserWeather zipCode = {zipCode}/>
         : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
-      {/* <button
-        className="create-post"
-        onClick={() => {
-          setIsModalVisible(true)
-        }}>
-        Create Post
-      </button>
-      {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)} */}
       <h2>Your Feed</h2>
       <DisplayReviews unique = {undefined}/>
       {zipCode ? <ForYou zipCode = {zipCode}/>

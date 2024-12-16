@@ -36,6 +36,9 @@ router.get("/byUser/:id", async (req, res) => {
 
     try {
         const postUser = await posts.getPostsByUser(uid)
+        if (!postUser || postUser.length === 0) {
+            return res.status(200).json([]);
+        }
         return res.status(200).json(postUser);
     } catch (e) {
         return res.status(500).json({ error: e.message });

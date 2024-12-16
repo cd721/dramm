@@ -1,10 +1,31 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, Typography, Avatar, Button, Box, ThemeProvider, createTheme, ToggleButton, ToggleButtonGroup, Grid, Link, Rating } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Avatar,
+  Button,
+  Box,
+  ThemeProvider,
+  createTheme,
+  ToggleButton,
+  ToggleButtonGroup,
+  Grid,
+  Rating,
+  Chip
+} from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
 import DisplayReviews from '../posts/DisplayReviews';
+import axios from 'axios';
+import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
+
+import StreakBadge from './StreakBadge';
+
+dayjs.extend(isoWeek);
 
 const lightTheme = createTheme({
     palette: {
@@ -31,6 +52,7 @@ function Account() {
   const [location, setLocation] = useState("");
   const [selectedView, setSelectedView] = useState("bookmarked");
   const [places, setPlaces] = useState([]);
+  const [reviewStreak, setReviewStreak] = useState(0);
 
   useEffect(() => {
       const fetchUserData = async (uid) => {
@@ -87,6 +109,40 @@ function Account() {
     fetchPlaces();
   }, [selectedView, currentUser.uid]);
 
+  useEffect(() => {
+      const fetchReviewsAndCalculateStreak = async () => {
+        try {
+          const response = await axios.get(`http://localhost:3001/posts/byUser/${currentUser.uid}`);
+          const reviews = response.data;
+
+          const today = dayjs();
+          const reviewDates = reviews
+            .map((review) => dayjs(review.date, "MM/DD/YYYY"))
+            .filter((date) => date.isValid());
+
+          const weeks = [...new Set(reviewDates.map((date) => date.isoWeek()))].sort((a, b) => b - a);
+
+          let streak = 0;
+          let currentWeek = today.isoWeek();
+
+          for (let week of weeks) {
+            if (week === currentWeek) {
+              streak++;
+              currentWeek--;
+            } else {
+              break;
+            }
+          }
+
+          setReviewStreak(streak);
+        } catch (error) {
+          console.error("Error fetching reviews:", error);
+        }
+      };
+
+      fetchReviewsAndCalculateStreak();
+    }, [currentUser.uid]);
+
   const handleToggleChange = (event, newView) => {
     if (newView !== null) {
       setSelectedView(newView);
@@ -134,16 +190,20 @@ function Account() {
                 {userData.displayName?.[0]?.toUpperCase() || "U"}
               </Avatar>
 
-              <Typography variant="h5" gutterBottom>
+              <Typography variant="h5" color="text.primary" gutterBottom>
                 {userData.displayName || "User"}
               </Typography>
               <Typography variant="body2" color="text.secondary" gutterBottom>
                 {"Based in " + location || "No location available"}
               </Typography>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
+            <Typography variant="body2" color="text.secondary" gutterBottom sx={{ marginBottom: "1em" }}>
                 {userData.bio || "No bio available"}
               </Typography>
-
+              
+            <StreakBadge reviewStreak={reviewStreak} />
+            
+            <Typography variant="body2" color="text.disabled" gutterBottom sx={{marginTop: "1em"}}>Review at least 1 place each week to keep up your streak!</Typography>
+            
               <Box sx={{ display: "flex", flexDirection: "column", gap: "1em", marginTop: "1em" }}>
                 <Button variant="contained" color="primary" fullWidth onClick={handleCustomizeProfile}>
                   Customize Your Profile
@@ -205,7 +265,7 @@ function Account() {
                             {place.city || "Unknown City"}, {place.state || "Unknown State"}
                           </Typography>
                           {place.rating && (
-                            <Rating name="half-rating-read" value={place.rating} precision={0.1} readOnly />
+                            <Rating name="half-rating-read" value={place.rating / 2} precision={0.1} readOnly />
                           )}
                         </CardContent>
                         <CardContent>
@@ -232,15 +292,19 @@ function Account() {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
           width: "100%",
           marginTop: "2em",
-          marginBottom: "2em",
+          marginBottom: "1em",
+          padding: "0"
         }}
       >
         <Card
           sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             width: "800px",
             boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
             borderRadius: "12px",
@@ -256,7 +320,7 @@ function Account() {
             >
               Past Reviews
             </Typography>
-            <DisplayReviews type="user" uniqueId={userData.id} />
+            <DisplayReviews type="user" uniqueId={currentUser.uid} />
           </CardContent>
         </Card>
       </Box>

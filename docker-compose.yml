@@ -75,18 +75,18 @@ volumes:
 
 secrets:
   VITE_FIREBASE_KEY:
-    file: ./secret_VITE_FIREBASE_KEY.txt
+    #file: ./secret_VITE_FIREBASE_KEY.txt
   VITE_FIREBASE_DOMAIN:
-    file: ./secret_VITE_FIREBASE_DOMAIN.txt
+    #file: ./secret_VITE_FIREBASE_DOMAIN.txt
   VITE_FIREBASE_PROJECT_ID:
-    file: ./secret_VITE_FIREBASE_PROJECT_ID.txt
+    #file: ./secret_VITE_FIREBASE_PROJECT_ID.txt
   VITE_FIREBASE_STORAGE_BUCKET:
-    file: ./secret_VITE_FIREBASE_STORAGE_BUCKET.txt
+    #file: ./secret_VITE_FIREBASE_STORAGE_BUCKET.txt
   VITE_FIREBASE_SENDER_ID:
-    file: ./secret_VITE_FIREBASE_SENDER_ID.txt
+    #file: ./secret_VITE_FIREBASE_SENDER_ID.txt
   VITE_FIREBASE_APP_ID:
-    file: ./secret_VITE_FIREBASE_APP_ID.txt
+    #file: ./secret_VITE_FIREBASE_APP_ID.txt
   VITE_YELP_API_KEY:
-    file: ./secret_VITE_YELP_API_KEY.txt
+    #file: ./secret_VITE_YELP_API_KEY.txt
   VITE_WEATHER_API_KEY:
-    file: ./secret_VITE_WEATHER_API_KEY.txt
+    #file: ./secret_VITE_WEATHER_API_KEY.txt

@@ -1,13 +1,12 @@
 import users from "../db/users.js";
 import posts from '../db/posts.js';
-import moment from "moment"
+import moment from "moment";
 import { ObjectId } from 'mongodb';
 import dayjs from 'dayjs';
-// TODO: error handling, figure out photo error handling for posts
-// TODO: error handling
 import { Router } from "express";
 import zipcodes from "zipcodes";
 import xss from 'xss';
+
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 const router = Router();
 
@@ -27,42 +26,42 @@ const validateBio = (bio) => {
     return trimmedBio.length <= 250 && validCharacters.test(trimmedBio);
 };
 
+// Get places for user
 router.get("/:uid/places", async (req, res) => {
     try {
-        const { type } = xss(req.query);
+        const type = req.query.type ? xss(req.query.type) : undefined;
 
         if (type && !["bookmarked", "visited"].includes(type)) {
             return res.status(400).json({ error: "Invalid type. Must be 'bookmarked' or 'visited'." });
         }
 
-        const places = await users.getPlacesForUser(xss(req.params.uid), type);
+        const uid = xss(req.params.uid);
+        const places = await users.getPlacesForUser(uid, type);
         return res.status(200).json(places);
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
 });
 
+// Update places for user
 router.patch("/:uid/places/:placeId", async (req, res) => {
     try {
-        const { isBookmarked, isVisited, name, image, location, city, state, rating } =xss(req.body);
+        const uid = xss(req.params.uid);
+        const placeId = xss(req.params.placeId);
+        const isBookmarked = req.body.isBookmarked !== undefined ? xss(req.body.isBookmarked) : undefined;
+        const isVisited = req.body.isVisited !== undefined ? xss(req.body.isVisited) : undefined;
+        const name = req.body.name ? xss(req.body.name) : undefined;
+        const image = req.body.image ? xss(req.body.image) : undefined;
+        const location = req.body.location ? xss(req.body.location) : undefined;
+        const city = req.body.city ? xss(req.body.city) : undefined;
+        const state = req.body.state ? xss(req.body.state) : undefined;
+        const rating = req.body.rating !== undefined ? xss(req.body.rating) : undefined;
 
         if (isBookmarked === undefined && isVisited === undefined) {
             return res.status(400).json({ error: "At least one flag (isBookmarked or isVisited) must be provided." });
         }
 
-        const result = await users.addPlaceForUser(
-            xss(req.params.uid),
-            xss(req.params.placeId),
-            isBookmarked || false,
-            isVisited || false,
-            name,
-            image,
-            location,
-            city,
-            state,
-            rating
-        );
-
+        const result = await users.addPlaceForUser(uid, placeId, isBookmarked, isVisited, name, image, location, city, state, rating);
         return res.status(200).json(result);
     } catch (e) {
         console.error("Error updating place for user:", e.message);
@@ -88,63 +87,64 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Get user by ID
 router.get("/:uid", async (req, res) => {
     try {
-        const user = await users.getUserById(xss(req.params.uid));
+        const uid = xss(req.params.uid);
+        const user = await users.getUserById(uid);
         return res.status(200).json(user);
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
 });
 
+// Add user if not exists
 router.post("/:uid", async (req, res) => {
     try {
-        const result = await users.addUserIfNotExists(xss(req.params.uid));
+        const uid = xss(req.params.uid);
+        const result = await users.addUserIfNotExists(uid);
         return res.status(200).json(result);
     } catch (e) {
         return res.status(400).json({ error: e.message });
     }
 });
 
+// Update user details
 router.patch("/:uid/details", async (req, res) => {
     try {
-        const { displayName, zipCode, bio } = req.body;
+        const uid = xss(req.params.uid);
+        const displayName = req.body.displayName ? xss(req.body.displayName.trim()) : undefined;
+        const zipCode = req.body.zipCode ? xss(req.body.zipCode.trim()) : undefined;
+        const bio = req.body.bio ? xss(req.body.bio.trim()) : undefined;
 
         const updateFields = {};
 
         if (displayName) {
-            const sanitizedDisplayName = xss(displayName.trim());
-            if (!validateDisplayName(sanitizedDisplayName)) {
-                return res.status(400).json({
-                    error: "Invalid display name. Must be at most 20 characters, no special characters.",
-                });
+            if (!validateDisplayName(displayName)) {
+                return res.status(400).json({ error: "Invalid display name. Must be at most 20 characters, no special characters." });
             }
-            updateFields.displayName = sanitizedDisplayName;
+            updateFields.displayName = displayName;
         }
 
         if (zipCode) {
-            const sanitizedZipCode = xss(zipCode.trim());
-            if (!validateZipCode(sanitizedZipCode)) {
+            if (!validateZipCode(zipCode)) {
                 return res.status(400).json({ error: "Invalid ZIP code." });
             }
-            updateFields.zipCode = sanitizedZipCode;
+            updateFields.zipCode = zipCode;
         }
 
         if (bio) {
-            const sanitizedBio = xss(bio.trim());
-            if (!validateBio(sanitizedBio)) {
-                return res.status(400).json({
-                    error: "Invalid bio. Must be at most 250 characters, no special characters.",
-                });
+            if (!validateBio(bio)) {
+                return res.status(400).json({ error: "Invalid bio. Must be at most 250 characters, no special characters besides usual punctuation." });
             }
-            updateFields.bio = sanitizedBio;
+            updateFields.bio = bio;
         }
 
         if (Object.keys(updateFields).length === 0) {
             return res.status(400).json({ error: "No fields to update" });
         }
 
-        const result = await users.updateUserProfile(xss(req.params.uid), updateFields);
+        const result = await users.updateUserProfile(uid, updateFields);
         return res.status(200).json({ success: true, result });
     } catch (e) {
         console.error("Error updating user details:", e.message);
@@ -162,21 +162,22 @@ router.get("/:uid/photo", async (req, res) => {
     }
 });
 
+// Update photo
 router.patch('/:uid/photo', async (req, res) => {
     try {
-        const { photo } = xss(req.body);
+        const uid = xss(req.params.uid);
+        const photo = req.body.photo ? xss(req.body.photo) : undefined;
 
         if (!photo) {
             return res.status(400).json({ error: "Photo is required in the request body" });
         }
 
         const buffer = Buffer.from(photo.split(",")[1], "base64");
-
         if (buffer.length > MAX_FILE_SIZE) {
             return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
         }
 
-        const result = await users.updateUserProfile(xss(req.params.uid), { photo });
+        const result = await users.updateUserProfile(uid, { photo });
         return res.status(200).json({ success: true, result });
     } catch (e) {
         return res.status(500).json({ error: e.message });

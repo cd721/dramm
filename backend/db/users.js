@@ -17,7 +17,7 @@ const exportedMethods = {
         if (!user) throw new Error(`User with ID ${id} not found`);
         return user;
     },
-
+    // NEED FIREBASE TO VALIDATE IF UID EXISTS ON FIREBASE
     async addUserIfNotExists(uid) {
         if (!uid) throw new Error('User ID is required');
         try {
@@ -60,19 +60,6 @@ const exportedMethods = {
         }
 
         const userCollection = await users();
-
-        console.log("Updating place for user:", {
-            uid,
-            placeId,
-            isBookmarked,
-            isVisited,
-            name,
-            image,
-            location,
-            city,
-            state,
-            rating,
-        });
 
         // Check if the place already exists for the user
         const existingPlace = await userCollection.findOne({

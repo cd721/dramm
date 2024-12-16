@@ -36,13 +36,11 @@ const exportedMethods = {
 
         if (!date) throw `Error: You must supply a date!`;
 
-        const [year, month, day] = date.split("-");
-        const formattedDate = `${month}/${day}/${year}`;
-        const today = dayjs().format("MM/DD/YYYY");
-        if (!dayjs(formattedDate, "MM/DD/YYYY", true).isValid() || dayjs(formattedDate, "MM/DD/YYYY", true).isAfter(today, "day")) {
-            throw "Invalid Date. Must be in MM/DD/YYYY format before today.";
-
+        if (!date) throw new Error("You must supply a date!");
+        if (!dayjs(date, "YYYY-MM-DD", true).isValid()) {
+            throw new Error("Invalid date format. Must be in YYYY-MM-DD format.");
         }
+        const formattedDate = dayjs(date, "YYYY-MM-DD").format("MM/DD/YYYY");
 
         if (!rating) throw `Error: You must supply a rating!`;
         if (typeof rating !== 'number') {
@@ -55,6 +53,8 @@ const exportedMethods = {
         if (parts.length > 1 && parts[1].length > 1) {
             throw "rating must only have one decimal point"
         }
+
+        console.log(formattedDate);
         let newPost = {
             _id: new ObjectId(),
             userId: uid,

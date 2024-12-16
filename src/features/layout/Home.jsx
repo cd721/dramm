@@ -5,6 +5,7 @@ import CreatePostModal from '../posts/CreatePostModal';
 import DisplayReviews from '../posts/DisplayReviews.jsx';
 import CurrentUserWeather from '../weather/CurrentUserWeather';
 import axios from "axios"
+import ForYou from '../for-you/ForYou.jsx';
 
 function Home() {
   const { currentUser } = useContext(AuthContext);
@@ -36,6 +37,9 @@ function Home() {
         : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
       <h2>Your Feed</h2>
       <DisplayReviews unique = {undefined}/>
+      {zipCode ? <ForYou zipCode = {zipCode}/>
+        : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
+      
   </div>
   )
 }

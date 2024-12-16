@@ -3,7 +3,7 @@
 
 // TODO: add labels
 const categoryList = [
-"markets",
+//"markets",
 "beaches",
 "fishing",
 "hiking",

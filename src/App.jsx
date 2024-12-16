@@ -3,6 +3,7 @@ import "./features/shared/styles/form.css"
 import './features/shared/styles/layout.css'
 
 import Account from "./features/account/Account";
+import Profile from "./features/account/Profile";
 import CustomizeProfile from "./features/account/CustomizeProfile";
 import ChangePassword from "./features/account/ChangePassword";
 import Home from "./features/layout/Home";
@@ -52,6 +53,8 @@ function App() {
             <Route path="/places" element={<Places />} />
             <Route path="/place/:id" element={<Place />} />
             <Route path="/AddPlaceReview" element={<AddPlaceReview />} />
+          
+            <Route path="/profile/:id" element={<Profile />} />
 
             <Route path='/calendar' element={<CalendarPage />} />
 

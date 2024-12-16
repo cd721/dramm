@@ -3,6 +3,7 @@ import "../shared/styles/posts.css"
 import { AuthContext } from '../../context/AuthContext';
 import axios from "axios"
 import { TextField, Box, Avatar, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Review = ({ post }) => {
   const [newComment, setNewComment] = useState("");
@@ -10,7 +11,15 @@ const Review = ({ post }) => {
   const [profilePic, setProfilePic] = useState("");
   const [username, setUsername] = useState("")
   const [comments, setComments] = useState([])
+  const navigate = useNavigate();
 
+  const handleNavigateToProfile = () => {
+    if (currentUser.uid === post.userId) {
+      navigate("/account");
+    } else {
+      navigate(`/profile/${post.userId}`);
+    }
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,7 +83,7 @@ const Review = ({ post }) => {
     <div className="review-card">
       <div className="review-content">
         <div className="header">
-          <div className="top">
+          <div className="top" onClick={handleNavigateToProfile}>
             <Avatar
               sx={{ bgcolor: "#73C2BE", width: 56, height: 56 }}
               alt={username}
@@ -117,4 +126,4 @@ const Review = ({ post }) => {
   )
 }
 
-export default Review
+export default Review;

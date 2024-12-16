@@ -6,6 +6,7 @@ import DisplayReviews from '../posts/DisplayReviews.jsx';
 import CurrentUserWeather from '../weather/CurrentUserWeather';
 import axios from "axios"
 import { useTitle } from '../shared/hooks/commonHooks.js';
+import ForYou from '../for-you/ForYou.jsx';
 
 function Home() {
   useTitle('Home');
@@ -37,16 +38,11 @@ function Home() {
       </h2>
       {zipCode ? <CurrentUserWeather zipCode = {zipCode}/>
         : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
-      {/* <button
-        className="create-post"
-        onClick={() => {
-          setIsModalVisible(true)
-        }}>
-        Create Post
-      </button>
-      {isModalVisible && (<CreatePostModal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)} />)} */}
       <h2>Your Feed</h2>
       <DisplayReviews unique = {undefined}/>
+      {zipCode ? <ForYou zipCode = {zipCode}/>
+        : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
+      
   </div>
   )
 }

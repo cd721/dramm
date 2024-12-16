@@ -6,12 +6,12 @@ import dayjs from 'dayjs';
 // TODO: error handling, figure out photo error handling for posts
 // TODO: error handling
 import { Router } from "express";
-
+import xss from 'xss'
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 const router = Router();
 
 router.get("/byLocation/:id", async (req, res) =>{
-    let placeId = req.params.id
+    let placeId = xss(req.params.id);
     if (!placeId) return res.status(400).json({ error: "Must provide id" });
     if (typeof placeId !== 'string') return res.status(400).json({ error: "ID must be string" });
     placeId = placeId.trim();
@@ -27,7 +27,7 @@ router.get("/byLocation/:id", async (req, res) =>{
 })
 
 router.get("/byUser/:id", async (req, res) => {
-    let uid = req.params.id
+    let uid = xss(req.params.id);
     if (!uid) return res.status(400).json({ error: "Must provide id" });
     if (typeof uid !== 'string') return res.status(400).json({ error: "ID must be string" });
     uid = uid.trim();
@@ -36,6 +36,9 @@ router.get("/byUser/:id", async (req, res) => {
 
     try {
         const postUser = await posts.getPostsByUser(uid)
+        if (!postUser || postUser.length === 0) {
+            return res.status(200).json([]);
+        }
         return res.status(200).json(postUser);
     } catch (e) {
         return res.status(500).json({ error: e.message });
@@ -44,7 +47,7 @@ router.get("/byUser/:id", async (req, res) => {
 
 router.post('/:uid', async (req, res) => {
     
-    let { caption, photo, location, date, rating, locationId } = req.body
+    let { caption, photo, location, date, rating, locationId } = xss(req.body);
 
     if (!caption) return res.status(400).json({ error: "You must supply a caption!" });
     if (typeof caption !== 'string') return res.status(400).json({ error: "Caption must be a string!" });
@@ -98,7 +101,7 @@ router.post('/:uid', async (req, res) => {
 
 
     try {
-        const result = await posts.addPost(req.params.uid, caption, photo, location, date, rating, locationId);
+        const result = await posts.addPost(xss(req.params.uid), caption, photo, location, date, rating, locationId);
         return res.status(200).json(result);
     } catch (e) {
         return res.status(500).json({ error: e.message });
@@ -115,7 +118,7 @@ router.get("/", async (req, res) => {
 });
 
 router.patch("/comments/:uid", async (req, res) => {
-    let uid = req.params.uid
+    let uid =xss(req.params.uid);
     let { postId, comment, name } = req.body
 
     if (!postId) return res.status(400).json({ error: "Must provide id" });

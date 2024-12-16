@@ -1,5 +1,7 @@
 import { users } from '../config/mongoCollections.js';
-
+import redis from "redis";
+const client = redis.createClient();
+await client.connect().then(() => { });
 // TODO: error handling + photo error handling for posts
 const exportedMethods = {
     async getAllUsers() {
@@ -18,8 +20,9 @@ const exportedMethods = {
 
     async addUserIfNotExists(uid) {
         if (!uid) throw new Error('User ID is required');
-        let user = await this.getUserById(uid);
-        if (!user) {
+        try {
+            await this.getUserById(uid);
+        } catch {
             const newUser = {
                 _id: uid,
                 places: [],
@@ -34,11 +37,12 @@ const exportedMethods = {
             }
 
             return { signupCompleted: true };
+
         }
         return { signupCompleted: false };
     },
 
-    
+
     async addPlaceForUser(
         uid,
         placeId,
@@ -119,6 +123,7 @@ const exportedMethods = {
             }
 
             console.log("New place added successfully:", result);
+            await client.flushDb();
             return { inserted: true };
         }
     },
@@ -139,12 +144,29 @@ const exportedMethods = {
             throw new Error("Failed to remove place");
         }
 
+        await client.flushDb();
+
         return { removed: true };
     },
 
     async getPlacesForUser(uid, type) {
         if (!uid) throw new Error("User ID is required");
 
+        let redisKey = "";
+        if (type === "bookmarked" || type === 'visited') {
+            redisKey = `placesForUser:${uid}:${type}`;
+        } else {
+            redisKey = `placesForUser:${uid}`;
+
+        }
+        let placesForUserExists = await client.exists(redisKey)
+
+        if (placesForUserExists) {
+            const placesForUser =
+                await client.json.get(redisKey);
+
+            return placesForUser;
+        }
         const userCollection = await users();
 
         const foundUser = await userCollection.findOne(
@@ -159,10 +181,19 @@ const exportedMethods = {
         const places = foundUser.places;
 
         if (type === "bookmarked") {
-            return places.filter(place => place.isBookmarked);
+            const bookmarkedPlaces = places.filter(place => place.isBookmarked);
+
+            await client.json.set(redisKey, "$", bookmarkedPlaces);
+
+            return bookmarkedPlaces;
         } else if (type === "visited") {
-            return places.filter(place => place.isVisited);
+            const visitedPlaces = places.filter(place => place.isVisited);
+            await client.json.set(redisKey, "$", visitedPlaces);
+
+            return visitedPlaces;
         }
+
+        await client.json.set(redisKey, "$", places);
 
         return places;
     },

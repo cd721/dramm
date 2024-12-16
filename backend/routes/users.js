@@ -23,7 +23,7 @@ const validateZipCode = (zip) => {
 
 const validateBio = (bio) => {
     const trimmedBio = bio.trim();
-    const validCharacters = /^[a-zA-Z0-9.,!? ]+$/;
+    const validCharacters = /^[a-zA-Z0-9.,!?' ]+$/;
     return trimmedBio.length <= 250 && validCharacters.test(trimmedBio);
 };
 
@@ -231,7 +231,7 @@ router.patch("/:uid/details", async (req, res) => {
 
         if (bio) {
             if (!validateBio(bio)) {
-                return res.status(400).json({ error: "Invalid bio. Must be at most 250 characters, no special characters." });
+                return res.status(400).json({ error: "Invalid bio. Must be at most 250 characters, no special characters except . , ! ? ' ." });
             }
             updateFields.bio = bio.trim();
         }

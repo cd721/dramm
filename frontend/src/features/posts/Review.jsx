@@ -33,7 +33,7 @@ const Review = ({ post }) => {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-      
+
     };
     fetchUserData();
   }, [currentUser.uid]);
@@ -109,19 +109,23 @@ const Review = ({ post }) => {
         <h3>Comments</h3>
         <ul className="comments-list">
           {comments.map((comment, index) => (
-            <li key={index}>{comment.name}- {comment.comment}</li>
+            <li key={index} className="comment-item">
+              <strong>{comment.name}</strong>: {comment.comment}
+            </li>
           ))}
         </ul>
-        <form onSubmit={handleCommentSubmit}>
+        <form onSubmit={handleCommentSubmit} className="comment-form">
           <input
             type="text"
             placeholder="Write a comment..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            className="comment-input"
           />
-          <button type="submit">Post</button>
+          <button type="submit" className="submit-button">Post</button>
         </form>
       </div>
+
     </div>
   )
 }

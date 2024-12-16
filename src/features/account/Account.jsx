@@ -19,12 +19,12 @@ import { AuthContext } from '../../context/AuthContext';
 import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
 import DisplayReviews from '../posts/DisplayReviews';
+import { useTitle } from '../shared/hooks/commonHooks';
 import axios from 'axios';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 
 import StreakBadge from './StreakBadge';
-
 dayjs.extend(isoWeek);
 
 const lightTheme = createTheme({
@@ -41,6 +41,8 @@ const lightTheme = createTheme({
 });
 
 function Account() {
+  useTitle('My Account');
+
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const [userData, setUserData] = useState({

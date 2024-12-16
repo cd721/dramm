@@ -277,7 +277,6 @@ function Place(props) {
         </div>
       </div>
 
-
       <h4>Reviews</h4>
       <DisplayReviews type="place" uniqueId={placeData.id} />
     </div>

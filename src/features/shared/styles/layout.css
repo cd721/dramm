@@ -84,14 +84,6 @@
     background-color: var(--secondary-orange);
 }
 
-.home {
-    display: flex;
-    flex-direction: column; 
-    align-items: flex-start; 
-    padding: 20px; 
-    width: 100%; 
-}
-
 .create-post {
     background-color: var(--primary-orange);
     transition: all 0.3s;

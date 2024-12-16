@@ -156,7 +156,7 @@ function CustomizeProfile() {
                 alert("Details updated successfully!");
             }
         } catch (error) {
-            console.error("Error updating details:", error);
+            console.error("Error updating details:", error.message);
             alert("Failed to update details.");
         }
     };

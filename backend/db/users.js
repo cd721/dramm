@@ -61,19 +61,6 @@ const exportedMethods = {
 
         const userCollection = await users();
 
-        console.log("Updating place for user:", {
-            uid,
-            placeId,
-            isBookmarked,
-            isVisited,
-            name,
-            image,
-            location,
-            city,
-            state,
-            rating,
-        });
-
         // Check if the place already exists for the user
         const existingPlace = await userCollection.findOne({
             _id: uid,

@@ -16,9 +16,7 @@ const ForYou = ({ zipCode }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                setUserZipCode(zipCode)
                 const categoryString = activeCategories.join(",");
-
                 const { data } = await axios.get(
                     `https://api.yelp.com/v3/businesses/search?location=${zipCode}&sort_by=best_match&categories=${categoryString}&limit=10&locale=en_US`,
                     {

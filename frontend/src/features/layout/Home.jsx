@@ -1,9 +1,9 @@
 import { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext.jsx';
 import '../shared/styles/home.css'
-import CreatePostModal from '../posts/CreatePostModal';
+import CreatePostModal from '../posts/CreatePostModal.jsx';
 import DisplayReviews from '../posts/DisplayReviews.jsx';
-import CurrentUserWeather from '../weather/CurrentUserWeather';
+import CurrentUserWeather from '../weather/CurrentUserWeather.jsx';
 import axios from "axios"
 import { useTitle } from '../shared/hooks/commonHooks.js';
 import ForYou from '../for-you/ForYou.jsx';

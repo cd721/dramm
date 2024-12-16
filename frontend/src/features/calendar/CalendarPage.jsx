@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import Calendar from "react-calendar";
 import '../shared/styles/calendar.css';
 import '../shared/styles/miscPages.css';
-import { useTitle } from "../shared/hooks/commonHooks";
+import { useTitle } from "../shared/hooks/commonHooks.js";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import axios from "axios";
 import { Link } from "react-router-dom";

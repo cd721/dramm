@@ -87,6 +87,6 @@ secrets:
   VITE_FIREBASE_APP_ID:
     file: ./secret_VITE_FIREBASE_APP_ID.txt
   VITE_YELP_API_KEY:
-    file: ./sercret_VITE_YELP_API_KEY.txt
+    file: ./secret_VITE_YELP_API_KEY.txt
   VITE_WEATHER_API_KEY:
     file: ./secret_VITE_WEATHER_API_KEY.txt

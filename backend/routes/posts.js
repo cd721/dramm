@@ -79,8 +79,6 @@ router.post('/:uid', async (req, res) => {
         
     }
 
-
-
     if (!rating) return res.status(400).json({ error: "You must supply a rating!" });
     if (typeof rating !== 'number') {
         return res.status(400).json({ error: "Rating must be a number" });
@@ -104,6 +102,7 @@ router.post('/:uid', async (req, res) => {
         const result = await posts.addPost(xss(req.params.uid), caption, photo, location, date, rating, locationId);
         return res.status(200).json(result);
     } catch (e) {
+        console.error("Error adding post:", e.message);
         return res.status(500).json({ error: e.message });
     }
 });

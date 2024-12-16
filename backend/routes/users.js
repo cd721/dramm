@@ -108,29 +108,36 @@ router.post("/:uid", async (req, res) => {
 
 router.patch("/:uid/details", async (req, res) => {
     try {
-        const { displayName, zipCode, bio } = xss(req.body);
+        const { displayName, zipCode, bio } = req.body;
 
         const updateFields = {};
 
         if (displayName) {
-            if (!validateDisplayName(displayName)) {
-                return res.status(400).json({ error: "Invalid display name. Must be at most 20 characters, no special characters." });
+            const sanitizedDisplayName = xss(displayName.trim());
+            if (!validateDisplayName(sanitizedDisplayName)) {
+                return res.status(400).json({
+                    error: "Invalid display name. Must be at most 20 characters, no special characters.",
+                });
             }
-            updateFields.displayName = displayName.trim();
+            updateFields.displayName = sanitizedDisplayName;
         }
 
         if (zipCode) {
-            if (!validateZipCode(zipCode)) {
+            const sanitizedZipCode = xss(zipCode.trim());
+            if (!validateZipCode(sanitizedZipCode)) {
                 return res.status(400).json({ error: "Invalid ZIP code." });
             }
-            updateFields.zipCode = zipCode;
+            updateFields.zipCode = sanitizedZipCode;
         }
 
         if (bio) {
-            if (!validateBio(bio)) {
-                return res.status(400).json({ error: "Invalid bio. Must be at most 250 characters, no special characters." });
+            const sanitizedBio = xss(bio.trim());
+            if (!validateBio(sanitizedBio)) {
+                return res.status(400).json({
+                    error: "Invalid bio. Must be at most 250 characters, no special characters.",
+                });
             }
-            updateFields.bio = bio.trim();
+            updateFields.bio = sanitizedBio;
         }
 
         if (Object.keys(updateFields).length === 0) {

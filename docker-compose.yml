@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    container_name: dramm_backend
+    ports: 
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+    
+  frontend:
+    build: ./
+    container_name: frontend
+    
+    ports: 
+      - "127.0.0.1:5173:5173"
+    volumes: 
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules

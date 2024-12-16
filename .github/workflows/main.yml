@@ -1,0 +1,63 @@
+
+name: CI/CD
+
+on:
+  push:
+    branches: [main, master]  
+  workflow_dispatch: 
+
+env:
+  MONGODB_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_INITDB_ROOT_PASSWORD }}
+  VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+  VITE_FIREBASE_DOMAIN: ${{ secrets.VITE_FIREBASE_DOMAIN }}
+
+  VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+
+  VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+
+  VITE_FIREBASE_SENDER_ID: ${{ secrets.VITE_FIREBASE_SENDER_ID }}
+
+  VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+
+  VITE_YELP_API_KEY: ${{ secrets.VITE_YELP_API_KEY }}
+
+  VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
+
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20' 
+
+      - name: Install dependencies
+        run: npm install
+
+
+      - name: Run docker-compose
+        uses: hoverkraft-tech/compose-action@v2.0.1
+        with:
+          compose-file: "../docker-compose.yml"
+
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build and push the Docker image
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm:latest

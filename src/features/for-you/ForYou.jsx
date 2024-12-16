@@ -8,11 +8,8 @@ import yelpCategories from "../../helpers/categories.js";
 import Reccomendation from './Reccomendation.jsx';
 
 const ForYou = ({ zipCode }) => {
-    const { currentUser } = useContext(AuthContext);
     const [loading, setLoading] = useState(true);
     const [placesData, setPlacesData] = useState([]);
-    const [userZipCode, setUserZipCode] = useState("07030");
-    const [totalResults, setTotalResults] = useState(0);
     const [activeCategories, setActiveCategories] = useState(yelpCategories);
 
 
@@ -32,9 +29,6 @@ const ForYou = ({ zipCode }) => {
                 );
 
                 setPlacesData(data.businesses || []);
-                console.log(placesData)
-                setTotalResults(data.total || 0);
-                // console.log(totalResults)
                 setLoading(false);
             } catch (e) {
                 console.error(e);

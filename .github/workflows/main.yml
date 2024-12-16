@@ -36,9 +36,6 @@ jobs:
         with:
           node-version: '20' 
 
-      - name: Install dependencies
-        run: npm install
-
 
       - name: Run docker-compose
         uses: hoverkraft-tech/compose-action@v2.0.1

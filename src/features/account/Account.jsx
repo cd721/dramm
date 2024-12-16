@@ -320,7 +320,7 @@ function Account() {
             >
               Past Reviews
             </Typography>
-            <DisplayReviews type="user" uniqueId={userData.id} />
+            <DisplayReviews type="user" uniqueId={currentUser.uid} />
           </CardContent>
         </Card>
       </Box>

@@ -91,10 +91,11 @@ const Review = ({ post }) => {
             />
             <p className="username">{username || 'user'}</p>
           </div>
-
-          <p><strong>Location:</strong> {post.location}</p>
-          <p><strong>Rating:</strong> {post.rating} / 10</p>
-          <p><strong>Visited Date:</strong> {post.date}</p>
+          <div className = "other-details">
+            <p><strong>Location:</strong> {post.location}</p>
+            <p><strong>Rating:</strong> {post.rating} / 10</p>
+            <p><strong>Visited Date:</strong> {post.date}</p>
+          </div>
         </div>
         <p>{post.caption}</p>
       </div>

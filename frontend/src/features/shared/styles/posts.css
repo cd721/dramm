@@ -165,3 +165,13 @@ li {
 small {
   color: grey
 }
+
+.other-details{
+  display:flex;
+  flex-direction:row;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+.other-details p{
+  margin-right:15px;
+}

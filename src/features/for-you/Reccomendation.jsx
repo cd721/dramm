@@ -21,7 +21,7 @@ const Reccomendation = ({ place }) => {
                     console.error("API response is undefined");
                     return;
                 }
-            
+
                 setCurrWeater(currentWeatherDataForPlace);
 
                 let weather = evaluateWeather(currentWeatherDataForPlace.name, currentWeatherDataForPlace.main.temp, currentWeatherDataForPlace.main.humidity, currentWeatherDataForPlace.wind.speed)
@@ -74,7 +74,7 @@ const Reccomendation = ({ place }) => {
             shouldGo += `Wind speed is mild at ${wind} m/s. `;
         }
 
-       
+
 
         if (isGoodWeather) {
             shouldGo += `Looks like the weather is great, you should definitely go here! `;
@@ -84,7 +84,9 @@ const Reccomendation = ({ place }) => {
 
         return shouldGo;
     }
-
+    if (loading) {
+        return <div>Loading reccomendations...</div>;
+    }
     return (
         <div>
             <p>{weatherDescription}</p>

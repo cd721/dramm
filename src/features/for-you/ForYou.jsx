@@ -41,7 +41,7 @@ const ForYou = ({ zipCode }) => {
 
     if (loading) {
         return <div>Loading reccomendations...</div>;
-      }
+    }
 
     return (
         <div>

@@ -46,7 +46,7 @@ function PlaceList(props) {
 
       try {
         const offset = (currentPage - 1) * resultsPerPage;
-        const categoryString = activeCategories.join(",");
+        const categoryString = activeCategories.map((cat) => cat.alias).join(",");
         
         const { data } = await axios.get(
           `https://api.yelp.com/v3/businesses/search?location=${userZipCode}&term=${searchTerm}&categories=${categoryString}&sort_by=best_match&limit=${resultsPerPage}&offset=${offset}&locale=en_US`,

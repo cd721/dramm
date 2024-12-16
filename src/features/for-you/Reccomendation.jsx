@@ -17,13 +17,14 @@ const Reccomendation = ({ place }) => {
                 const { data: currentWeatherDataForPlace } = await axios.get(
                     `https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
                 );
-                setCurrWeater(currentWeatherDataForPlace);
-                let cloud = 0
-                if (currWeather.clouds){
-                    cloud = currWeather.clouds.all
+                if (!currentWeatherDataForPlace) {
+                    console.error("API response is undefined");
+                    return;
                 }
+            
+                setCurrWeater(currentWeatherDataForPlace);
 
-                let weather = evaluateWeather(currWeather.name, currWeather.main.temp, currWeather.main.humidity, currWeather.wind.speed, cloud)
+                let weather = evaluateWeather(currentWeatherDataForPlace.name, currentWeatherDataForPlace.main.temp, currentWeatherDataForPlace.main.humidity, currentWeatherDataForPlace.wind.speed)
                 setWeatherDescription(weather)
 
                 setLoading(false);
@@ -35,7 +36,7 @@ const Reccomendation = ({ place }) => {
         fetchData();
     }, []);
 
-    function evaluateWeather(name, temp, humidity, wind, cloud) {
+    function evaluateWeather(name, temp, humidity, wind) {
         let shouldGo = `Weather in ${name}: `;
         let isGoodWeather = true;
 
@@ -44,7 +45,6 @@ const Reccomendation = ({ place }) => {
         const humidityMax = 60
         const humidityMin = 30
         const windMax = 20
-        const cloudMax = 50
 
         if (temp < tempMin) {
             shouldGo += `It's too cold (${temp}°F) here to be comfortable. If you do go out though, bring a jacket! `;
@@ -74,12 +74,7 @@ const Reccomendation = ({ place }) => {
             shouldGo += `Wind speed is mild at ${wind} m/s. `;
         }
 
-        if (cloud > cloudMax) {
-            shouldGo += `It's cloudy with ${cloud}% cloud coverage. `;
-            isGoodWeather = false;
-        } else {
-            shouldGo += `Skies are pretty clear with ${cloud}% cloud coverage. `;
-        }
+       
 
         if (isGoodWeather) {
             shouldGo += `Looks like the weather is great, you should definitely go here! `;

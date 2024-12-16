@@ -34,6 +34,16 @@ function Home() {
   return (
     <div className='home'>
       <div className='left-side'>
+        <div className='fyp-header'>
+          <h2>Outdoor Locations For You!</h2>
+          <p>Browse through the best places based on your preferences and the current weather!</p>
+        </div>
+
+        {zipCode ? <ForYou zipCode = {zipCode}/>
+          : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
+      </div>
+
+      <div className='right-side'>
         <h2>
           Welcome {currentUser && currentUser.displayName}!
         </h2>
@@ -46,15 +56,7 @@ function Home() {
         <DisplayReviews unique = {undefined}/>
       </div>
 
-      <div className='right-side'>
-        <div className='fyp-header'>
-          <h2>Outdoor Locations For You!</h2>
-          <p>Browse through the best places based on your preferences and the current weather!</p>
-        </div>
 
-        {zipCode ? <ForYou zipCode = {zipCode}/>
-          : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
-      </div>
   </div>
   )
 }

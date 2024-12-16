@@ -8,16 +8,22 @@
     overflow: hidden;
 }
 
-.home .left-side {
-    width: 70vw;
+.home .right-side {
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+
+    width: 65vw;
+    padding: 20px;
+
     background-color: var(--secondary-gray);
 
     overflow-y: auto;
 
-    padding: 20px;
+
 }
 
-.home .right-side {
+.home .left-side {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,7 +32,7 @@
 
     overflow-y: auto;
     
-    width: 30vw;
+    width: 35vw;
     height: 100%;
 
     box-shadow: var(--box-shadow);

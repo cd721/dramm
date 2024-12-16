@@ -3,8 +3,8 @@ import yelpCategories from "../../helpers/categories.js";
 function Categories({ activeCategories, setActiveCategories }) {
 
   const handleCategoryToggle = (category) => {
-    if (activeCategories.includes(category)) {
-      setActiveCategories(activeCategories.filter((cat) => cat !== category));
+    if (activeCategories.find((cat) => cat.alias === category.alias)) {
+      setActiveCategories(activeCategories.filter((cat) => cat.alias !== category.alias));
     } else {
       setActiveCategories([...activeCategories, category]);
     }
@@ -13,24 +13,24 @@ function Categories({ activeCategories, setActiveCategories }) {
   return (
     <div className="categories-container">      
       <div className="categories-list">
-        {yelpCategories.map((category, index) => (
+        {yelpCategories.map(({ alias, label }, index) => (
             <label 
               key={index} 
               className={`category-item ${
-                activeCategories.includes(category) ? "active" : null
+                activeCategories.some((cat) => cat.alias === alias) ? "active" : null
               }`}
             >
               <input
                 type="checkbox"
-                checked={activeCategories.includes(category)}
-                onChange={() => handleCategoryToggle(category)}
+                checked={activeCategories.some((cat) => cat.alias === alias)}
+                onChange={() => handleCategoryToggle({ alias, label })}
               />
               <img 
-                src={`/icons/categories/${category}.png`}
-                alt={category}
+                src={`/icons/categories/${alias}.png`}
+                alt={label}
                 className="category-icon"
               />
-              <p>{category}</p>
+              <p>{label}</p>
             </label>
         ))}
       </div>

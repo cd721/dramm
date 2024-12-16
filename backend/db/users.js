@@ -24,8 +24,9 @@ const exportedMethods = {
 
     async addUserIfNotExists(uid) {
         if (!uid) throw new Error('User ID is required');
-        let user = await this.getUserById(uid);
-        if (!user) {
+        try {
+            await this.getUserById(uid);
+        } catch {
             const newUser = {
                 _id: uid,
                 places: [],
@@ -40,6 +41,7 @@ const exportedMethods = {
             }
 
             return { signupCompleted: true };
+
         }
         return { signupCompleted: false };
     },

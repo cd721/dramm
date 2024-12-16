@@ -130,26 +130,30 @@ const exportedMethods = {
 
     },
     async getPostsByUser(userId) {
-        if (!userId) { throw 'Error: You must provide an id to search for' };
-        if (typeof userId !== 'string') { throw 'Error: id must be a string' };
+        if (!userId) throw new Error('Error: You must provide an ID to search for');
+        if (typeof userId !== 'string') throw new Error('Error: ID must be a string');
         userId = userId.trim();
-        if (userId.length === 0) {
-            throw 'Error: id cannot be an empty string or just spaces';
-        }
+        if (userId.length === 0) throw new Error('Error: ID cannot be an empty string or just spaces');
+
         const redisKey = `postsForUser:${userId}`;
 
-        const postsByUserExists = await client.json.exists(redisKey);
-        if (postsByUserExists) {
-            const postsByUser = await client.json.get(redisKey)
+        try {
+            const postsByUserExists = await client.exists(redisKey);
+            if (postsByUserExists) {
+                const postsByUser = await client.json.get(redisKey);
+                return postsByUser || [];
+            }
 
-            return postsByUser;
+            const postCollection = await posts();
+            const result = await postCollection.find({ userId }).toArray();
+
+            await client.json.set(redisKey, '$', result || []);
+
+            return result || [];
+        } catch (error) {
+            console.error('Error in getPostsByUser:', error.message);
+            throw new Error('Error: Unable to fetch posts for the given user');
         }
-        const postCollection = await posts();
-
-        const result = await postCollection.find({ userId }).toArray();
-        await client.json.set(redisKey, '$', result);
-        return result;
-
     },
     async editPost(postId, updatedFields) {
         if (!postId) throw 'Error: You must provide an id to search for';

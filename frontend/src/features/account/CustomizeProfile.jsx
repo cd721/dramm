@@ -44,7 +44,7 @@ function CustomizeProfile() {
 
     const validateBio = (bioText) => {
         const trimmedBio = bioText.trim();
-        const validCharacters = /^[a-zA-Z0-9.,!? ]+$/;
+        const validCharacters = /^[a-zA-Z0-9.,!?' ]+$/;
         return trimmedBio.length <= 250 && validCharacters.test(trimmedBio);
     };
 
@@ -156,7 +156,7 @@ function CustomizeProfile() {
                 alert("Details updated successfully!");
             }
         } catch (error) {
-            console.error("Error updating details:", error);
+            console.error("Error updating details:", error.message);
             alert("Failed to update details.");
         }
     };

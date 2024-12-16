@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 // TODO: error handling
 import { Router } from "express";
 import zipcodes from "zipcodes";
-
+import xss from 'xss';
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB
 const router = Router();
 
@@ -29,13 +29,13 @@ const validateBio = (bio) => {
 
 router.get("/:uid/places", async (req, res) => {
     try {
-        const { type } = req.query;
+        const { type } = xss(req.query);
 
         if (type && !["bookmarked", "visited"].includes(type)) {
             return res.status(400).json({ error: "Invalid type. Must be 'bookmarked' or 'visited'." });
         }
 
-        const places = await users.getPlacesForUser(req.params.uid, type);
+        const places = await users.getPlacesForUser(xss(req.params.uid), type);
         return res.status(200).json(places);
     } catch (e) {
         return res.status(500).json({ error: e.message });
@@ -44,15 +44,15 @@ router.get("/:uid/places", async (req, res) => {
 
 router.patch("/:uid/places/:placeId", async (req, res) => {
     try {
-        const { isBookmarked, isVisited, name, image, location, city, state, rating } = req.body;
+        const { isBookmarked, isVisited, name, image, location, city, state, rating } =xss(req.body);
 
         if (isBookmarked === undefined && isVisited === undefined) {
             return res.status(400).json({ error: "At least one flag (isBookmarked or isVisited) must be provided." });
         }
 
         const result = await users.addPlaceForUser(
-            req.params.uid,
-            req.params.placeId,
+            xss(req.params.uid),
+            xss(req.params.placeId),
             isBookmarked || false,
             isVisited || false,
             name,
@@ -72,7 +72,7 @@ router.patch("/:uid/places/:placeId", async (req, res) => {
 
 router.delete("/:uid/places/:placeId", async (req, res) => {
     try {
-        const result = await users.removePlaceForUser(req.params.uid, req.params.placeId);
+        const result = await users.removePlaceForUser(xss(req.params.uid), xss(req.params.placeId));
         return res.status(200).json(result);
     } catch (e) {
         return res.status(500).json({ error: e.message });
@@ -90,7 +90,7 @@ router.get("/", async (req, res) => {
 
 router.get("/:uid", async (req, res) => {
     try {
-        const user = await users.getUserById(req.params.uid);
+        const user = await users.getUserById(xss(req.params.uid));
         return res.status(200).json(user);
     } catch (e) {
         return res.status(500).json({ error: e.message });
@@ -99,46 +99,13 @@ router.get("/:uid", async (req, res) => {
 
 router.post("/:uid", async (req, res) => {
     try {
-        const result = await users.addUserIfNotExists(req.params.uid);
+        const result = await users.addUserIfNotExists(xss(req.params.uid));
         return res.status(200).json(result);
     } catch (e) {
         return res.status(400).json({ error: e.message });
     }
 });
 
-router.get("/:uid/photo", async (req, res) => {
-    try {
-        const photo = await users.getUserPhoto(req.params.uid);
-        if (!photo) return res.status(404).json({ error: "User photo not found" });
-        return res.status(200).json({ photo });
-    } catch (e) {
-        return res.status(500).json({ error: e.message });
-    }
-});
-
-router.patch("/:uid/photo", async (req, res) => {
-    try {
-        const { photo } = req.body;
-
-        if (!photo) {
-            return res.status(400).json({ error: "Photo is required in the request body" });
-        }
-
-        const buffer = Buffer.from(photo.split(",")[1], "base64");
-        console.log("Payload size in bytes:", buffer.length);
-
-        if (buffer.length > MAX_FILE_SIZE) {
-            return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
-        }
-
-        const result = await users.updateUserProfile(req.params.uid, { photo });
-        return res.status(200).json({ success: true, result });
-    } catch (e) {
-        console.error("Error updating photo:", e.message);
-        return res.status(500).json({ error: e.message });
-    }
-});
-
 router.patch("/:uid/details", async (req, res) => {
     try {
         const { displayName, zipCode, bio } = req.body;
@@ -146,31 +113,38 @@ router.patch("/:uid/details", async (req, res) => {
         const updateFields = {};
 
         if (displayName) {
-            if (!validateDisplayName(displayName)) {
-                return res.status(400).json({ error: "Invalid display name. Must be at most 20 characters, no special characters." });
+            const sanitizedDisplayName = xss(displayName.trim());
+            if (!validateDisplayName(sanitizedDisplayName)) {
+                return res.status(400).json({
+                    error: "Invalid display name. Must be at most 20 characters, no special characters.",
+                });
             }
-            updateFields.displayName = displayName.trim();
+            updateFields.displayName = sanitizedDisplayName;
         }
 
         if (zipCode) {
-            if (!validateZipCode(zipCode)) {
+            const sanitizedZipCode = xss(zipCode.trim());
+            if (!validateZipCode(sanitizedZipCode)) {
                 return res.status(400).json({ error: "Invalid ZIP code." });
             }
-            updateFields.zipCode = zipCode;
+            updateFields.zipCode = sanitizedZipCode;
         }
 
         if (bio) {
-            if (!validateBio(bio)) {
-                return res.status(400).json({ error: "Invalid bio. Must be at most 250 characters, no special characters." });
+            const sanitizedBio = xss(bio.trim());
+            if (!validateBio(sanitizedBio)) {
+                return res.status(400).json({
+                    error: "Invalid bio. Must be at most 250 characters, no special characters.",
+                });
             }
-            updateFields.bio = bio.trim();
+            updateFields.bio = sanitizedBio;
         }
 
         if (Object.keys(updateFields).length === 0) {
             return res.status(400).json({ error: "No fields to update" });
         }
 
-        const result = await users.updateUserProfile(req.params.uid, updateFields);
+        const result = await users.updateUserProfile(xss(req.params.uid), updateFields);
         return res.status(200).json({ success: true, result });
     } catch (e) {
         console.error("Error updating user details:", e.message);
@@ -180,7 +154,7 @@ router.patch("/:uid/details", async (req, res) => {
 
 router.get("/:uid/photo", async (req, res) => {
     try {
-        const photo = await users.getUserPhoto(req.params.uid);
+        const photo = await users.getUserPhoto(xss(req.params.uid));
         if (!photo) return res.status(404).json({ error: "User photo not found" });
         return res.status(200).json({ photo });
     } catch (e) {
@@ -190,7 +164,7 @@ router.get("/:uid/photo", async (req, res) => {
 
 router.patch('/:uid/photo', async (req, res) => {
     try {
-        const { photo } = req.body;
+        const { photo } = xss(req.body);
 
         if (!photo) {
             return res.status(400).json({ error: "Photo is required in the request body" });
@@ -202,105 +176,11 @@ router.patch('/:uid/photo', async (req, res) => {
             return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
         }
 
-        const result = await users.updateUserProfile(req.params.uid, { photo });
+        const result = await users.updateUserProfile(xss(req.params.uid), { photo });
         return res.status(200).json({ success: true, result });
     } catch (e) {
         return res.status(500).json({ error: e.message });
     }
 });
-
-router.patch("/:uid/details", async (req, res) => {
-    try {
-        const { displayName, zipCode, bio } = req.body;
-
-        const updateFields = {};
-
-        if (displayName) {
-            if (!validateDisplayName(displayName)) {
-                return res.status(400).json({ error: "Invalid display name. Must be at most 20 characters, no special characters." });
-            }
-            updateFields.displayName = displayName.trim();
-        }
-
-        if (zipCode) {
-            if (!validateZipCode(zipCode)) {
-                return res.status(400).json({ error: "Invalid ZIP code." });
-            }
-            updateFields.zipCode = zipCode;
-        }
-
-        if (bio) {
-            if (!validateBio(bio)) {
-                return res.status(400).json({ error: "Invalid bio. Must be at most 250 characters, no special characters except . , ! ? ' ." });
-            }
-            updateFields.bio = bio.trim();
-        }
-
-        if (Object.keys(updateFields).length === 0) {
-            return res.status(400).json({ error: "No fields to update" });
-        }
-
-        const result = await users.updateUserProfile(req.params.uid, updateFields);
-        return res.status(200).json({ success: true, result });
-    } catch (e) {
-        console.error("Error updating user details:", e.message);
-        return res.status(500).json({ error: e.message });
-    }
-});
-
-
-
-router.get("/:uid/photo", async (req, res) => {
-    try {
-        const photo = await users.getUserPhoto(req.params.uid);
-        if (!photo) return res.status(404).json({ error: "User photo not found" });
-        return res.status(200).json({ photo });
-    } catch (e) {
-        return res.status(500).json({ error: e.message });
-    }
-});
-
-router.patch('/:uid/photo', async (req, res) => {
-    try {
-        const { photo } = req.body;
-
-        if (!photo) {
-            return res.status(400).json({ error: "Photo is required in the request body" });
-        }
-
-        const buffer = Buffer.from(photo.split(",")[1], "base64");
-
-        if (buffer.length > MAX_FILE_SIZE) {
-            return res.status(413).json({ error: "Photo size exceeds 2 MB limit." });
-        }
-
-        const result = await users.updateUserProfile(req.params.uid, { photo });
-        return res.status(200).json({ success: true, result });
-    } catch (e) {
-        return res.status(500).json({ error: e.message });
-    }
-});
-
-router.patch('/:uid/details', async (req, res) => {
-    try {
-        const { displayName, zipCode, bio } = req.body;
-
-        const updateFields = {};
-        if (displayName) updateFields.displayName = displayName;
-        if (zipCode) updateFields.zipCode = zipCode;
-        if (bio) updateFields.bio = bio;
-
-        if (Object.keys(updateFields).length === 0) {
-            return res.status(400).json({ error: "No fields to update" });
-        }
-
-        const result = await users.updateUserProfile(req.params.uid, updateFields);
-        return res.status(200).json({ success: true, result });
-    } catch (e) {
-        return res.status(500).json({ error: e.message });
-    }
-});
-
-
 
 export default router;

@@ -1,0 +1,111 @@
+.home {
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: calc(100vh - 100px);
+
+    overflow: hidden;
+}
+
+.home .right-side {
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+
+    width: 65vw;
+    padding: 20px;
+
+    background-color: var(--secondary-gray);
+
+    overflow-y: auto;
+
+
+}
+
+.home .left-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background-color: var(--primary-white);
+
+    overflow-y: auto;
+    
+    width: 35vw;
+    height: 100%;
+
+    box-shadow: var(--box-shadow);
+}
+
+/* fyp */
+.fyp-header {
+    width: 100%;
+    padding: 0.8em;
+
+    background-color: var(--primary-blue);
+
+    color: var(--primary-white);
+}
+
+.fyp-header h2,
+.fyp-header p {
+    margin: 2px;
+}
+
+.recommendation-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    padding: 2em;
+}
+
+.fyp-button {
+    width: 100%;
+
+    background-color: var(--primary-orange);
+
+    transition: all 0.3s ease;
+}
+.fyp-button:hover {
+    background-color: var(--secondary-orange);
+}
+
+
+.recommendation {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding: 1.2em;
+}
+
+.recommendation .place-card {
+    margin: 0;
+
+    width: 100%;
+    height: 100%;
+}
+.recommendation .place-card:hover {
+    transform: none;
+}
+
+.recommendation .weather-info {
+    margin: 0.9em 0 0;
+}
+
+.recommendation h4 {
+    margin: 10px auto;
+}
+
+.recommendation>ul {
+    padding-left: 2em;
+    margin: 10px;
+}
+.recommendation li {
+    text-align: left;
+}
+

@@ -11,6 +11,7 @@ const Review = ({ post }) => {
   const [profilePic, setProfilePic] = useState("");
   const [username, setUsername] = useState("")
   const [comments, setComments] = useState([])
+  const [commentAuthors, setCommentAuthors] = useState({});
   const navigate = useNavigate();
 
   const handleNavigateToProfile = () => {
@@ -37,6 +38,33 @@ const Review = ({ post }) => {
     };
     fetchUserData();
   }, [currentUser.uid]);
+
+  useEffect(() => {
+    const fetchCommentAuthors = async () => {
+      const authorData = { ...commentAuthors };
+
+      await Promise.all(
+        post.comments.map(async (comment) => {
+          if (!authorData[comment.userId]) {
+            try {
+              const response = await axios.get(`http://localhost:3001/users/${comment.userId}`);
+              const userData = response.data;
+              authorData[comment.userId] = userData.displayName;
+            } catch (error) {
+              console.error("Error fetching comment author data:", error);
+              authorData[comment.userId] = "Unknown User";
+            }
+          }
+        })
+      );
+
+      setCommentAuthors(authorData);
+    };
+
+    fetchCommentAuthors();
+
+  }, [post.comments, commentAuthors]);
+
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
@@ -109,7 +137,9 @@ const Review = ({ post }) => {
         <h3>Comments</h3>
         <ul className="comments-list">
           {comments.map((comment, index) => (
-            <li key={index}>{comment.name}- {comment.comment}</li>
+            <li key={index}>
+              <strong>{commentAuthors[comment.userId] || "Loading..."}</strong>: {comment.comment}
+            </li>
           ))}
         </ul>
         <form onSubmit={handleCommentSubmit}>

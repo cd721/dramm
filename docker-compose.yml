@@ -17,17 +17,61 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+      - cache
+    environment:
+      REDIS_HOST: cache
 
     
   frontend:
-    build: ./
+    build: ./frontend
     container_name: frontend
-    
+    stdin_open: true
     ports: 
-      - "127.0.0.1:5173:5173"
+      # - "127.0.0.1:5173:5173"
+      - "8000:80"
     volumes: 
-      - ./:/usr/src/app
+      - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
+    environment:
+      - PORT=8000
+
+  mongo:
+    image: mongo:7.0
+    environment:
+       - MONGO_INITDB_ROOT_USERNAME=dramm
+       - MONGO_INITDB_ROOT_PASSWORD=MONGO_INITDB_ROOT_PASSWORD
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data:/data/db
+
+  cache:
+    image: redis/redis-stack-server:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-stack-server --requirepass sOmE_sEcUrE_pAsS
+    volumes: 
+      - cache:/data
+    
+  # nginx:
+  #   image: nginx:1.16.0-alpine
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #   ports:
+  #     - "8080:80"
+  #   depends_on:
+  #      - backend
+  #      - frontend
+
+volumes:
+  mongo-data:
+    driver: local
+  cache:
+    driver: local
+
 
 secrets:
   VITE_FIREBASE_KEY:

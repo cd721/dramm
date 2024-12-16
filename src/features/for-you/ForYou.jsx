@@ -45,9 +45,13 @@ const ForYou = ({ zipCode }) => {
         fetchData();
     }, []);
 
+    if (loading) {
+        return <div>Loading reccomendations...</div>;
+      }
+
     return (
         <div>
-            <h2>Outdoor Reccomendations For You Near {userZipCode}!</h2>
+            <h2>Outdoor Locations For You!</h2>
             <div className="places-grid">
                 {placesData
                     .sort((a, b) => a.distance.toFixed(0) - b.distance.toFixed(0))

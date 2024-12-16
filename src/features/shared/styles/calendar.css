@@ -92,14 +92,18 @@
     box-shadow: var(--box-shadow);
 }
 
+.react-calendar__month-view__days__day.today {
+    border: 5px solid var(--secondary-orange);
+}
+
 /* reviews */
-.react-calendar__month-view__days__day.has-review {
+.react-calendar__month-view__days__day.has-post {
     border: 2px solid #70a5a5;
     background-color: var(--primary-blue);
 }
-.react-calendar__tile.has-review abbr {
+/* .react-calendar__tile.has-post abbr {
     display: none;
-}
+} */
 
 .react-calendar__tile ul {
     list-style-type: none;
@@ -171,4 +175,36 @@
 .react-calendar__year-view__months__month:disabled,
 .react-calendar__navigation button:disabled {
     cursor: not-allowed;
+}
+
+/* //////////// REVIEW LIST //////////// */
+.review-list {
+    list-style: none;
+    padding: 0;
+}
+
+.review-list li {
+    padding: 20px;
+    margin: 15px;
+
+    border: 1px solid black;
+    border-radius: 20px;
+}
+
+.review-list li>div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.review-list li>div h4,
+.review-list li>div p {
+    margin: 0;
+    width: 100%;
+}
+
+.review-list li>div h4 {
+    text-align: left;
+}
+.review-list li>div p {
+    text-align: right;
 }

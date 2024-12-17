@@ -27,22 +27,23 @@ const Review = ({ post }) => {
       try {
         const response = await axios.get(`http://localhost:3001/users/${post.userId}`);
         const userData = response.data;
-        if (userData.photo) setProfilePic(userData.photo);
-        setUsername(userData.displayName)
-        console.log(response)
-        setComments(post.comments)
+        setProfilePic(userData.photo || "");
+        setUsername(userData.displayName || "user");
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setUsername("Unknown User");
       }
-
     };
+
     fetchUserData();
-  }, [currentUser.uid]);
+  }, [post]);
 
   useEffect(() => {
+    setComments([]);
+    setCommentAuthors({});
+    
     const fetchCommentAuthors = async () => {
-      const authorData = { ...commentAuthors };
-
+      const authorData = {};
       await Promise.all(
         post.comments.map(async (comment) => {
           if (!authorData[comment.userId]) {
@@ -59,11 +60,11 @@ const Review = ({ post }) => {
       );
 
       setCommentAuthors(authorData);
+      setComments(post.comments);
     };
 
     fetchCommentAuthors();
-
-  }, [post.comments]);
+  }, [post]);
 
 
   const handleCommentSubmit = async (e) => {

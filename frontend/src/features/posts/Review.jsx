@@ -11,6 +11,7 @@ const Review = ({ post }) => {
   const [profilePic, setProfilePic] = useState("");
   const [username, setUsername] = useState("")
   const [comments, setComments] = useState([])
+  const [commentAuthors, setCommentAuthors] = useState({});
   const navigate = useNavigate();
 
   const handleNavigateToProfile = () => {
@@ -33,51 +34,82 @@ const Review = ({ post }) => {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-      
+
     };
     fetchUserData();
   }, [currentUser.uid]);
+
+  useEffect(() => {
+    const fetchCommentAuthors = async () => {
+      const authorData = { ...commentAuthors };
+
+      await Promise.all(
+        post.comments.map(async (comment) => {
+          if (!authorData[comment.userId]) {
+            try {
+              const response = await axios.get(`http://localhost:3001/users/${comment.userId}`);
+              const userData = response.data;
+              authorData[comment.userId] = userData.displayName;
+            } catch (error) {
+              console.error("Error fetching comment author data:", error);
+              authorData[comment.userId] = "Unknown User";
+            }
+          }
+        })
+      );
+
+      setCommentAuthors(authorData);
+    };
+
+    fetchCommentAuthors();
+
+  }, [post.comments]);
+
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
 
     if (!newComment) {
-      alert("Must have a comment")
-      return
-    }
-    if (typeof newComment !== 'string') {
-      alert("comment must be a string")
-      return
-    }
-    setNewComment(newComment.trim())
-    if (newComment.length === 0) {
-      alert("comment cant be empty")
-      return
+      alert("Must have a comment");
+      return;
     }
 
-    if (newComment.length > 50) {
-      alert("comment cant be more than 50 chars")
-      return
+    if (typeof newComment !== "string") {
+      alert("Comment must be a string");
+      return;
     }
 
+    const trimmedComment = newComment.trim();
+
+    if (trimmedComment.length === 0) {
+      alert("Comment can't be empty");
+      return;
+    }
+
+    if (trimmedComment.length > 50) {
+      alert("Comment can't be more than 50 chars");
+      return;
+    }
     try {
       const response = await axios.patch(`http://localhost:3001/posts/comments/${currentUser.uid}`, {
         postId: post._id,
-        comment: newComment,
-        name: currentUser.displayName
+        comment: trimmedComment,
+        name: currentUser.displayName,
       });
-      console.log(response.data)
+      const newCommentData = { userId: currentUser.uid, comment: trimmedComment };
+      setComments((prevComments) => [...prevComments, newCommentData]);
+      setCommentAuthors((prevAuthors) => ({
+        ...prevAuthors,
+        [currentUser.uid]: currentUser.displayName,
+      }));
 
+      setNewComment("");
     } catch (e) {
       alert("Error: something went wrong.");
-      console.log(e)
-      return
+      console.log(e);
     }
-    const newCommentData = { name: currentUser.displayName, comment: newComment };
-    setComments(prevComments => [...prevComments, newCommentData]);
-    setNewComment("")
-
   };
+
 
   return (
     <div className="review-card">
@@ -91,10 +123,11 @@ const Review = ({ post }) => {
             />
             <p className="username">{username || 'user'}</p>
           </div>
-
-          <p><strong>Location:</strong> {post.location}</p>
-          <p><strong>Rating:</strong> {post.rating} / 10</p>
-          <p><strong>Visited Date:</strong> {post.date}</p>
+          <div className="other-details">
+            <p><strong>Location:</strong> {post.location}</p>
+            <p><strong>Rating:</strong> {post.rating} / 10</p>
+            <p><strong>Visited Date:</strong> {post.date}</p>
+          </div>
         </div>
         <p>{post.caption}</p>
       </div>
@@ -109,19 +142,23 @@ const Review = ({ post }) => {
         <h3>Comments</h3>
         <ul className="comments-list">
           {comments.map((comment, index) => (
-            <li key={index}>{comment.name}- {comment.comment}</li>
+            <li key={index}>
+              <strong>{commentAuthors[comment.userId] || "Loading..."}</strong>: {comment.comment}
+            </li>
           ))}
         </ul>
-        <form onSubmit={handleCommentSubmit}>
+        <form onSubmit={handleCommentSubmit} className="comment-form">
           <input
             type="text"
             placeholder="Write a comment..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            className="comment-input"
           />
-          <button type="submit">Post</button>
+          <button type="submit" className="submit-button">Post</button>
         </form>
       </div>
+
     </div>
   )
 }

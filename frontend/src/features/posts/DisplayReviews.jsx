@@ -53,12 +53,11 @@ const DisplayReviews = ({ type, uniqueId }) => {
   }
   return (
     <div>
-
       {reviews.length === 0 ? (
         placeId.length === 0 ? (
-          <h3 style={{ color: 'black' }}>No reviews to view yet!</h3>
-        ) : (
           <h3 style={{ color: 'white' }}>No reviews to view yet!</h3>
+        ) : (
+          <h3 style={{ color: 'black' }}>No reviews to view yet!</h3>
         )
       ) : (
         <ul>

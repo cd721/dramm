@@ -114,7 +114,6 @@ const exportedMethods = {
         try {
             const cachedPosts = await client.json.get(redisKey);
             if (cachedPosts) {
-                console.log("Returning cached posts");
                 return cachedPosts;
             }
 
@@ -127,7 +126,6 @@ const exportedMethods = {
 
             await client.json.set(redisKey, '$', result);
 
-            console.log("Posts fetched from database and cached");
             return result;
         } catch (error) {
             console.error("Error in getPostsByPlace:", error.message);

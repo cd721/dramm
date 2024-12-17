@@ -129,95 +129,95 @@ const exportedMethods = {
             throw new Error('Error: Unable to fetch posts for the given user');
         }
     },
-    async editPost(postId, updatedFields) {
-        if (!postId) throw 'Error: You must provide an id to search for';
-        if (typeof postId !== 'string') throw 'Error: id must be a string';
-        postId = postId.trim();
-        if (postId.length === 0)
-            throw 'Error: id cannot be an empty string or just spaces';
-        if (!ObjectId.isValid(postId)) throw 'Error: invalid object ID';
-        if (Object.keys(updatedFields).length === 0) throw 'no fields to update'
+    // async editPost(postId, updatedFields) {
+    //     if (!postId) throw 'Error: You must provide an id to search for';
+    //     if (typeof postId !== 'string') throw 'Error: id must be a string';
+    //     postId = postId.trim();
+    //     if (postId.length === 0)
+    //         throw 'Error: id cannot be an empty string or just spaces';
+    //     if (!ObjectId.isValid(postId)) throw 'Error: invalid object ID';
+    //     if (Object.keys(updatedFields).length === 0) throw 'no fields to update'
 
-        const postCollection = await posts();
-        const post = await postCollection.findOne({ _id: new ObjectId(postId) });
-        if (!post) throw "post not found"
+    //     const postCollection = await posts();
+    //     const post = await postCollection.findOne({ _id: new ObjectId(postId) });
+    //     if (!post) throw "post not found"
 
-        let update = {}
+    //     let update = {}
 
-        if (!updatedFields) throw "must have updated fields"
+    //     if (!updatedFields) throw "must have updated fields"
 
-        if (updatedFields.has("caption")) {
-            let caption = updatedFields.caption
+    //     if (updatedFields.has("caption")) {
+    //         let caption = updatedFields.caption
 
-            if (!caption) throw `Error: You must supply a caption!`;
-            if (typeof caption !== 'string') throw `Error: caption must be a string!`;
-            caption = caption.trim();
-            if (caption.length < 50 || caption.length > 500)
-                throw `Error: caption must be between 50 and 500 characters`;
-            if (!isNaN(caption))
-                throw `Error: caption is not a valid value for caption as it only contains digits`;
+    //         if (!caption) throw `Error: You must supply a caption!`;
+    //         if (typeof caption !== 'string') throw `Error: caption must be a string!`;
+    //         caption = caption.trim();
+    //         if (caption.length < 50 || caption.length > 500)
+    //             throw `Error: caption must be between 50 and 500 characters`;
+    //         if (!isNaN(caption))
+    //             throw `Error: caption is not a valid value for caption as it only contains digits`;
 
-            update.caption = caption
-        }
+    //         update.caption = caption
+    //     }
 
-        if (updatedFields.has("photo")) {
-            update.photo = updatedFields.photo
-        }
+    //     if (updatedFields.has("photo")) {
+    //         update.photo = updatedFields.photo
+    //     }
 
-        if (updatedFields.has('location')) {
-            let location = updatedFields.location
+    //     if (updatedFields.has('location')) {
+    //         let location = updatedFields.location
 
-            if (!location) throw `Error: You must supply a location!`;
-            if (typeof location !== 'string') throw `Error: location must be a string!`;
-            location = location.trim();
-            if (location.length < 5 || location.length > 25)
-                throw `Error: location must be between 5 and 25 characters`;
-            if (!isNaN(location))
-                throw `Error: location is not a valid value for location as it only contains digits`;
-            update.location = location
-        }
+    //         if (!location) throw `Error: You must supply a location!`;
+    //         if (typeof location !== 'string') throw `Error: location must be a string!`;
+    //         location = location.trim();
+    //         if (location.length < 5 || location.length > 25)
+    //             throw `Error: location must be between 5 and 25 characters`;
+    //         if (!isNaN(location))
+    //             throw `Error: location is not a valid value for location as it only contains digits`;
+    //         update.location = location
+    //     }
 
-        if (updatedFields.has("date")) {
-            let date = updatedFields.date
+    //     if (updatedFields.has("date")) {
+    //         let date = updatedFields.date
 
-            if (!date) throw `Error: You must supply a date!`;
-            const today = moment().format("MM/DD/YYYY");
-            if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
-                throw "Invalid Date. Must be in MM/DD/YYYY format before today.";
-            }
-            update.date = date
-        }
+    //         if (!date) throw `Error: You must supply a date!`;
+    //         const today = moment().format("MM/DD/YYYY");
+    //         if (!moment(date, "MM/DD/YYYY", true).isValid() || !moment(date, "MM/DD/YYYY", true).isSameOrBefore(today, "day")) {
+    //             throw "Invalid Date. Must be in MM/DD/YYYY format before today.";
+    //         }
+    //         update.date = date
+    //     }
 
-        if (updatedFields.has("rating")) {
-            let rating = updatedFields.rating
-            if (!rating) throw `Error: You must supply a rating!`;
-            if (typeof rating !== 'number') {
-                throw "rating must be a number"
-            }
-            if (isNaN(rating) || rating < 0 || rating > 10) {
-                throw "invalid rating"
-            }
-            const parts = rating.toString().split('.');
-            if (parts.length > 1 && parts[1].length > 1) {
-                throw "rating must only have one decimal point"
-            }
-            update.rating = rating
+    //     if (updatedFields.has("rating")) {
+    //         let rating = updatedFields.rating
+    //         if (!rating) throw `Error: You must supply a rating!`;
+    //         if (typeof rating !== 'number') {
+    //             throw "rating must be a number"
+    //         }
+    //         if (isNaN(rating) || rating < 0 || rating > 10) {
+    //             throw "invalid rating"
+    //         }
+    //         const parts = rating.toString().split('.');
+    //         if (parts.length > 1 && parts[1].length > 1) {
+    //             throw "rating must only have one decimal point"
+    //         }
+    //         update.rating = rating
 
-        }
+    //     }
 
-        const updateResult = await postCollection.updateOne(
-            { _id: new ObjectId(postId) },
-            { $set: update }
-        );
+    //     const updateResult = await postCollection.updateOne(
+    //         { _id: new ObjectId(postId) },
+    //         { $set: update }
+    //     );
 
-        if (!updateResult.modifiedCount) {
-            throw "no changes made";
-        }
+    //     if (!updateResult.modifiedCount) {
+    //         throw "no changes made";
+    //     }
 
-        await client.flushDb();
+    //     await client.flushDb();
 
-        return { postId, updatedFields: update };
-    },
+    //     return { postId, updatedFields: update };
+    // },
     
     async addComment(postId, uid, comment, name) {
         if (!postId) throw 'Error: You must provide an id to search for';

@@ -34,26 +34,26 @@ router.route("/").get(async (req, res) => {
 });
 
 //ERROR HANDLING FOR THIS TO BE FINISHED
-router
-    .route("/:pid/newReview")
-    .post(async (req, res) => {
-        try {
-            if (!checkId(req.params.pid) ){
-                return res.status(400).json({ error: "Invalid ID. "});
-            }
-            if (!checkId(req.body.uid) ){
-                return res.status(400).json({ error: "Invalid ID. "});
-            }
+// router
+//     .route("/:pid/newReview")
+//     .post(async (req, res) => {
+//         try {
+//             if (!checkId(req.params.pid) ){
+//                 return res.status(400).json({ error: "Invalid ID. "});
+//             }
+//             if (!checkId(req.body.uid) ){
+//                 return res.status(400).json({ error: "Invalid ID. "});
+//             }
 
-            let poster_id = xss(req.body.uid);
-            let post = xss(req.body.post);
-            let placeId = xss(req.params.pid);
-            const result = await placeData.addReviewToPlace(placeId, post, poster_id);
-            return res.status(200).json(result);
-        } catch (e) {
-            return res.status(500).render("errorSpecial", { error: e });
-        }
-    });
+//             let poster_id = xss(req.body.uid);
+//             let post = xss(req.body.post);
+//             let placeId = xss(req.params.pid);
+//             const result = await placeData.addReviewToPlace(placeId, post, poster_id);
+//             return res.status(200).json(result);
+//         } catch (e) {
+//             return res.status(500).render("errorSpecial", { error: e });
+//         }
+//     });
 
 router
     .route("/:pid")

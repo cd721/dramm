@@ -52,7 +52,7 @@ function App() {
 
             <Route path="/places" element={<Places />} />
             <Route path="/place/:id" element={<Place />} />
-            <Route path="/AddPlaceReview" element={<AddPlaceReview />} />
+            {/* <Route path="/AddPlaceReview" element={<AddPlaceReview />} /> */}
           
             <Route path="/profile/:id" element={<Profile />} />
 

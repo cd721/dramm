@@ -1,46 +1,48 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import axios from "axios"
 import Review from './Review.jsx'
+import { ReviewContext } from '../../context/ReviewContext.jsx'
 
 const DisplayReviews = ({ type, uniqueId }) => {
   const [reviews, setReviews] = useState([])
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [placeId, setPlaceId] = useState("")
+  const { refreshKey } = useContext(ReviewContext);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        if (uniqueId === undefined) {
-          console.log("hi")
-          const response = await axios.get("http://localhost:3001/posts");
+  const fetchPosts = async () => {
+    try {
+      if (uniqueId === undefined) {
+        console.log("hi")
+        const response = await axios.get("http://localhost:3001/posts");
+        setReviews(response.data);
+      }
+      else if (type === "place") {
+        //posts/byLocation/:id
+        setPlaceId(uniqueId)
+        console.log(placeId)
+        const response = await axios.get(`http://localhost:3001/posts/byLocation/${uniqueId}`);
+        if (response.data){
           setReviews(response.data);
         }
-        else if (type === "place") {
-          //posts/byLocation/:id
-          setPlaceId(uniqueId)
-          console.log(placeId)
-          const response = await axios.get(`http://localhost:3001/posts/byLocation/${uniqueId}`);
-          if (response.data){
-            setReviews(response.data);
-          }
-          console.log(response)
-        } else if (type === "user") {
-          const response = await axios.get(`http://localhost:3001/posts/byUser/${uniqueId}`);
-          if (response.data){
-            setReviews(response.data);
-          }
+        console.log(response)
+      } else if (type === "user") {
+        const response = await axios.get(`http://localhost:3001/posts/byUser/${uniqueId}`);
+        if (response.data){
+          setReviews(response.data);
         }
-      } catch (err) {
-        setError("Error fetching reviews");
-        console.error(err);
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err) {
+      setError("Error fetching reviews");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [refreshKey, uniqueId]);
 
   if (loading) {
     return <div>Loading reviews...</div>;

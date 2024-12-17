@@ -4,7 +4,9 @@ import moment from 'moment'
 import dayjs from 'dayjs'
 import redis from 'redis'
 const client = redis.createClient({
-   url: 'redis://cache:6379',
+   //url: 'redis://cache:6379',
+   host: "cache",
+  port: 6379,
    socket: {
     connectTimeout: 50000,
   }

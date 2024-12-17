@@ -20,6 +20,7 @@ router.get("/byLocation/:id", async (req, res) => {
         const postPlace = await posts.getPostsByPlace(placeId.trim());
         return res.status(200).json(postPlace);
     } catch (e) {
+        console.log(e.message)
         return res.status(500).json({ error: e.message });
     }
 });

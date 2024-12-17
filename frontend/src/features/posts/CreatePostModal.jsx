@@ -4,7 +4,8 @@ import "../shared/styles/posts.css"
 import axios from "axios"
 import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs'
-//NEED TO SHARE CONTEXTS FOR AFTER POST SUBMISSION
+import { ReviewContext } from '../../context/ReviewContext';
+
 const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
     //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
@@ -17,6 +18,8 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
     const { currentUser } = useContext(AuthContext);
     const [locationId, setLocationId] = useState("")
+    const { triggerRefresh } = useContext(ReviewContext);
+
 
     useEffect(() => {
         if (isOpen) {
@@ -104,7 +107,8 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
 
             await updatePlaceForUser(rating);
 
-            
+            triggerRefresh();
+            onClose();
         } catch (error) {
             console.error( error);
             setError("Error: something went wrong.");

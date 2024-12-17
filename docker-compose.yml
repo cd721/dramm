@@ -3,14 +3,8 @@ services:
     build: ./backend
     container_name: dramm_backend
     secrets:
-      - VITE_FIREBASE_KEY
-      - VITE_FIREBASE_DOMAIN
-      - VITE_FIREBASE_PROJECT_ID
-      - VITE_FIREBASE_STORAGE_BUCKET
-      - VITE_FIREBASE_SENDER_ID
-      - VITE_FIREBASE_APP_ID
-      - VITE_YELP_API_KEY
-      - VITE_WEATHER_API_KEY
+      - MONGO_INITDB_ROOT_PASSWORD
+      # - REDIS_PASSWORD
     ports: 
       - "127.0.0.1:3001:3001"
     volumes:
@@ -21,11 +15,32 @@ services:
       - cache
     environment:
       REDIS_HOST: cache
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/MONGO_INITDB_ROOT_PASSWORD
+
 
     
   frontend:
     build: ./frontend
     container_name: frontend
+    environment:
+      # VITE_FIREBASE_KEY: /run/secrets/VITE_FIREBASE_KEY
+      # VITE_FIREBASE_DOMAIN: /run/secrets/VITE_FIREBASE_DOMAIN
+      # VITE_FIREBASE_PROJECT_ID: /run/secrets/VITE_FIREBASE_PROJECT_ID
+      # VITE_FIREBASE_STORAGE_BUCKET: /run/secrets/VITE_FIREBASE_STORAGE_BUCKET
+      # VITE_FIREBASE_SENDER_ID: /run/secrets/VITE_FIREBASE_SENDER_ID
+      # VITE_FIREBASE_APP_ID: /run/secrets/VITE_FIREBASE_APP_ID
+      # VITE_YELP_API_KEY: /run/secrets/VITE_YELP_API_KEY
+      # VITE_WEATHER_API_KEY: /run/secrets/VITE_WEATHER_API_KEY
+      PORT: 8000
+    secrets:
+      - VITE_FIREBASE_KEY
+      - VITE_FIREBASE_DOMAIN
+      - VITE_FIREBASE_PROJECT_ID
+      - VITE_FIREBASE_STORAGE_BUCKET
+      - VITE_FIREBASE_SENDER_ID
+      - VITE_FIREBASE_APP_ID
+      - VITE_YELP_API_KEY
+      - VITE_WEATHER_API_KEY
     stdin_open: true
     ports: 
       # - "127.0.0.1:5173:5173"
@@ -33,14 +48,13 @@ services:
     volumes: 
       - ./frontend:/usr/src/app
       - /usr/src/app/node_modules
-    environment:
-      - PORT=8000
+    
 
   mongo:
     image: mongo:7.0
     environment:
-       - MONGO_INITDB_ROOT_USERNAME=dramm
-       - MONGO_INITDB_ROOT_PASSWORD=MONGO_INITDB_ROOT_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME: dramm
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/MONGO_INITDB_ROOT_PASSWORD
     ports:
       - 27017:27017
     volumes:
@@ -51,7 +65,9 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: redis-stack-server --requirepass sOmE_sEcUrE_pAsS
+    command: redis-stack-server
+    #["redis-stack-server", "/etc/redis/redis.conf"] 
+    #redis-stack-server --requirepass sOmE_sEcUrE_pAsS
     volumes: 
       - cache:/data
     
@@ -74,27 +90,32 @@ volumes:
 
 secrets:
   VITE_FIREBASE_KEY: 
-    #file: ./secret_VITE_FIREBASE_KEY.txt
-    environment: VITE_FIREBASE_KEY
+    file: secret_VITE_FIREBASE_KEY.txt
+    #environment: VITE_FIREBASE_KEY
   VITE_FIREBASE_DOMAIN:
-    #file: ./secret_VITE_FIREBASE_DOMAIN.txt
-    environment: VITE_FIREBASE_DOMAIN
+    file: secret_VITE_FIREBASE_DOMAIN.txt
+    #environment: VITE_FIREBASE_DOMAIN
   VITE_FIREBASE_PROJECT_ID:
-    #file: ./secret_VITE_FIREBASE_PROJECT_ID.txt
+    file: secret_VITE_FIREBASE_PROJECT_ID.txt
 
-    environment: VITE_FIREBASE_PROJECT_ID
+    #environment: VITE_FIREBASE_PROJECT_ID
   VITE_FIREBASE_STORAGE_BUCKET:
-    #file: ./secret_VITE_FIREBASE_STORAGE_BUCKET.txt
-    environment: VITE_FIREBASE_STORAGE_BUCKET
+    file: secret_VITE_FIREBASE_STORAGE_BUCKET.txt
+    #environment: VITE_FIREBASE_STORAGE_BUCKET
   VITE_FIREBASE_SENDER_ID:
-    #file: ./secret_VITE_FIREBASE_SENDER_ID.txt
-    environment: VITE_FIREBASE_SENDER_ID
+    file: secret_VITE_FIREBASE_SENDER_ID.txt
+   # environment: VITE_FIREBASE_SENDER_ID
   VITE_FIREBASE_APP_ID:
-    #file: ./secret_VITE_FIREBASE_APP_ID.txt
-    environment: VITE_FIREBASE_APP_ID
+    file: secret_VITE_FIREBASE_APP_ID.txt
+    #environment: VITE_FIREBASE_APP_ID
   VITE_YELP_API_KEY:
-    #file: ./secret_VITE_YELP_API_KEY.txt
-      environment: VITE_YELP_API_KEY
+    file: secret_VITE_YELP_API_KEY.txt
+    #environment: VITE_YELP_API_KEY
   VITE_WEATHER_API_KEY:
-    #file: ./secret_VITE_WEATHER_API_KEY.txt
-    environment: VITE_WEATHER_API_KEY
+    file: secret_VITE_WEATHER_API_KEY.txt
+    #environment: VITE_WEATHER_API_KEY
+  MONGO_INITDB_ROOT_PASSWORD:
+    file: ./secret_MONGO_INITDB_ROOT_PASSWORD.txt
+    #environment: MONGO_INITDB_ROOT_PASSWORD
+#   # REDIS_PASSWORD:
+#   #   environment: REDIS_PASSWORD

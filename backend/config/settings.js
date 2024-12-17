@@ -6,3 +6,5 @@ export const mongoConfig = {
   `mongodb+srv://dramm:${process.env.MONGO_INITDB_ROOT_PASSWORD}@554-final-project.xcldy.mongodb.net/?retryWrites=true&w=majority&appName=554-Final-Project`,
   database: 'dramm'
 };
+
+//${process.env.MONGO_INITDB_ROOT_PASSWORD}

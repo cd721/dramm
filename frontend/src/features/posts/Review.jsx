@@ -70,42 +70,46 @@ const Review = ({ post }) => {
     e.preventDefault();
 
     if (!newComment) {
-      alert("Must have a comment")
-      return
-    }
-    if (typeof newComment !== 'string') {
-      alert("comment must be a string")
-      return
-    }
-    setNewComment(newComment.trim())
-    if (newComment.length === 0) {
-      alert("comment cant be empty")
-      return
+      alert("Must have a comment");
+      return;
     }
 
-    if (newComment.length > 50) {
-      alert("comment cant be more than 50 chars")
-      return
+    if (typeof newComment !== "string") {
+      alert("Comment must be a string");
+      return;
     }
 
+    const trimmedComment = newComment.trim();
+
+    if (trimmedComment.length === 0) {
+      alert("Comment can't be empty");
+      return;
+    }
+
+    if (trimmedComment.length > 50) {
+      alert("Comment can't be more than 50 chars");
+      return;
+    }
     try {
       const response = await axios.patch(`http://localhost:3001/posts/comments/${currentUser.uid}`, {
         postId: post._id,
-        comment: newComment,
-        name: currentUser.displayName
+        comment: trimmedComment,
+        name: currentUser.displayName,
       });
-      console.log(response.data)
+      const newCommentData = { userId: currentUser.uid, comment: trimmedComment };
+      setComments((prevComments) => [...prevComments, newCommentData]);
+      setCommentAuthors((prevAuthors) => ({
+        ...prevAuthors,
+        [currentUser.uid]: currentUser.displayName,
+      }));
 
+      setNewComment("");
     } catch (e) {
       alert("Error: something went wrong.");
-      console.log(e)
-      return
+      console.log(e);
     }
-    const newCommentData = { name: currentUser.displayName, comment: newComment };
-    setComments(prevComments => [...prevComments, newCommentData]);
-    setNewComment("")
-
   };
+
 
   return (
     <div className="review-card">
@@ -119,7 +123,7 @@ const Review = ({ post }) => {
             />
             <p className="username">{username || 'user'}</p>
           </div>
-          <div className = "other-details">
+          <div className="other-details">
             <p><strong>Location:</strong> {post.location}</p>
             <p><strong>Rating:</strong> {post.rating} / 10</p>
             <p><strong>Visited Date:</strong> {post.date}</p>

@@ -104,27 +104,33 @@ const exportedMethods = {
         return postList;
     },
     async getPostsByPlace(placeId) {
-        if (!placeId) { throw 'Error: You must provide an id to search for' };
-        if (typeof placeId !== 'string') { throw 'Error: id must be a string' };
+        if (!placeId) throw 'Error: You must provide an id to search for';
+        if (typeof placeId !== 'string') throw 'Error: id must be a string';
         placeId = placeId.trim();
-        if (placeId.length === 0) {
-            throw 'Error: id cannot be an empty string or just spaces'
-        };
+        if (placeId.length === 0) throw 'Error: id cannot be an empty string or just spaces';
 
         const redisKey = `postsForPlace:${placeId}`;
 
-        const postsByPlaceExists = await client.exists(redisKey);
-        if (postsByPlaceExists) {
-            const postsByPlace = await client.json.get(redisKey);
-            return postsByPlace || [];
+        try {
+            const cachedPosts = await client.json.get(redisKey);
+            if (cachedPosts) {
+                return cachedPosts;
+            }
+
+            const postCollection = await posts();
+            const result = await postCollection.find({ locationId: placeId }).toArray();
+
+            if (!result) {
+                throw new Error("No posts found for this place ID");
+            }
+
+            await client.json.set(redisKey, '$', result);
+
+            return result;
+        } catch (error) {
+            console.error("Error in getPostsByPlace:", error.message);
+            throw new Error("Unable to fetch posts for the given place");
         }
-        const postCollection = await posts();
-
-        const result = await postCollection.find({ locationId: placeId }).toArray();
-        await client.json.set(redisKey, '$', result);
-        return result;
-
-
     },
     async getPostsByUser(userId) {
         if (!userId) throw new Error('Error: You must provide an ID to search for');

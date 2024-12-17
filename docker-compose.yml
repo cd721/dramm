@@ -2,6 +2,9 @@ services:
   backend:
     build: ./backend
     container_name: dramm_backend
+    environment:
+      REDIS_HOST: cache
+      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/MONGO_INITDB_ROOT_PASSWORD
     secrets:
       - MONGO_INITDB_ROOT_PASSWORD
       # - REDIS_PASSWORD
@@ -13,9 +16,7 @@ services:
     depends_on:
       - mongo
       - cache
-    environment:
-      REDIS_HOST: cache
-      MONGO_INITDB_ROOT_PASSWORD: /run/secrets/MONGO_INITDB_ROOT_PASSWORD
+    
 
 
     
@@ -115,7 +116,7 @@ secrets:
     file: secret_VITE_WEATHER_API_KEY.txt
     #environment: VITE_WEATHER_API_KEY
   MONGO_INITDB_ROOT_PASSWORD:
-    file: ./secret_MONGO_INITDB_ROOT_PASSWORD.txt
+    file: secret_MONGO_INITDB_ROOT_PASSWORD.txt
     #environment: MONGO_INITDB_ROOT_PASSWORD
 #   # REDIS_PASSWORD:
 #   #   environment: REDIS_PASSWORD

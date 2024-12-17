@@ -10,7 +10,7 @@ const dbConnection = async () => {
     _db = _connection.db(mongoConfig.database);
 
   }
-
+  console.log("***CONNECTION:   "+ `${process.env.MONGO_INITDB_ROOT_PASSWORD}`)
   return _db;
 };
 const closeConnection = async () => {

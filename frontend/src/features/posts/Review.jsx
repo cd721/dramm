@@ -63,7 +63,7 @@ const Review = ({ post }) => {
 
     fetchCommentAuthors();
 
-  }, [post.comments, commentAuthors]);
+  }, [post.comments]);
 
 
   const handleCommentSubmit = async (e) => {

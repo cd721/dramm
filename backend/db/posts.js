@@ -74,30 +74,7 @@ const exportedMethods = {
         await client.flushDb();
         return { signupCompleted: true };
     },
-    async deletePost(postId) {
-        if (!postId) throw 'Error: You must provide an id to search for';
-        if (typeof postId !== 'string') throw 'Error: id must be a string';
-        postId = postId.trim();
-        if (postId.length === 0)
-            throw 'Error: id cannot be an empty string or just spaces';
-        if (!ObjectId.isValid(postId)) throw 'Error: invalid object ID';
-
-        const postCollection = await posts();
-
-        //Try catch block here has been removed. If an error is thrown, it will
-        //automatically "bubble up" to calling function. Same thing has been done 
-        //with other try/catches in this file.
-        const result = await postCollection.findOneAndDelete({ _id: new ObjectId(postId) });
-        if (!result.value) {
-            throw "item not deleted"
-        }
-
-        await client.flushDb();
-
-        return { deleted: true }
-
-
-    },
+    
     async getAllPosts() {
         const postCollection = await posts();
         const postList = await postCollection.find({}).toArray();
@@ -241,40 +218,7 @@ const exportedMethods = {
 
         return { postId, updatedFields: update };
     },
-    async addLike(postId, uid) {
-        if (!postId) throw 'Error: You must provide an id to search for';
-        if (typeof postId !== 'string') throw 'Error: id must be a string';
-        postId = postId.trim();
-        if (postId.length === 0)
-            throw 'Error: id cannot be an empty string or just spaces';
-        if (!ObjectId.isValid(postId)) throw 'Error: invalid object ID';
-
-        if (!uid) throw 'Error: You must provide an id to search for';
-        if (typeof uid !== 'string') throw 'Error: id must be a string';
-        uid = uid.trim();
-        if (uid.length === 0)
-            throw 'Error: id cannot be an empty string or just spaces';
-
-        const postCollection = await posts();
-        const post = await postCollection.findOne({ _id: new ObjectId(postId) });
-        if (!post) throw "post not found"
-        const userCollection = await users();
-        const user = await userCollection.findOne({ _id: uid });
-        if (!user) throw "invalid user"
-
-        let updated = await postCollection.updateOne(
-            { _id: new ObjectId(postId) },
-            { $push: { likes: uid } }
-        )
-        if (!updated.modifiedCount) {
-            throw "The like could not be added to the post.";
-        }
-
-        await client.flushDb();
-
-        return { updated: true }
-
-    },
+    
     async addComment(postId, uid, comment, name) {
         if (!postId) throw 'Error: You must provide an id to search for';
         if (typeof postId !== 'string') throw 'Error: id must be a string';

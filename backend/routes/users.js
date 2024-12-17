@@ -26,6 +26,15 @@ const validateBio = (bio) => {
     return trimmedBio.length <= 250 && validCharacters.test(trimmedBio);
 };
 
+const checkId = (id) =>{
+    if (!id) return False
+    if (typeof id !== 'string') return False
+    id = id.trim();
+    if (id.length === 0)
+        return False
+    return true;
+}
+
 // Get places for user
 router.get("/:uid/places", async (req, res) => {
     try {
@@ -36,6 +45,9 @@ router.get("/:uid/places", async (req, res) => {
         }
 
         const uid = xss(req.params.uid);
+        if (!checkId(uid)){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const places = await users.getPlacesForUser(uid, type);
         return res.status(200).json(places);
     } catch (e) {
@@ -46,6 +58,10 @@ router.get("/:uid/places", async (req, res) => {
 // Update places for user
 router.patch("/:uid/places/:placeId", async (req, res) => {
     try {
+        if (!checkId(req.params.uid) || !checkId(req.params.placeId)){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
+
         const uid = xss(req.params.uid);
         const placeId = xss(req.params.placeId);
         const isBookmarked = req.body.isBookmarked !== undefined ? xss(req.body.isBookmarked) : undefined;
@@ -71,6 +87,9 @@ router.patch("/:uid/places/:placeId", async (req, res) => {
 
 router.delete("/:uid/places/:placeId", async (req, res) => {
     try {
+        if (!checkId(req.params.uid) || !checkId(req.params.placeId)){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const result = await users.removePlaceForUser(xss(req.params.uid), xss(req.params.placeId));
         return res.status(200).json(result);
     } catch (e) {
@@ -90,7 +109,11 @@ router.get("/", async (req, res) => {
 // Get user by ID
 router.get("/:uid", async (req, res) => {
     try {
+        if (!checkId(req.params.uid) ){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const uid = xss(req.params.uid);
+        
         const user = await users.getUserById(uid);
         return res.status(200).json(user);
     } catch (e) {
@@ -101,6 +124,9 @@ router.get("/:uid", async (req, res) => {
 // Add user if not exists
 router.post("/:uid", async (req, res) => {
     try {
+        if (!checkId(req.params.uid) ){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const uid = xss(req.params.uid);
         const result = await users.addUserIfNotExists(uid);
         return res.status(200).json(result);
@@ -112,6 +138,9 @@ router.post("/:uid", async (req, res) => {
 // Update user details
 router.patch("/:uid/details", async (req, res) => {
     try {
+        if (!checkId(req.params.uid) ){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const uid = xss(req.params.uid);
         const displayName = req.body.displayName ? xss(req.body.displayName.trim()) : undefined;
         const zipCode = req.body.zipCode ? xss(req.body.zipCode.trim()) : undefined;
@@ -154,6 +183,9 @@ router.patch("/:uid/details", async (req, res) => {
 
 router.get("/:uid/photo", async (req, res) => {
     try {
+        if (!checkId(req.params.uid) ){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const photo = await users.getUserPhoto(xss(req.params.uid));
         if (!photo) return res.status(404).json({ error: "User photo not found" });
         return res.status(200).json({ photo });
@@ -165,6 +197,9 @@ router.get("/:uid/photo", async (req, res) => {
 // Update photo
 router.patch('/:uid/photo', async (req, res) => {
     try {
+        if (!checkId(req.params.uid) ){
+            return res.status(400).json({ error: "Invalid ID. "});
+        }
         const uid = xss(req.params.uid);
         const photo = req.body.photo ? xss(req.body.photo) : undefined;
 

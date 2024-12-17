@@ -97,9 +97,9 @@ secrets:
     #file: secret_VITE_FIREBASE_DOMAIN.txt
     environment: VITE_FIREBASE_DOMAIN
   VITE_FIREBASE_PROJECT_ID:
-    file: secret_VITE_FIREBASE_PROJECT_ID.txt
+   # file: secret_VITE_FIREBASE_PROJECT_ID.txt
 
-    #environment: VITE_FIREBASE_PROJECT_ID
+    environment: VITE_FIREBASE_PROJECT_ID
   VITE_FIREBASE_STORAGE_BUCKET:
     #file: secret_VITE_FIREBASE_STORAGE_BUCKET.txt
     environment: VITE_FIREBASE_STORAGE_BUCKET

@@ -3,7 +3,9 @@ import { ObjectId } from "mongodb";
 import redis from 'redis';
 const client = redis.createClient({
  url: 'redis://cache:6379', 
-    
+      socket: {
+    connectTimeout: 50000,
+  },
 });await client.connect().then(() => { });
 
 let exportedMethods = {

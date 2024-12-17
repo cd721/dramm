@@ -267,7 +267,7 @@ function Place(props) {
           </table>
         </div>
         
-        <div className="place-info-container" id="place-hours">
+        <div className="place-info-container-hours" id="place-hours">
           <h4>Hours</h4>
           {placeData.hours ? (
             <HoursTable hours={placeData.hours} />
@@ -277,7 +277,7 @@ function Place(props) {
         </div>
       </div>
 
-      <h4>Reviews</h4>
+      <h2>Reviews</h2>
       <DisplayReviews type="place" uniqueId={placeData.id} />
     </div>
   );

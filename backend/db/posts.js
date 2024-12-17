@@ -112,13 +112,12 @@ const exportedMethods = {
         };
 
         const redisKey = `postsForPlace:${placeId}`;
-        const postsByPlaceExists = await client.json.get(redisKey);
+
+        const postsByPlaceExists = await client.exists(redisKey);
         if (postsByPlaceExists) {
-            const postsByPlace = await client.json.set(redisKey, '$', postsByPlace);
-
-            return postsByPlace;
+            const postsByPlace = await client.json.get(redisKey);
+            return postsByPlace || [];
         }
-
         const postCollection = await posts();
 
         const result = await postCollection.find({ locationId: placeId }).toArray();

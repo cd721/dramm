@@ -34,7 +34,7 @@ const Review = ({ post }) => {
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
-      
+
     };
     fetchUserData();
   }, [currentUser.uid]);
@@ -119,10 +119,11 @@ const Review = ({ post }) => {
             />
             <p className="username">{username || 'user'}</p>
           </div>
-
-          <p><strong>Location:</strong> {post.location}</p>
-          <p><strong>Rating:</strong> {post.rating} / 10</p>
-          <p><strong>Visited Date:</strong> {post.date}</p>
+          <div className = "other-details">
+            <p><strong>Location:</strong> {post.location}</p>
+            <p><strong>Rating:</strong> {post.rating} / 10</p>
+            <p><strong>Visited Date:</strong> {post.date}</p>
+          </div>
         </div>
         <p>{post.caption}</p>
       </div>
@@ -142,16 +143,18 @@ const Review = ({ post }) => {
             </li>
           ))}
         </ul>
-        <form onSubmit={handleCommentSubmit}>
+        <form onSubmit={handleCommentSubmit} className="comment-form">
           <input
             type="text"
             placeholder="Write a comment..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
+            className="comment-input"
           />
-          <button type="submit">Post</button>
+          <button type="submit" className="submit-button">Post</button>
         </form>
       </div>
+
     </div>
   )
 }

@@ -2,6 +2,8 @@ import { useContext, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { doCreateUserWithEmailAndPassword } from '../../firebase/FirebaseFunctions';
 import { AuthContext } from '../../context/AuthContext';
+import {Link, useNavigate} from 'react-router-dom';
+
 import SocialSignIn from './SocialSignIn';
 import axios from "axios"
 
@@ -10,13 +12,49 @@ function SignUp() {
   const [pwMatch, setPwMatch] = useState('');
   const [formError, setFormError] = useState('');
   const [redirect, setRedirect] = useState(false); 
+  const [formErrors, setFormErrors] = useState({});
+
+  const validateForm = ({ displayName, email, passwordOne, passwordTwo }) => {
+    const errors = {};
+
+    if (!displayName.trim()) {
+      errors.displayName = 'Name is required';
+    }
+    
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      errors.email = 'Enter a valid email address';
+    }
+
+    if (!passwordOne.trim()) {
+      errors.passwordOne = 'Password is required';
+    } else if (passwordOne.length < 6) {
+      errors.passwordOne = 'Password must be at least 6 characters';
+    }
+    if (passwordTwo !== passwordOne) {
+      errors.passwordTwo = 'Passwords do not match';
+    }
+
+    return errors;
+  };
 
   const handleSignUp = async (e) => {
     e.preventDefault();
     const { displayName, email, passwordOne, passwordTwo } = e.target.elements;
-    if (passwordOne.value !== passwordTwo.value) {
-      setPwMatch('Password does not match');
-      return false;
+
+    const errors = validateForm({
+      displayName: displayName.value,
+      email: email.value,
+      passwordOne: passwordOne.value,
+      passwordTwo: passwordTwo.value,
+    });
+
+    setFormErrors(errors);
+
+    // don't submit if >= 1 errors
+    if (Object.keys(errors).length > 0) {
+      return;
     }
 
     try {
@@ -29,12 +67,14 @@ function SignUp() {
       const x = await axios.post(`http://localhost:3001/users/${response.user.uid}`);
       setRedirect(true);
     } catch (error) {
-      setFormError(error.message);
+      setFormErrors({ form: error.message });
     }
   };
 
   if (currentUser && redirect) {
-    return <Navigate to='/home' />;
+    const navigate = useNavigate();
+    navigate('/home')
+
   }
 
   return (
@@ -42,27 +82,27 @@ function SignUp() {
       <div className='form-container'>
         <form id='signup-form' onSubmit={handleSignUp}>
           <h2>Sign up for DRAMM</h2>
-          <p className={formError ? 'form-overall-error' : ''}>{formError}</p>
-
+          {formErrors.form && <p className='form-overall-error'>{formErrors.form}</p>}
+        
           <div className='form-field'>
-            <label>Name</label>
-            <input
-              required
-              name='displayName'
-              type='text'
-              placeholder='Enter name'
-              autoFocus={true}
-            />
+            <label>Display Name</label>
+              <input
+                name='displayName'
+                type='text'
+                placeholder='Enter name'
+                autoFocus={true}
+              />
+              {formErrors.displayName && <p className='form-error'>{formErrors.displayName}</p>}
           </div>
 
           <div className='form-field'>
             <label>Email</label>
             <input
-              required
               name='email'
               type='email'
               placeholder='Enter email'
             />
+            {formErrors.email && <p className='form-error'>{formErrors.email}</p>}
           </div>
 
           <div className='form-row'>
@@ -74,8 +114,8 @@ function SignUp() {
                 type='password'
                 placeholder='Enter password'
                 autoComplete='off'
-                required
               />
+              {formErrors.passwordOne && <p className='form-error'>{formErrors.passwordOne}</p>}
             </div>
 
             <div className='form-field'>
@@ -85,16 +125,14 @@ function SignUp() {
                 type='password'
                 placeholder='Repeat password'
                 autoComplete='off'
-                required
               />
-              {pwMatch && <p className='form-error'>{pwMatch}</p>}
+              {formErrors.passwordTwo && <p className='form-error'>{formErrors.passwordTwo}</p>}
             </div>
           </div>
 
-
           <div className="form-buttons">
             <button className='button' type='submit'>
-              Sign in
+              Sign Up
             </button>
           </div>
         </form>

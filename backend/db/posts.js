@@ -99,8 +99,14 @@ const exportedMethods = {
 
     },
     async getAllPosts() {
+        const redisKey = "posts";
+        const exists = await client.exists(redisKey);
+        if(exists) {
+            return await client.json.get(redisKey);
+        }
         const postCollection = await posts();
         const postList = await postCollection.find({}).toArray();
+        await client.json.set(redisKey, '$', postList);
         return postList;
     },
     async getPostsByPlace(placeId) {
@@ -243,7 +249,10 @@ const exportedMethods = {
             throw "no changes made";
         }
 
-        await client.flushDb();
+        await client.del("posts");
+        await client.del("postsForPlace*");
+        await client.del("postsForUser*");
+
 
         return { postId, updatedFields: update };
     },
@@ -276,7 +285,9 @@ const exportedMethods = {
             throw "The like could not be added to the post.";
         }
 
-        await client.flushDb();
+        await client.del("posts");
+        await client.del("postsForUser*");
+        await client.del("postsForPlace*");
 
         return { updated: true }
 
@@ -330,8 +341,10 @@ const exportedMethods = {
         if (!updated.modifiedCount) {
             throw "The commend could not be added to the post.";
         }
-
-        await client.flushDb();
+        
+        await client.del("posts");
+        await client.del("postsForUser*");
+        await client.del("postsForPlace*");
 
         return newComment;
 

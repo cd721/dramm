@@ -54,7 +54,7 @@ let exportedMethods = {
         if (!newInsertInformation.insertedId) {
             throw "Insert failed!";
         }
-        await client.flushDb();
+        await client.del("places");
         return await this.getPlaceById(newInsertInformation.insertedId.toString());
     },
 
@@ -74,7 +74,9 @@ let exportedMethods = {
                 { $push: { reviews: newReview } }
             );
 
-        await client.flushDb();
+        await client.del(`place:${placeId}`);
+        await client.del(`places`);
+
         return result;
     }
 

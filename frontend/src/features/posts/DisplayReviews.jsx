@@ -64,8 +64,8 @@ const DisplayReviews = ({ type, uniqueId }) => {
           {reviews
             .slice()
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-            .map((post) => (
-              <Review key={post.id} post={post} />
+            .map((post, index) => (
+              <Review key={post.id || index} post={post} />
             ))}
         </ul>
       )}

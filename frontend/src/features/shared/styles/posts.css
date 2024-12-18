@@ -44,13 +44,15 @@ textarea {
 }
 
 .review-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+
   margin: 16px auto;
   padding: 16px;
   max-width: 800px;
   background-color: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  border-radius: 20px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .review-photo img {
@@ -64,10 +66,12 @@ textarea {
 
 .comment-section {
   background-color: #f9f9f9;
-  border: 1px solid #ddd;
+
   border-radius: 8px;
   padding: 20px;
   margin: 20px 0;
+
+  border: 1px solid #ddd;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -81,13 +85,14 @@ textarea {
   padding: 0;
   margin: 0;
 }
-
-.comment-item {
+.comments-list li {
   background-color: #fff;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-bottom: 10px;
+
+  text-align: left;
 }
 
 .comment-form {
@@ -134,6 +139,9 @@ textarea {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  padding-bottom: 1em;
+  border-bottom: 1px solid #ddd;
 }
 
 p {
@@ -143,15 +151,32 @@ p {
   white-space: normal;
 }
 
-.top {
+.review-card .top {
+  cursor: pointer;
+
   display: flex;
   flex-direction: row;
+
+  width: 40%;
+  margin-right: 20px;
+
+  border-radius: 12px;
+
+  transition: all 0.3s ease;
+}
+.review-card .top:hover {
+  transform: scale(1.05);
+
+  border: 1px solid black;
 }
 
 .username {
-  margin-left: 15px;
   font-weight: bold;
   font-size: 18px;
+
+  text-align: left;
+
+  margin: 12px;
 }
 
 h2,
@@ -166,12 +191,47 @@ small {
   color: grey
 }
 
-.other-details{
-  display:flex;
-  flex-direction:row;
-  justify-content: space-between;
-  margin-top: 4px;
+.other-details {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 15px;
+  margin-top: 8px;
 }
-.other-details p{
-  margin-right:15px;
+.other-details p {
+  margin: 0;
+
+  font-size: 0.9em;
+  color: #707070;
+}
+
+.other-details .review p {
+  text-align: left;
+}
+
+/* reviews */
+.stars-container {
+  display: flex;
+  gap: 5px;
+}
+
+.stars-container .star {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50px;
+
+  background-color: var(--primary-gray);
+}
+.star.filled {
+
+  background-color: var(--primary-orange);
+}
+.star img {
+  max-width: 15px;
+  max-height: 15px;
 }

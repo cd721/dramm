@@ -1,28 +1,44 @@
-const SearchPlaces = ({ searchValue }) => {
+const SearchPlaces = ({ searchValue, setZipCode, userZipCode }) => {
   return (
     <div className="search-container">
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          searchValue(e.target[0].value);
-          e.target.reset();
+          const searchTerm = e.target[0].value.trim();
+          const zipCode = e.target[1].value.trim();
+
+          searchValue(searchTerm);
+          
+          if (zipCode) {
+            setZipCode(zipCode);
+          } else {
+            setZipCode(userZipCode);
+          }
         }}
-      > 
+      >
         <div className="search-bar">
-          <input type="text" autoComplete="off" />
+          <input 
+            type="text" 
+            autoComplete="off" 
+            placeholder="Search places by name"
+            className="search-term" 
+          />
 
-          <button type="submit">Submit</button>
+          <input
+            type="text"
+            autoComplete="off"
+            placeholder="Enter zip code (optional)"
+            className="search-zip"
+          />
 
-          {/* clearing the search */}
-          <button
-            onClick={() => {
-              searchValue("");
-            }}
-          >
-            Clear
+          <button type="submit">
+            <img 
+                src={`/icons/search.png`}
+                alt={"Submit Search"}
+                className="search-icon"
+            />
           </button>
         </div>
-
       </form>
     </div>
   );

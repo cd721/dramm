@@ -20,6 +20,7 @@ const exportedMethods = {
         if (!id) throw new Error('You must provide an ID');
         if (!checkId(id)){
             throw new Error('Invalid ID');
+        }
         const redisKey = `user:${id}`;
         const exists = await client.exists(redisKey);
         if (exists) {

@@ -41,7 +41,7 @@ function PlaceList(props) {
         setUserZipCode(userData.zipCode);
       } catch (e) {
         console.error(e);
-        setUserZipCode("07030");
+        setUserZipCode("");
       }
 
       try {
@@ -68,14 +68,14 @@ function PlaceList(props) {
     };
 
     fetchData();
-  }, [searchTerm, activeCategories, currentPage, navigate]);
+  }, [searchTerm, activeCategories, currentPage, userZipCode, navigate]);
 
   const searchValue = (value) => {
     setSearchTerm(value);
     setCurrentPage(1);
   };
 
-  if (loading) {
+  if (loading ||userZipCode.length === 0) {
     return <h2>Loading...</h2>;
   }
 

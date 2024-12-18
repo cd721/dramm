@@ -41,7 +41,7 @@ services:
       VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
       VITE_YELP_API_KEY: ${VITE_YELP_API_KEY}
       VITE_WEATHER_API_KEY: ${VITE_WEATHER_API_KEY}
-      VITE_API_URL: ${VITE_API_URL}
+      VITE_API_URL: "localhost:3001"
     stdin_open: true
     ports: 
       # - "127.0.0.1:5173:5173"

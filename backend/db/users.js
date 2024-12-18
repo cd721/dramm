@@ -121,7 +121,8 @@ const exportedMethods = {
             }
 
             console.log("New place added successfully:", result);
-            await client.flushDb();
+            const redisKey = `placesForUser:${uid}*`;
+            await client.del(redisKey);
             return { inserted: true };
         }
     },
@@ -141,8 +142,8 @@ const exportedMethods = {
         if (!result.modifiedCount) {
             throw new Error("Failed to remove place");
         }
-
-        await client.flushDb();
+        const redisKey = `placesForUser:${uid}*`;
+        await client.del(redisKey);
 
         return { removed: true };
     },
@@ -239,7 +240,7 @@ const exportedMethods = {
         if (!updateResult.modifiedCount) {
             throw new Error("No changes made to the user profile.");
         }
-            
+
         return { uid, updatedFields: updateFields };
     },
 };

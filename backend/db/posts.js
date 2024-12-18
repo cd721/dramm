@@ -277,7 +277,7 @@ const exportedMethods = {
             throw "The like could not be added to the post.";
         }
 
-        await client.flushDb();
+        await client.del("posts");
 
         return { updated: true }
 
@@ -332,7 +332,7 @@ const exportedMethods = {
             throw "The commend could not be added to the post.";
         }
 
-        await client.flushDb();
+        await client.del("posts");
 
         return newComment;
 

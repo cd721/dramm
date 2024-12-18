@@ -99,8 +99,14 @@ const exportedMethods = {
 
     },
     async getAllPosts() {
+        const redisKey = "posts";
+        const exists = await client.exists(redisKey);
+        if(exists){
+            return client.json.get(redisKey);
+        }
         const postCollection = await posts();
         const postList = await postCollection.find({}).toArray();
+        await client.json.set(redisKey, '$', postList);
         return postList;
     },
     async getPostsByPlace(placeId) {
@@ -112,9 +118,9 @@ const exportedMethods = {
         };
 
         const redisKey = `postsForPlace:${placeId}`;
-        const postsByPlaceExists = await client.json.get(redisKey);
+        const postsByPlaceExists = await client.exists(redisKey);
         if (postsByPlaceExists) {
-            const postsByPlace = await client.json.set(redisKey, '$', postsByPlace);
+            const postsByPlace = await client.json.get(redisKey, '$', postsByPlace);
 
             return postsByPlace;
         }
@@ -136,7 +142,7 @@ const exportedMethods = {
         }
         const redisKey = `postsForUser:${userId}`;
 
-        const postsByUserExists = await client.json.exists(redisKey);
+        const postsByUserExists = await client.exists(redisKey);
         if (postsByUserExists) {
             const postsByUser = await client.json.get(redisKey)
 
@@ -234,7 +240,11 @@ const exportedMethods = {
             throw "no changes made";
         }
 
-        await client.flushDb();
+        const postsForPlaceKey = `postsForPlace:*`;
+        const postsKey ="posts";
+
+        await client.del(postsForPlaceKey);
+        await client.del(postsKey)
 
         return { postId, updatedFields: update };
     },

@@ -42,6 +42,8 @@ let exportedMethods = {
     },
 
     async addPlace(place_id, name) {
+        const redisKey = "places";
+
         let newplace = {
             _id: place_id,
             name: name, reviews: [], rating: null
@@ -54,11 +56,13 @@ let exportedMethods = {
         if (!newInsertInformation.insertedId) {
             throw "Insert failed!";
         }
-        await client.flushDb();
+        await client.del(redisKey);
         return await this.getPlaceById(newInsertInformation.insertedId.toString());
     },
 
     async addReviewToPlace(placeId, post, poster_id) {
+        const placesKey = "places";
+        const thisPlaceKey = `place:${id}`;
         const newReview = {
             _id: new ObjectId(),
             review: post,
@@ -74,7 +78,9 @@ let exportedMethods = {
                 { $push: { reviews: newReview } }
             );
 
-        await client.flushDb();
+        await client.del(placesKey);
+        await client.del(thisPlaceKey);
+
         return result;
     }
 

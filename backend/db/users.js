@@ -239,7 +239,7 @@ const exportedMethods = {
         if (!updateResult.modifiedCount) {
             throw new Error("No changes made to the user profile.");
         }
-
+            
         return { uid, updatedFields: updateFields };
     },
 };

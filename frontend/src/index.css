@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Overpass', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -29,6 +29,10 @@
   /* designs */
   --box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
   --semi-transparent: rgba(250, 250, 250, 0.8);
+}
+
+h1, h2, h3, h4, h5, h6, abbr {
+  font-family: 'Quando', system-ui, Avenir, Helvetica, Arial, sans-serif;;
 }
 
 * {

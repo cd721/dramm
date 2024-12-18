@@ -47,6 +47,7 @@
 .temp {
     font-weight: 550;
     font-size: 60px;
+    font-family: 'Inter';
     margin: 0;
     display: flex;
     justify-content: center;

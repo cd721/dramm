@@ -1,34 +1,41 @@
-import  {useContext, useState} from 'react';
-import {Link, Navigate} from 'react-router-dom';
-import {doCreateUserWithEmailAndPassword} from '../../firebase/FirebaseFunctions';
-import {AuthContext} from '../../context/AuthContext';
+import { useContext, useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { doCreateUserWithEmailAndPassword } from '../../firebase/FirebaseFunctions';
+import { AuthContext } from '../../context/AuthContext';
 import SocialSignIn from './SocialSignIn';
+import axios from "axios"
 
 function SignUp() {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
   const [pwMatch, setPwMatch] = useState('');
   const [formError, setFormError] = useState('');
+  const [redirect, setRedirect] = useState(false);  // Add state for redirecting
+
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-    const {displayName, email, passwordOne, passwordTwo} = e.target.elements;
+    const { displayName, email, passwordOne, passwordTwo } = e.target.elements;
     if (passwordOne.value !== passwordTwo.value) {
       setPwMatch('Password does not match');
       return false;
     }
 
     try {
-      await doCreateUserWithEmailAndPassword(
+      const response = await doCreateUserWithEmailAndPassword(
         email.value,
         passwordOne.value,
         displayName.value
       );
+
+      const x = await axios.post(`http://localhost:3001/users/${response.user.uid}`);
+      console.log(x)
+      setRedirect(true);
     } catch (error) {
       setFormError(error.message);
     }
   };
 
-  if (currentUser) {
+  if (currentUser && redirect) {
     return <Navigate to='/home' />;
   }
 
@@ -38,16 +45,16 @@ function SignUp() {
         <form id='signup-form' onSubmit={handleSignUp}>
           <h2>Sign up for DRAMM</h2>
           <p className={formError ? 'form-overall-error' : ''}>{formError}</p>
-        
+
           <div className='form-field'>
             <label>Name</label>
-              <input
-                required
-                name='displayName'
-                type='text'
-                placeholder='Enter name'
-                autoFocus={true}
-              />
+            <input
+              required
+              name='displayName'
+              type='text'
+              placeholder='Enter name'
+              autoFocus={true}
+            />
           </div>
 
           <div className='form-field'>

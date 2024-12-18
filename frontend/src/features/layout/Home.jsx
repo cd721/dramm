@@ -19,6 +19,7 @@ function Home() {
   useEffect(() => {
     const fetchUserData = async () => {
         try {
+            console.log(currentUser.uid)
             const response = await axios.get(`http://localhost:3001/users/${currentUser.uid}`);
             const userData = response.data;
             if (userData.zipCode) setZipCode(userData.zipCode);

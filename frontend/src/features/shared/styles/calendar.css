@@ -19,8 +19,9 @@
 .react-calendar__month-view__days__day,
 .react-calendar__month-view__weekdays__weekday,
 .react-calendar__year-view__months__month {
-    border-radius: 4px;
-    border: 1px solid #bebebe;
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* navigation */
@@ -187,8 +188,9 @@
     padding: 20px;
     margin: 15px;
 
-    border: 1px solid black;
     border-radius: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .review-list li>div {

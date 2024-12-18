@@ -1,6 +1,6 @@
 import  {useContext, useState} from 'react';
 import SocialSignIn from './SocialSignIn';
-import {Link, Navigate} from 'react-router-dom';
+import {Link, Navigate, useNavigate} from 'react-router-dom';
 import {AuthContext} from '../../context/AuthContext';
 import {
   doSignInWithEmailAndPassword,
@@ -9,16 +9,43 @@ import {
 
 function SignIn() {
   const {currentUser} = useContext(AuthContext);
-  const [formError, setFormError] = useState('');
+  const [formErrors, setFormErrors] = useState({});
+
+  const validateForm = ({ email, password }) => {
+    const errors = {};
+    if (!email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+      errors.email = 'Enter a valid email address';
+    }
+
+    if (!password.trim()) {
+      errors.password = 'Password is required';
+    }
+    
+    return errors;
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
-    let {email, password} = event.target.elements;
+    const { email, password } = event.target.elements;
+
+    const errors = validateForm({
+      email: email.value,
+      password: password.value,
+    });
+
+    setFormErrors(errors);
+
+    // don't submit if >= 1 errors
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
 
     try {
       await doSignInWithEmailAndPassword(email.value, password.value);
     } catch (error) {
-      setFormError(error.message);
+      setFormErrors({ form: error.message });
     }
   };
 
@@ -34,15 +61,18 @@ function SignIn() {
       );
     }
   };
+
+  const navigate = useNavigate();
   if (currentUser) {
-    return <Navigate to='/home' />;
+    navigate('/home')
   }
+
   return (
     <article className='form-page'>
       <div className='form-container'>
         <form id='signin-form' onSubmit={handleLogin}>
           <h2>Log in to DRAMM</h2>
-          <p className={formError ? 'form-overall-error' : ''}>{formError}</p>
+          {formErrors.form && <p className='form-overall-error'>{formErrors.form}</p>}
 
           <div className='form-field'>
             <label>Email</label>
@@ -51,9 +81,9 @@ function SignIn() {
               id='email'
               type='email'
               placeholder='Enter email'
-              required
               autoFocus={true}
             />
+            {formErrors.email && <p className='form-error'>{formErrors.email}</p>}
           </div>
 
           <div className='form-field'>
@@ -63,8 +93,8 @@ function SignIn() {
               type='password'
               placeholder='Enter password'
               autoComplete='off'
-              required
             />
+            {formErrors.password && <p className='form-error'>{formErrors.password}</p>}
 
             <a className='forgot-password' onClick={passwordReset}>
               Forgot your password?

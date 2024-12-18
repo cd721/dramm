@@ -226,7 +226,7 @@ const exportedMethods = {
         if (!uid || !updateFields) {
             throw new Error("User ID and fields to update are required");
         }
-        const redisKey = `user:${id}`
+        const redisKey = `user:${uid}`
 
         const userCollection = await users();
         const updateResult = await userCollection.updateOne(

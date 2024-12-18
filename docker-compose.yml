@@ -1,6 +1,10 @@
 services:
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      args:
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
     container_name: dramm_backend
     environment:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}

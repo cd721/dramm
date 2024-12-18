@@ -70,6 +70,8 @@ jobs:
         with:
           context: ./backend
           file: ./backend/Dockerfile
+          build-args: |
+            MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_INITDB_ROOT_PASSWORD }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm-backend:latest
 

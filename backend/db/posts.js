@@ -4,10 +4,10 @@ import moment from 'moment'
 import dayjs from 'dayjs'
 import redis from 'redis'
 const client = redis.createClient({
-    url:"redis://redis:6379",
+   // url:"redis://0.0.0.0:6379",
 
    socket: {
-    
+
     connectTimeout: 50000,
   }
 });await client.connect().then(() => { });

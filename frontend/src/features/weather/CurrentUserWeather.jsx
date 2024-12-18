@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from "axios"
+import axios from '../../../config/axiosConfig.js';
 import '../shared/styles/weather.css'
 import moment from "moment"
 

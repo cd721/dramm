@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import axios from '../../../config/axiosConfig.js';
 import { useNavigate } from "react-router-dom";
 import PlaceListCard from "./PlaceListCard.jsx";
 import SearchPlaces from "./SearchPlaces.jsx";

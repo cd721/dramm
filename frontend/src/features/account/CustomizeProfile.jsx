@@ -3,7 +3,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { TextField, Box, Avatar, Button } from "@mui/material";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import React, { useState, useContext, useEffect } from "react";
-import axios from "axios";
+import axios from '../../../config/axiosConfig.js';
 import { AuthContext } from "../../context/AuthContext";
 import { updateProfile } from "firebase/auth";
 import "../shared/styles/profile.css";

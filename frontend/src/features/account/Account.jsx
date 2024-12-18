@@ -20,7 +20,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import zipcodes from 'zipcodes';
 import DisplayReviews from '../posts/DisplayReviews';
 import { useTitle } from '../shared/hooks/commonHooks';
-import axios from 'axios';
+import axios from '../../../config/axiosConfig.js';
 import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 

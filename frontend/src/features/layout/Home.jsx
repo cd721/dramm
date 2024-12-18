@@ -4,7 +4,7 @@ import '../shared/styles/home.css'
 import CreatePostModal from '../posts/CreatePostModal.jsx';
 import DisplayReviews from '../posts/DisplayReviews.jsx';
 import CurrentUserWeather from '../weather/CurrentUserWeather.jsx';
-import axios from "axios"
+import axios from '../../../config/axiosConfig.js';
 import { useTitle } from '../shared/hooks/commonHooks.js';
 import ForYou from '../for-you/ForYou.jsx';
 

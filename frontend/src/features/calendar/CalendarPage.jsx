@@ -4,7 +4,7 @@ import '../shared/styles/calendar.css';
 import '../shared/styles/miscPages.css';
 import { useTitle } from "../shared/hooks/commonHooks.js";
 import { AuthContext } from "../../context/AuthContext.jsx";
-import axios from "axios";
+import axios from '../../../config/axiosConfig.js';
 import { Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;

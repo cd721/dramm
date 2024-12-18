@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import axios from 'axios';
+import axios from '../../../config/axiosConfig.js';
 
 function AddPlaceReview(props) {
   const [inputVal, setInputVal] = useState('');

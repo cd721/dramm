@@ -9,9 +9,11 @@ import yelpCategories from "../../helpers/categories.js";
 import { useTitle } from "../shared/hooks/commonHooks.js";
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function getUserData(currentUser) {
   const { data } = await axios.get(
-    `http://localhost:3001/users/${currentUser.uid}`
+    `${API_URL}/users/${currentUser.uid}`
   );
   return data;
 }

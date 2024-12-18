@@ -3,6 +3,8 @@ import axios from "axios"
 import Review from './Review.jsx'
 import { ReviewContext } from '../../context/ReviewContext.jsx'
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const DisplayReviews = ({ type, uniqueId }) => {
   const [reviews, setReviews] = useState([])
   const [error, setError] = useState("");
@@ -14,20 +16,20 @@ const DisplayReviews = ({ type, uniqueId }) => {
     try {
       if (uniqueId === undefined) {
         console.log("hi")
-        const response = await axios.get("http://localhost:3001/posts");
+        const response = await axios.get(`${API_URL}/posts`);
         setReviews(response.data);
       }
       else if (type === "place") {
         //posts/byLocation/:id
         setPlaceId(uniqueId)
         console.log(placeId)
-        const response = await axios.get(`http://localhost:3001/posts/byLocation/${uniqueId}`);
+        const response = await axios.get(`${API_URL}/posts/byLocation/${uniqueId}`);
         if (response.data){
           setReviews(response.data);
         }
         console.log(response)
       } else if (type === "user") {
-        const response = await axios.get(`http://localhost:3001/posts/byUser/${uniqueId}`);
+        const response = await axios.get(`${API_URL}/posts/byUser/${uniqueId}`);
         if (response.data){
           setReviews(response.data);
         }

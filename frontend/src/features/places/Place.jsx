@@ -11,6 +11,8 @@ import { AuthContext } from "../../context/AuthContext.jsx";
 
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Place(props) {
   const navigate = useNavigate();
 
@@ -29,7 +31,7 @@ function Place(props) {
   async function bookmarkPlaceForUser(place) {
     try {
         const { data } = await axios.patch(
-            `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+            `${API_URL}/users/${currentUser.uid}/places/${place.id}`,
             {
                 isBookmarked: true,
                 name: place.name || "Unknown Place",
@@ -56,17 +58,11 @@ function Place(props) {
   async function removeBookmarkForUser(place) {
     try {
         const { data } = await axios.patch(
-            `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+            `${API_URL}/users/${currentUser.uid}/places/${place.id}`,
             {
                 isBookmarked: false
             }
         );
-
-        // if (data.modifiedCount) {
-        //     alert(`You have removed ${place.name} from your bookmarks.`);
-        // } else {
-        //     alert(`${place.name} could not be removed from your bookmarks.`);
-        // }
 
         setUserHasPlace(false);
     } catch (error) {
@@ -127,7 +123,7 @@ function Place(props) {
         if (!placeData || !placeData.id) return;
 
         const { data: placesForUser } = await axios.get(
-            `http://localhost:3001/users/${currentUser.uid}/places`
+            `${API_URL}/users/${currentUser.uid}/places`
         );
 
         const bookmarked = placesForUser.some(

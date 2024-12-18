@@ -7,6 +7,7 @@ import { AuthContext } from "../../context/AuthContext.jsx";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+const API_URL = import.meta.env.VITE_API_URL;
 
 const formatToMMDDYYYY = (date) => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -32,7 +33,7 @@ export const CalendarPage = () => {
             if (!currentUser) return;
 
             try {
-                const { data } = await axios.get(`http://localhost:3001/posts/byUser/${currentUser.uid}`);
+                const { data } = await axios.get(`${API_URL}/posts/byUser/${currentUser.uid}`);
                 setUserPosts(data);
                 
             } catch (error) {

@@ -27,6 +27,8 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import StreakBadge from './StreakBadge';
 dayjs.extend(isoWeek);
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const lightTheme = createTheme({
     palette: {
         mode: "light",
@@ -59,7 +61,7 @@ function Account() {
   useEffect(() => {
       const fetchUserData = async (uid) => {
           try {
-              const response = await fetch(`http://localhost:3001/users/${uid}`);
+              const response = await fetch(`${API_URL}/users/${uid}`);
               if (!response.ok) {
                   throw new Error(`Failed to fetch user data: ${response.statusText}`);
               }
@@ -92,8 +94,8 @@ function Account() {
       try {
         const endpoint =
           selectedView === "bookmarked"
-            ? `http://localhost:3001/users/${currentUser.uid}/places?type=bookmarked`
-            : `http://localhost:3001/users/${currentUser.uid}/places?type=visited`;
+            ? `${API_URL}/users/${currentUser.uid}/places?type=bookmarked`
+            : `${API_URL}/users/${currentUser.uid}/places?type=visited`;
 
         const response = await fetch(endpoint);
         if (!response.ok) {
@@ -114,7 +116,7 @@ function Account() {
   useEffect(() => {
       const fetchReviewsAndCalculateStreak = async () => {
         try {
-          const response = await axios.get(`http://localhost:3001/posts/byUser/${currentUser.uid}`);
+          const response = await axios.get(`${API_URL}/posts/byUser/${currentUser.uid}`);
           const reviews = response.data;
 
           const today = dayjs();

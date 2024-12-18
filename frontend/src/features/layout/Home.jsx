@@ -8,6 +8,8 @@ import axios from "axios"
 import { useTitle } from '../shared/hooks/commonHooks.js';
 import ForYou from '../for-you/ForYou.jsx';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function Home() {
   useTitle('Home');
 
@@ -19,7 +21,7 @@ function Home() {
   useEffect(() => {
     const fetchUserData = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/users/${currentUser.uid}`);
+            const response = await axios.get(`${API_URL}/users/${currentUser.uid}`);
             const userData = response.data;
             if (userData.zipCode) setZipCode(userData.zipCode);
           

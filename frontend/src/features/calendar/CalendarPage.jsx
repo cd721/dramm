@@ -6,6 +6,7 @@ import { useTitle } from "../shared/hooks/commonHooks.js";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { RatingStars } from "../posts/RatingStars.jsx";
 
 
 const formatToMMDDYYYY = (date) => {
@@ -138,7 +139,7 @@ export const CalendarPage = () => {
                                 <li key={index}>
                                     <div>
                                         <h4><Link to={`/place/${post.locationId}`}>{post.location}</Link></h4>
-                                        <p>Rating: {post.rating}</p>
+                                        <RatingStars rating={post.rating} maxStars={10}/>
                                     </div>
                                     <p>{post.caption}</p>
                                 </li>

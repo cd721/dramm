@@ -2,8 +2,9 @@ import React, { useContext, useState, useEffect } from 'react'
 import "../shared/styles/posts.css"
 import { AuthContext } from '../../context/AuthContext';
 import axios from "axios"
-import { TextField, Box, Avatar, Button } from '@mui/material';
+import { Avatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { RatingStars } from './RatingStars';
 
 const Review = ({ post }) => {
   const [newComment, setNewComment] = useState("");
@@ -27,22 +28,23 @@ const Review = ({ post }) => {
       try {
         const response = await axios.get(`http://localhost:3001/users/${post.userId}`);
         const userData = response.data;
-        if (userData.photo) setProfilePic(userData.photo);
-        setUsername(userData.displayName)
-        console.log(response)
-        setComments(post.comments)
+        setProfilePic(userData.photo || "");
+        setUsername(userData.displayName || "user");
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setUsername("Unknown User");
       }
-
     };
+
     fetchUserData();
-  }, [currentUser.uid]);
+  }, [post]);
 
   useEffect(() => {
+    setComments([]);
+    setCommentAuthors({});
+    
     const fetchCommentAuthors = async () => {
-      const authorData = { ...commentAuthors };
-
+      const authorData = {};
       await Promise.all(
         post.comments.map(async (comment) => {
           if (!authorData[comment.userId]) {
@@ -59,11 +61,11 @@ const Review = ({ post }) => {
       );
 
       setCommentAuthors(authorData);
+      setComments(post.comments);
     };
 
     fetchCommentAuthors();
-
-  }, [post.comments]);
+  }, [post]);
 
 
   const handleCommentSubmit = async (e) => {
@@ -124,9 +126,14 @@ const Review = ({ post }) => {
             <p className="username">{username || 'user'}</p>
           </div>
           <div className="other-details">
-            <p><strong>Location:</strong> {post.location}</p>
-            <p><strong>Rating:</strong> {post.rating} / 10</p>
+            <p><strong>Location:</strong> <a href={`/place/${post.locationId}`}>{post.location}</a></p>
+            
             <p><strong>Visited Date:</strong> {post.date}</p>
+
+            <div className='review'>
+              <RatingStars rating={post.rating} maxStars={10} />
+              <p><strong>Rating:</strong> {post.rating} / 10</p>
+            </div>
           </div>
         </div>
         <p>{post.caption}</p>

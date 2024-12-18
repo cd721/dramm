@@ -4,19 +4,22 @@ import "../shared/styles/posts.css"
 import axios from "axios"
 import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs'
-//NEED TO SHARE CONTEXTS FOR AFTER POST SUBMISSION
+import { ReviewContext } from '../../context/ReviewContext';
+
 const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
     //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
     const [photos, setPhotos] = useState('');
     const [location, setLocation] = useState('');
-    const [rating, setRating] = useState(undefined);
-    const [error, setError] = useState('');
+    const [rating, setRating] = useState("");
+    const [formErrors, setFormErrors] = useState('');
     const [date, setDate] = useState('');
     const [photoBase64, setPhotoBase64] = useState("");
     const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2 MB size limit
     const { currentUser } = useContext(AuthContext);
     const [locationId, setLocationId] = useState("")
+    const { triggerRefresh } = useContext(ReviewContext);
+
 
     useEffect(() => {
         if (isOpen) {
@@ -25,63 +28,54 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
         }
       }, [isOpen, place]); 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const validateForm = () => {
+        const errors = {};
+
         if (!caption) {
-            setError("Must have a caption")
-            return
-        }
-        if (typeof caption !== 'string') {
-            setError("Must have string input for caption")
-            return
-        }
-        setCaption(caption.trim())
-        if (!isNaN(caption) || caption.length < 50 || caption.length > 500) {
-            setError("Invalid caption length.")
-            return
-        }
-        if (!location) {
-            setError("Must have a location")
-            return
-        }
-        if (typeof location !== 'string') {
-            setError("Must have string input for location")
-            return
-        }
-        setLocation(location.trim())
-        if (!isNaN(location) || location.length < 5 || location.length > 25) {
-            console.log(location)
-            setError("Invalid location length.")
-            return
-        }
-        if (!rating) {
-            setError("Must have a rating")
-            return
-        }
-        if (typeof rating !== 'number') {
-            setError("Must have number input for rating")
-            return
-        }
-        if (isNaN(rating) || rating < 0 || rating > 10) {
-            setError("Invalid rating.")
-            return
+            errors.caption = 'Caption is required';
+        } else if (typeof caption !== 'string' || caption.trim().length < 50 || caption.trim().length > 500) {
+            errors.caption = 'Caption must be between 50 and 500 characters';
         }
 
-        if (photos.size > MAX_FILE_SIZE) {
-            setError("File size exceeds 2 MB. Please upload a smaller file.");
-            return;
+        if (!location) {
+            errors.location = 'Location is required';
+        } else if (typeof location !== 'string' || location.trim().length < 5 || location.trim().length > 25) {
+            errors.location = 'Location must be between 5 and 25 characters';
+        }
+
+        if (!rating) {
+            errors.rating = 'Rating is required';
+        } else if (isNaN(rating) || rating < 0 || rating > 10) {
+            errors.rating = 'Rating must be a number between 0 and 10';
+        }
+
+        if (photos && photos.size > MAX_FILE_SIZE) {
+            errors.photos = 'File size exceeds 2 MB. Please upload a smaller file.';
         }
 
         if (!date) {
-            setError("Must have date")
-            return
+            errors.date = 'Visited date is required';
+        } else {
+            const [year, month, day] = date.split('-');
+            const formattedDate = `${month}/${day}/${year}`;
+            const today = dayjs().format('MM/DD/YYYY');
+            if (!dayjs(formattedDate, 'MM/DD/YYYY', true).isValid() || dayjs(formattedDate, 'MM/DD/YYYY', true).isAfter(today, 'day')) {
+                errors.date = 'Invalid Date. Must be in MM/DD/YYYY format before today.';
+            }
         }
-        const [year, month, day] = date.split("-"); 
-        const formattedDate = `${month}/${day}/${year}`; 
-        const today = dayjs().format("MM/DD/YYYY");
-        if (!dayjs(formattedDate, "MM/DD/YYYY", true).isValid() || dayjs(formattedDate, "MM/DD/YYYY", true).isAfter(today, "day")) {
-            setError("Invalid Date. Must be in MM/DD/YYYY format before today.");
-            return
+
+        setFormErrors(errors);
+        if (Object.keys(errors).length > 0) {
+            return false;
+        } else{
+            return true;
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            return;
         }
 
         try {
@@ -91,7 +85,6 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                 compressedBase64 = await compressImage(photos);
                 console.log("Compressed Base64 size:", compressedBase64.length);
             }
-
 
             const response = await axios.post(`http://localhost:3001/posts/${currentUser.uid}`, {
                 caption,
@@ -104,10 +97,11 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
 
             await updatePlaceForUser(rating);
 
-            
+            triggerRefresh();
+            onClose();
         } catch (error) {
             console.error( error);
-            setError("Error: something went wrong.");
+            setFormErrors({ form: "Error: Something went wrong while submitting the post" });
             return
         }
         onClose()
@@ -150,7 +144,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
             }
         } catch (error) {
             console.error("Error updating user's places:", error);
-            setError("Error: something went wrong while updating places.");
+            setFormErrors({ form: "Error: Something went wrong while updating places" });
         }
     };
 
@@ -189,7 +183,8 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                 </button>
                 <h2>Create Review</h2>
                 <h3>Create a review to share your thoughts on this location!</h3>
-                {error && <p className="error">{error}</p>}
+                {formErrors.form && <p className='form-overall-error'>{formErrors.form}</p>}
+
                 <form onSubmit={handleSubmit} >
                     <div className="formInput">
                         <label htmlFor="caption">Review Caption:<span style={{ color: 'red' }}>*</span></label>
@@ -197,9 +192,9 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                             id="caption"
                             value={caption}
                             onChange={(e) => setCaption(e.target.value)}
-                            required
                         />
-                        <small>Min: 50 characters, Max: 500 characters</small>
+                        {formErrors.caption && <p className='form-error'>{formErrors.caption}</p>}
+                        <small>Min: 50 characters, Max: 500 characters ({caption.length}/500)</small>
                     </div>
 
                     <div className="formInput">
@@ -210,6 +205,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                             accept="image/*"
                             onChange={(e) => setPhotos(e.target.files[0])}
                         />
+                        {formErrors.photos && <p className='form-error'>{formErrors.photos}</p>}
                         <small>Add a picture if you'd like!</small>
                     </div>
 
@@ -221,8 +217,8 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                             type="date"
                             value={date}
                             onChange={(e) => setDate(e.target.value)}
-                            required
                         />
+                        {formErrors.date && <p className='form-error'>{formErrors.date}</p>}
                     </div>
 
                     <div className="formInput">
@@ -235,9 +231,9 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                             onChange={(e) => setRating(Number(e.target.value))}
                             min="0"
                             max="10"
-                            required
                             step="0.1"
                         />
+                        {formErrors.rating && <p className='form-error'>{formErrors.rating}</p>}
                     </div>
                     <button type="submit" className="create-post">
                         Submit

@@ -64,7 +64,7 @@ let exportedMethods = {
         if (!newInsertInformation.insertedId) {
             throw "Insert failed!";
         }
-        await client.flushDb();
+        await client.del("places");
         return await this.getPlaceById(newInsertInformation.insertedId.toString());
     },
 

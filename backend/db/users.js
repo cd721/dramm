@@ -6,6 +6,11 @@ await client.connect().then(() => { });
 // TODO: error handling + photo error handling for posts
 const exportedMethods = {
     async getAllUsers() {
+        const redisKey = "users";
+        const exists = await client.exists(redisKey);
+        if (exists) {
+            return await client.json.get(redisKey);
+        }
         const userCollection = await users();
         const userList = await userCollection.find({}).toArray();
         return userList;
@@ -15,10 +20,15 @@ const exportedMethods = {
         if (!id) throw new Error('You must provide an ID');
         if (!checkId(id)){
             throw new Error('Invalid ID');
+        const redisKey = `user:${id}`;
+        const exists = await client.exists(redisKey);
+        if (exists) {
+            return await client.json.get(redisKey);
         }
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: id });
         if (!user) throw new Error(`User with ID ${id} not found`);
+        await client.json.set(redisKey, "$", user);
         return user;
     },
     // NEED FIREBASE TO VALIDATE IF UID EXISTS ON FIREBASE
@@ -42,7 +52,7 @@ const exportedMethods = {
             if (!newInsertInformation.insertedId) {
                 throw new Error('Insert failed!');
             }
-
+            await client.del("users");
             return { signupCompleted: true };
 
         }
@@ -120,7 +130,7 @@ const exportedMethods = {
             }
 
             console.log("New place added successfully:", result);
-            await client.flushDb();
+            await client.del("placesForUser*");
             return { inserted: true };
         }
     },
@@ -144,7 +154,7 @@ const exportedMethods = {
             throw new Error("Failed to remove place");
         }
 
-        await client.flushDb();
+        await client.del("placesForUser*");
 
         return { removed: true };
     },
@@ -218,6 +228,7 @@ const exportedMethods = {
             throw new Error('Invalid ID');
         }
 
+        const redisKey = `user:${id}`
         const userCollection = await users();
         const updateResult = await userCollection.updateOne(
             { _id: uid },
@@ -229,6 +240,7 @@ const exportedMethods = {
             throw new Error("Failed to update user photo");
         }
 
+        await client.del(redisKey);
         return { success: true, photo };
     },
 
@@ -239,6 +251,8 @@ const exportedMethods = {
         if (!checkId(uid)){
             throw new Error('Invalid ID');
         }
+
+        const redisKey = `user:${uid}`
 
         const userCollection = await users();
         const updateResult = await userCollection.updateOne(
@@ -253,6 +267,7 @@ const exportedMethods = {
         if (!updateResult.modifiedCount) {
             throw new Error("No changes made to the user profile.");
         }
+        await client.del(redisKey);
         return { uid, updatedFields: updateFields };
     },
 };

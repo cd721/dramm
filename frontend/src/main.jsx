@@ -9,6 +9,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "@mui/material";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import darkTheme from "./features/shared/styles/theme.js";
+import { ReviewProvider } from "./context/ReviewContext.jsx";
 
 const app = initializeApp(fbconfig);
 
@@ -16,7 +17,9 @@ createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
       <ThemeProvider theme={darkTheme}>
-        <App />
+        <ReviewProvider>
+          <App />
+        </ReviewProvider>
       </ThemeProvider>
     </AuthProvider>
   </BrowserRouter>

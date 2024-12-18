@@ -19,8 +19,6 @@
     background-color: var(--secondary-gray);
 
     overflow-y: auto;
-
-
 }
 
 .home .left-side {
@@ -74,6 +72,14 @@
     background-color: var(--secondary-orange);
 }
 
+.fyp-button img {
+    max-width: 30px;
+    max-height: 30px;
+}
+
+.next-icon {
+    transform: rotate(180deg);
+}
 
 .recommendation {
     flex: 1;
@@ -100,6 +106,8 @@
 
 .recommendation h4 {
     margin: 10px auto;
+
+    text-align: left;
 }
 
 .recommendation>ul {

@@ -43,23 +43,36 @@ const ForYou = ({ zipCode }) => {
         <>
             {placesData.length > 0 ? (
                 <div className='recommendation-panel'>
-                    <button 
-                        className="fyp-button prev" 
-                        onClick={() => setCurrentIndex((prevIndex) => prevIndex - 1)}
-                        disabled={currentIndex === 0}
-                    >
-                        PREV
-                    </button>
+                    {currentIndex !== 0 &&
+                        <button 
+                            className="fyp-button prev" 
+                            onClick={() => setCurrentIndex((prevIndex) => prevIndex - 1)}
+                            disabled={currentIndex === 0}
+                        >
+                            <img 
+                                src={`/icons/arrow.png`}
+                                alt={"previous"}
+                                className="prev-icon"
+                            />
+                        </button>
+                    }
 
                     <Reccomendation key={placesData[currentIndex].id} place={placesData[currentIndex]} />
 
-                    <button 
-                        className="fyp-button next" 
-                        onClick={() => setCurrentIndex(prevIndex => prevIndex + 1)}
-                        disabled={currentIndex === placesData.length - 1}
-                    >
-                        NEXT
-                    </button>
+                    {currentIndex !== placesData.length - 1 &&
+                        <button 
+                            className="fyp-button next" 
+                            onClick={() => setCurrentIndex(prevIndex => prevIndex + 1)}
+                            disabled={currentIndex === placesData.length - 1}
+                        >
+                            <img 
+                                src={`/icons/arrow.png`}
+                                alt={"next"}
+                                className="next-icon"
+                            />
+                        </button>
+                    }
+
                 </div>
             ) : (
                 <div>No recommendations found.</div>

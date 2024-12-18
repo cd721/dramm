@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import axios from '../../../config/axiosConfig.js';
 import noImage from "../../img/download.jpeg";
 import CreatePostModal from "../posts/CreatePostModal.jsx";
 import '../shared/styles/layout.css'

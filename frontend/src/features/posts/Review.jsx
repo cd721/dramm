@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react'
 import "../shared/styles/posts.css"
 import { AuthContext } from '../../context/AuthContext';
-import axios from "axios"
+import axios from '../../../config/axiosConfig.js';
 import { TextField, Box, Avatar, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 

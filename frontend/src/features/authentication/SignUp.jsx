@@ -9,8 +9,7 @@ function SignUp() {
   const { currentUser } = useContext(AuthContext);
   const [pwMatch, setPwMatch] = useState('');
   const [formError, setFormError] = useState('');
-  const [redirect, setRedirect] = useState(false);  // Add state for redirecting
-
+  const [redirect, setRedirect] = useState(false); 
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -28,7 +27,6 @@ function SignUp() {
       );
 
       const x = await axios.post(`http://localhost:3001/users/${response.user.uid}`);
-      console.log(x)
       setRedirect(true);
     } catch (error) {
       setFormError(error.message);

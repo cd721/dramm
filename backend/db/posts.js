@@ -3,7 +3,9 @@ import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import dayjs from 'dayjs'
 import redis from 'redis'
-const client = redis.createClient();
+const client = redis.createClient({
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+});
 await client.connect().then(() => { });
 const exportedMethods = {
     async addPost(uid, caption, photo, location, date, rating, locationId) {

@@ -102,10 +102,10 @@ function PlaceList(props) {
       <div className="attractions-filter">
         <div className="search-header">
           <h1>Welcome, {currentUser && currentUser.displayName}.</h1>
-          <p>Search attractions or select categories of places you want to see!</p>
+          <p>We've curated a list of places that you might like. Use the search bar find the ones that interest you the most. Click on one of the categories below to deselect it.</p>
         </div>
 
-        {/* searchung */}
+        {/* searching */}
         <SearchPlaces searchValue={searchValue} setZipCode={setSearchZipCode} />
 
         {/* categories */}
@@ -118,6 +118,7 @@ function PlaceList(props) {
       <div className="results-header">
         <h2>{searchTerm ? (searchZipCode ? (`Results for "${searchTerm}" at ${searchZipCode}...`): (`Results for "${searchTerm}" at ${userZipCode}...`)) : 'Here are your best matches!'}</h2>
         <p>Discover top-rated places and attractions in the area. Click on a place to learn more or save it to your bookmarks!</p>
+        <p>{activeCategories && activeCategories.length >0  ? `Your selected categories are: ${activeCategories.map(category =>category.label).join(", ")}` : ""}</p>
       </div>
 
 

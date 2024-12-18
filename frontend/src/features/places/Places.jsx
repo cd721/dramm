@@ -58,6 +58,10 @@ function PlaceList(props) {
   useEffect(() => {
     const fetchPlacesData = async () => {
       try {
+        console.log("Search effect fired")
+        console.log(searchZipCode)
+        console.log(userZipCode)
+
         const zipCodeToUse = searchZipCode || userZipCode;
         if (!zipCodeToUse) return;
   
@@ -106,7 +110,7 @@ function PlaceList(props) {
         </div>
 
         {/* searching */}
-        <SearchPlaces searchValue={searchValue} setZipCode={setSearchZipCode} />
+        <SearchPlaces searchValue={searchValue} setZipCode={setSearchZipCode} userZipCode={userZipCode} />
 
         {/* categories */}
         <Categories

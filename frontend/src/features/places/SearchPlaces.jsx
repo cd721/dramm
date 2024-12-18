@@ -1,4 +1,4 @@
-const SearchPlaces = ({ searchValue, setZipCode }) => {
+const SearchPlaces = ({ searchValue, setZipCode, userZipCode }) => {
   return (
     <div className="search-container">
       <form
@@ -11,6 +11,8 @@ const SearchPlaces = ({ searchValue, setZipCode }) => {
           
           if (zipCode) {
             setZipCode(zipCode);
+          } else {
+            setZipCode(userZipCode);
           }
         }}
       >

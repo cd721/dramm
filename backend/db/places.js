@@ -1,7 +1,9 @@
 import { places } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import redis from 'redis';
-const client = redis.createClient();
+const client = redis.createClient({
+  url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`
+});
 await client.connect().then(() => { });
 
 let exportedMethods = {

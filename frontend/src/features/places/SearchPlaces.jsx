@@ -18,7 +18,7 @@ const SearchPlaces = ({ searchValue, setZipCode }) => {
           <input 
             type="text" 
             autoComplete="off" 
-            placeholder="Search places..."
+            placeholder="Search places by name"
             className="search-term" 
           />
 
@@ -29,16 +29,12 @@ const SearchPlaces = ({ searchValue, setZipCode }) => {
             className="search-zip"
           />
 
-          <button type="submit">Submit</button>
-
-          <button
-            type="button"
-            onClick={() => {
-              searchValue("");
-              setZipCode(null);
-            }}
-          >
-            Clear
+          <button type="submit">
+            <img 
+                src={`/icons/search.png`}
+                alt={"Submit Search"}
+                className="search-icon"
+            />
           </button>
         </div>
       </form>

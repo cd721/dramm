@@ -17,6 +17,8 @@
   --secondary-gray: #e9e9e9;
 
   --primary-blue: #a3cbcb;
+  --secondary-blue: #85b1b1;
+
   --primary-lightbrown: #f4eedb;
 
   --primary-orange: #d96134;
@@ -67,6 +69,9 @@ button {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+button:disabled {
+  cursor: not-allowed;
 }
 
 @media (prefers-color-scheme: light) {

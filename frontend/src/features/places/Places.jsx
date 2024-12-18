@@ -115,32 +115,11 @@ function PlaceList(props) {
         />
       </div>
       
-      <h2>
-        {searchTerm ? `Results for "${searchTerm}" at ${searchZipCode}...` : 'Here are your best matches!'}
-      </h2>
-      {placesData.length > 0 && (
-        <div className="pagination">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
+      <div className="results-header">
+        <h2>{searchTerm ? `Results for "${searchTerm}" at ${searchZipCode}...` : 'Here are your best matches!'}</h2>
+        <p>Discover top-rated places and attractions in the area. Click on a place to learn more or save it to your bookmarks!</p>
+      </div>
 
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <button
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
-      )}
 
       {activeCategories.length === 0 ? (
         <div>
@@ -167,6 +146,8 @@ function PlaceList(props) {
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+
+                className="prev-button"
               >
                 Previous
               </button>
@@ -180,6 +161,7 @@ function PlaceList(props) {
                   setCurrentPage((prev) => Math.min(prev + 1, totalPages))
                 }
                 disabled={currentPage === totalPages}
+                className="next-button"
               >
                 Next
               </button>

@@ -3,7 +3,7 @@ FROM node:20-slim
 ARG REDIS_HOST
 ARG REDIS_PORT
 
-ENV REDIS_HOST=redis
+ENV REDIS_HOST=127.0.0.1
 ENV REDIS_PORT=6379
 
 # location for node app code

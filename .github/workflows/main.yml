@@ -7,6 +7,10 @@ on:
   workflow_dispatch: 
 
 env:
+# The hostname used to communicate with the Redis service container
+  REDIS_HOST: redis
+# The default Redis port
+  REDIS_PORT: 6379
   MONGODB_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_INITDB_ROOT_PASSWORD }}
   VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
   VITE_FIREBASE_DOMAIN: ${{ secrets.VITE_FIREBASE_DOMAIN }}

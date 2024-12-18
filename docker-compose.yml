@@ -3,16 +3,17 @@ services:
     build: ./backend
     container_name: dramm_backend
     environment:
-      REDIS_HOST: cache
+      REDIS_HOST: redis
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports: 
-      - "127.0.0.1:3001:3001"
+      # - "127.0.0.1:3001:3001"
+      - "3001:3001"
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
       - mongo
-      - cache
+      - redis
     
 
 
@@ -49,7 +50,7 @@ services:
     volumes:
       - mongo-data:/data/db
 
-  cache:
+  redis:
     image: redis/redis-stack-server:latest
     restart: always
     ports:

@@ -1,9 +1,10 @@
 import { users } from '../config/mongoCollections.js';
 import redis from "redis";
 const client = redis.createClient({
-      host: "cache",
-  port: 6379, 
-  socket: {
+    url:"redis://redis:6379",
+
+  socket: {port:6379,
+    host:"redis",
     connectTimeout: 50000,
   }
   

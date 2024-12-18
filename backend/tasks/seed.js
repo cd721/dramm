@@ -251,3 +251,4 @@ await seedPlaces()
 await seedComments()
 
 await closeConnection();
+process.exit(0);

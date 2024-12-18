@@ -10,11 +10,20 @@ Follow these instructions to set up and run the backend, frontend, and Redis ser
 
 ### 1. **Start Backend Server**
 
-Open a terminal and run the following commands:
+Navigate to the backend folder:
 
 ```bash
 cd backend
 npm install
+```
+
+Seed the database
+```bash
+npm run seed
+```
+
+After the database has finished being seeded, you may start the backend 
+```bash
 npm start
 ```
 

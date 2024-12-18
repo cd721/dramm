@@ -19,8 +19,8 @@ services:
 
     
   frontend:
-    build: ./frontend
-      context: .frontend
+    build:
+      context: ./frontend
       args:
         VITE_FIREBASE_KEY: ${VITE_FIREBASE_KEY}
         VITE_FIREBASE_DOMAIN: ${VITE_FIREBASE_DOMAIN}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import PlaceListCard from '../places/PlaceListCard.jsx';
-import axios from "axios"
+import axios from '../../../config/axiosConfig.js';
 
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 

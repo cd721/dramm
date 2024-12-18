@@ -101,7 +101,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
             onClose();
         } catch (error) {
             console.error( error);
-            setError("Error: something went wrong.");
+            setFormErrors({ form: "Error: Something went wrong while submitting the post" });
             return
         }
         onClose()
@@ -144,7 +144,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
             }
         } catch (error) {
             console.error("Error updating user's places:", error);
-            setError("Error: something went wrong while updating places.");
+            setFormErrors({ form: "Error: Something went wrong while updating places" });
         }
     };
 

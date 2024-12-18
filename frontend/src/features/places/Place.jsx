@@ -4,14 +4,14 @@ import noImage from "../../img/download.jpeg";
 import CreatePostModal from "../posts/CreatePostModal.jsx";
 import '../shared/styles/layout.css'
 import DisplayReviews from "../posts/DisplayReviews.jsx";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import CurrentUserWeather from "../weather/CurrentUserWeather.jsx";
+import { useParams, useNavigate } from "react-router-dom";
 import { HoursTable } from "./HoursTable.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
 import { RatingStars } from "../posts/RatingStars.jsx";
+import CurrentUserWeather from "../weather/CurrentUserWeather.jsx";
 
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
-const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+
 function Place(props) {
   const navigate = useNavigate();
 
@@ -21,9 +21,8 @@ function Place(props) {
   const [userHasPlace, setUserHasPlace] = useState(false);
 
   const [placeData, setPlaceData] = useState(null);
-  const [currentWeatherDataForPlace, setCurrentWeatherDataForPlace] = useState(undefined);
+
   const [loading, setLoading] = useState(true);
-  const [weatherForecastForPlace, setWeatherForecastForPlace] = useState(undefined);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -93,32 +92,21 @@ function Place(props) {
         setPlaceData(placeData);
         console.log("place", placeData);
 
-        const latitude = placeData.coordinates.latitude;
-        const longitude = placeData.coordinates.longitude;
-
-        const { data: currentWeatherDataForPlace } = await axios.get(
-          `https://api.openweathermap.org/data/2.5/weather?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
-        ); setCurrentWeatherDataForPlace(currentWeatherDataForPlace);
-        console.log("Weather data for place:");
-        console.log(currentWeatherDataForPlace);
-        console.log(currentWeatherDataForPlace.main.temp);
-
-
-        //Gives 40 timestamps by default (gives  forecast for every three hours over the next 5 days).
-        const { data: weatherForecastForPlace } = await axios.get(
-          `https://api.openweathermap.org/data/2.5/forecast?units=imperial&lat=${latitude}&lon=${longitude}&appid=${WEATHER_API_KEY}`
-        );
-        console.log("Weather FORECAST for place:");
-
-
-        console.log(weatherForecastForPlace);
-        setWeatherForecastForPlace(weatherForecastForPlace);
-
         setLoading(false);
+
       } catch (e) {
-        console.log(e);
+        // Yelp doesn't provide details for some businesses, particularly ones that do not have any reviews
+        if (e.response?.data?.error?.code === "BUSINESS_UNAVAILABLE") {
+
+          setPlaceData(null);
+          setLoading(false);
+          
+        } else {
+          console.error("Error fetching data:", e);
+          setLoading(false);
+        }
       }
-    };
+    }
     fetchData();
   }, [id]);
 
@@ -148,6 +136,16 @@ function Place(props) {
     return (
       <div>
         <h2>loading...</h2>
+      </div>
+    );
+  }
+
+  if (placeData === null) {
+    return (
+      <div>
+        <h2>Attraction Not Available</h2>
+        <p>We are unable to provide details for this attraction. It might not have any reviews yet or is currently unavailable.</p>
+        <button onClick={() => navigate('/places')}>Back to all places</button>
       </div>
     );
   }

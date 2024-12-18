@@ -141,7 +141,7 @@ textarea {
   justify-content: space-between;
 
   padding-bottom: 1em;
-  border-bottom: 1px solid grey;
+  border-bottom: 1px solid #ddd;
 }
 
 p {

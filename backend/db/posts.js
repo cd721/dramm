@@ -72,7 +72,7 @@ const exportedMethods = {
             throw "Insert failed!";
         }
         await client.flushDb();
-        return { signupCompleted: true };
+        return newPost;
     },
     async deletePost(postId) {
         if (!postId) throw 'Error: You must provide an id to search for';

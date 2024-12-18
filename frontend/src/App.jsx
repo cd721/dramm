@@ -27,41 +27,50 @@ import { CalendarPage } from "./features/calendar/CalendarPage";
 function App() {
   return (
     <div className="layout">
-        <Navbar />
+      <Navbar />
 
-        <main>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/home" element={<PrivateRoute />}>
-              <Route path="/home" element={<Home />} />
-            </Route>
-            <Route path="/account" element={<PrivateRoute />}>
-              <Route path="/account" element={<Account />} />
-            </Route>
+      <main>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/home" element={<PrivateRoute />}>
+            <Route path="/home" element={<Home />} />
+          </Route>
+          <Route path="/account" element={<PrivateRoute />}>
+            <Route path="/account" element={<Account />} />
+          </Route>
 
-            <Route path="/customize-profile" element={<PrivateRoute />}>
-              <Route path="/customize-profile" element={<CustomizeProfile />} />
-            </Route>
-            
-            <Route path="/change-password" element={<PrivateRoute />}>
-              <Route path="/change-password" element={<ChangePassword />} />
-            </Route>
-          
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/signup" element={<SignUp />} />
+          <Route path="/customize-profile" element={<PrivateRoute />}>
+            <Route path="/customize-profile" element={<CustomizeProfile />} />
+          </Route>
 
+          <Route path="/change-password" element={<PrivateRoute />}>
+            <Route path="/change-password" element={<ChangePassword />} />
+          </Route>
+
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+
+          <Route path="/places" element={<PrivateRoute />}>
             <Route path="/places" element={<Places />} />
+          </Route>
+
+          <Route path="/place/:id" element={<PrivateRoute />}>
             <Route path="/place/:id" element={<Place />} />
-            <Route path="/AddPlaceReview" element={<AddPlaceReview />} />
-          
+          </Route>
+
+          <Route path="/profile/:id" element={<PrivateRoute />}>
             <Route path="/profile/:id" element={<Profile />} />
+          </Route>
 
+          <Route path="/calendar" element={<PrivateRoute />}>
             <Route path='/calendar' element={<CalendarPage />} />
+          </Route>
 
-            <Route path="/404" element={<ErrorPage />} />
-            <Route path="*" element={<Navigate to='/404' />} />
-          </Routes>
-        </main>
+
+          <Route path="/404" element={<ErrorPage />} />
+          <Route path="*" element={<Navigate to='/404' />} />
+        </Routes>
+      </main>
     </div>
   );
 }

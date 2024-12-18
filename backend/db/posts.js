@@ -71,7 +71,7 @@ const exportedMethods = {
         if (!newInsertInformation.insertedId) {
             throw "Insert failed!";
         }
-        await client.flushDb();
+        await client.del("posts");
         return { signupCompleted: true };
     },
     async deletePost(postId) {

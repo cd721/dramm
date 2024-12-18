@@ -6,8 +6,8 @@ import redis from 'redis'
 const client = redis.createClient({
     url:"redis://redis:6379",
 
-   socket: {port:6379,
-    host:"redis",
+   socket: {
+    
     connectTimeout: 50000,
   }
 });await client.connect().then(() => { });

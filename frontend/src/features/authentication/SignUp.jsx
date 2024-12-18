@@ -2,7 +2,7 @@ import { useContext, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { doCreateUserWithEmailAndPassword } from '../../firebase/FirebaseFunctions';
 import { AuthContext } from '../../context/AuthContext';
-import {Link, useNavigate} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 
 import SocialSignIn from './SocialSignIn';
 import axios from "axios"

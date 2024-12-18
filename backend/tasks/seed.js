@@ -34,6 +34,7 @@ const seedUsers = async () => {
             zipCode: "90001",
             bio: "I am a fellow traveller!"
         })
+        console.log("done")
 
     } catch (e) {
         console.log(e)
@@ -251,4 +252,4 @@ await seedUsers()
 await seedPlaces()
 await seedComments()
 await closeConnection();
-process.exit(0)
+// process.exit(0)

@@ -31,9 +31,9 @@ const exportedMethods = {
     // NEED FIREBASE TO VALIDATE IF UID EXISTS ON FIREBASE
     async addUserIfNotExists(uid) {
         if (!uid) throw new Error('User ID is required');
-        try {
-            await this.getUserById(uid);
-        } catch {
+        const userCollection = await users();
+        const existingUser = await userCollection.findOne({ _id: uid });
+        if (!existingUser) {
             const newUser = {
                 _id: uid,
                 places: [],
@@ -48,8 +48,8 @@ const exportedMethods = {
             }
             await client.del("users");
             return { signupCompleted: true };
-
         }
+
         return { signupCompleted: false };
     },
 

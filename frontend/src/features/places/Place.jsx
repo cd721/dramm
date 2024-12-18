@@ -8,6 +8,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import CurrentUserWeather from "../weather/CurrentUserWeather.jsx";
 import { HoursTable } from "./HoursTable.jsx";
 import { AuthContext } from "../../context/AuthContext.jsx";
+import { RatingStars } from "../posts/RatingStars.jsx";
 
 const YELP_API_KEY = import.meta.env.VITE_YELP_API_KEY;
 const WEATHER_API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
@@ -161,16 +162,7 @@ function Place(props) {
 
               <div className="place-profile-rating">
                 <div className="stars-container">
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <div
-                      key={index}
-                      className={`star ${index < Math.floor(placeData.rating) ? "filled" : ""}`}
-                    >
-                      <img
-                        src="/icons/places/star.png"
-                      />
-                    </div>
-                  ))}
+                  <RatingStars rating={placeData.rating} />
                 </div>
                 <p className="rating-text"><span>{placeData.rating}</span> ({placeData.review_count} reviews)</p>
               </div>

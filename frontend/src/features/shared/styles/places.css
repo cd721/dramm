@@ -378,25 +378,9 @@
     flex-direction: column;
 }
 
-.stars-container {
-    display: flex;
-    gap: 5px;
-}
-
-.stars-container .star {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+.place-profile-rating .star {
     width: 30px;
     height: 30px;
-
-    border-radius: 50px;
-
-    background-color: var(--primary-gray);
-}
-.star.filled {
-    background-color: var(--primary-orange);
 }
 .place-profile-rating .star img {
     max-width: 20px;

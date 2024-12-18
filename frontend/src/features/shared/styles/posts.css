@@ -147,7 +147,7 @@ p {
   white-space: normal;
 }
 
-.top {
+.review-card .top {
   cursor: pointer;
 
   display: flex;
@@ -160,7 +160,7 @@ p {
 
   transition: all 0.3s ease;
 }
-.top:hover {
+.review-card .top:hover {
   transform: scale(1.05);
 
   border: 1px solid black;
@@ -195,4 +195,35 @@ small {
 
   font-size: 0.9em;
   color: #707070;
+}
+
+.other-details .review p {
+  text-align: left;
+}
+
+/* reviews */
+.stars-container {
+  display: flex;
+  gap: 5px;
+}
+
+.stars-container .star {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 20px;
+  height: 20px;
+
+  border-radius: 50px;
+
+  background-color: var(--primary-gray);
+}
+.star.filled {
+
+  background-color: var(--primary-orange);
+}
+.star img {
+  max-width: 15px;
+  max-height: 15px;
 }

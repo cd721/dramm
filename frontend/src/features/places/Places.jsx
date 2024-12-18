@@ -41,7 +41,7 @@ function PlaceList(props) {
         setUserZipCode(userData.zipCode);
       } catch (e) {
         console.error(e);
-        setUserZipCode("");
+        setUserZipCode("07030");
       }
 
       try {

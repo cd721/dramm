@@ -29,46 +29,62 @@ function PlaceList(props) {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategories, setActiveCategories] = useState(yelpCategories);
   const [userZipCode, setUserZipCode] = useState("07030");
+  const [searchZipCode, setSearchZipCode] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
   const resultsPerPage = 20;
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchUserData = async () => {
       try {
         const userData = await getUserData(currentUser);
-        setUserZipCode(userData.zipCode);
+        if (userData.zipCode) {
+          setUserZipCode(userData.zipCode);
+
+        } else {
+          setUserZipCode("07030");
+        }
+
       } catch (e) {
-        console.error(e);
+        console.error("Error fetching user data:", e);
         setUserZipCode("07030");
       }
+    };
+  
+    fetchUserData();
+  }, [currentUser?.uid]);
 
+  useEffect(() => {
+    const fetchPlacesData = async () => {
       try {
+        const zipCodeToUse = searchZipCode || userZipCode;
+        if (!zipCodeToUse) return;
+  
         const offset = (currentPage - 1) * resultsPerPage;
         const categoryString = activeCategories.map((cat) => cat.alias).join(",");
-        
+  
         const { data } = await axios.get(
-          `https://api.yelp.com/v3/businesses/search?location=${userZipCode}&term=${searchTerm}&categories=${categoryString}&sort_by=best_match&limit=${resultsPerPage}&offset=${offset}&locale=en_US`,
+          `https://api.yelp.com/v3/businesses/search?location=${zipCodeToUse}&term=${searchTerm}&categories=${categoryString}&sort_by=best_match&limit=${resultsPerPage}&offset=${offset}&locale=en_US`,
           {
             headers: {
               Authorization: `Bearer ${YELP_API_KEY}`,
             },
           }
         );
-
+  
         setPlacesData(data.businesses || []);
         setTotalResults(data.total || 0);
         setLoading(false);
       } catch (e) {
-        console.error(e);
+        console.error("Error fetching places data:", e);
         setLoading(false);
         navigate("/404");
       }
     };
-
-    fetchData();
-  }, [searchTerm, activeCategories, currentPage, navigate]);
+  
+    fetchPlacesData();
+  }, [searchTerm, activeCategories, currentPage, navigate, userZipCode, searchZipCode]);
 
   const searchValue = (value) => {
     setSearchTerm(value);
@@ -86,11 +102,11 @@ function PlaceList(props) {
       <div className="attractions-filter">
         <div className="search-header">
           <h1>Welcome, {currentUser && currentUser.displayName}.</h1>
-          <p>Search attractions, or select categories of places you want to see!</p>
+          <p>Search attractions or select categories of places you want to see!</p>
         </div>
 
         {/* searchung */}
-        <SearchPlaces searchValue={searchValue} />
+        <SearchPlaces searchValue={searchValue} setZipCode={setSearchZipCode} />
 
         {/* categories */}
         <Categories
@@ -98,10 +114,33 @@ function PlaceList(props) {
           setActiveCategories={setActiveCategories}
         />
       </div>
-
+      
       <h2>
-        {searchTerm ? `Results for ${searchTerm}...` : 'Here are your best matches!'}
+        {searchTerm ? `Results for "${searchTerm}" at ${searchZipCode}...` : 'Here are your best matches!'}
       </h2>
+      {placesData.length > 0 && (
+        <div className="pagination">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+      )}
 
       {activeCategories.length === 0 ? (
         <div>

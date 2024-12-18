@@ -328,6 +328,8 @@
     align-items: center;
 
     width: 100%;
+
+    background-color: var(--secondary-gray);
 }
 
 .place-header {
@@ -429,9 +431,11 @@
 
 #place-buttons,
 .place-info-container {
-    background: rgba(224, 226, 230, 0.25);
-    border: 1px solid black;
+    background: var(--primary-white);
+
     border-radius: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .place-info-container {

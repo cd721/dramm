@@ -116,7 +116,7 @@ function PlaceList(props) {
       </div>
       
       <div className="results-header">
-        <h2>{searchTerm ? (searchZipCode ? (`Results for "${searchTerm}" at ${searchZipCode}...`): (`Results for "${searchTerm}" at ${userZipCode}...`)) : 'Here are your best matches!'}</h2>
+        <h2>{searchTerm ? (searchZipCode !=null ? (`Results for "${searchTerm}" at ${searchZipCode}...`): (`Results for "${searchTerm}" at ${userZipCode}...`)) : 'Here are your best matches!'}</h2>
         <p>Discover top-rated places and attractions in the area. Click on a place to learn more or save it to your bookmarks!</p>
         <p>{activeCategories && activeCategories.length >0  ? `Your selected categories are: ${activeCategories.map(category =>category.label).join(", ")}` : ""}</p>
       </div>

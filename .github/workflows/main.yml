@@ -8,7 +8,7 @@ on:
 
 env:
 # The hostname used to communicate with the Redis service container
-  REDIS_HOST: localhost
+  REDIS_HOST: redis
 # The default Redis port
   REDIS_PORT: 6379
   MONGODB_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_INITDB_ROOT_PASSWORD }}

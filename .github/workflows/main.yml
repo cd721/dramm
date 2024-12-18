@@ -30,8 +30,6 @@ env:
 
 
 jobs:
-
-
   build:
     runs-on: ubuntu-latest
 
@@ -82,5 +80,3 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm-frontend:latest
-          # Step 3: Build and push the Docker image
-   

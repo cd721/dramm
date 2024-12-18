@@ -78,5 +78,15 @@ jobs:
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
+          build-args:  |
+            VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+            VITE_FIREBASE_DOMAIN: ${{ secrets.VITE_FIREBASE_DOMAIN }}
+            VITE_FIREBASE_KEY: ${{ secrets.VITE_FIREBASE_KEY }}
+            VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+            VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
+            VITE_FIREBASE_SENDER_ID: ${{ secrets.VITE_FIREBASE_SENDER_ID }}
+            VITE_YELP_API_KEY: ${{ secrets.VITE_YELP_API_KEY }}
+            VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
+            VITE_API_URL=localhost:3001
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm-frontend:latest

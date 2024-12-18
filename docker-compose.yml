@@ -3,7 +3,6 @@ services:
     build: ./backend
     container_name: dramm_backend
     environment:
-      REDIS_HOST: redis
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports: 
       # - "127.0.0.1:3001:3001"

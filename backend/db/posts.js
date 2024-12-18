@@ -2,15 +2,8 @@ import { posts, users } from '../config/mongoCollections.js'
 import { ObjectId } from 'mongodb'
 import moment from 'moment'
 import dayjs from 'dayjs'
-import redis from 'redis'
-const client = redis.createClient({
-   // url:"redis://0.0.0.0:6379",
+import client from "../db/redisClient.js";
 
-   socket: {
-
-    connectTimeout: 50000,
-  }
-});await client.connect().then(() => { });
 const exportedMethods = {
     async addPost(uid, caption, photo, location, date, rating, locationId) {
         const postCollection = await posts();

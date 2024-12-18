@@ -1,12 +1,6 @@
 import { places } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
-import redis from 'redis';
-const client = redis.createClient({
-    //url:"redis://127.0.0.1:6379",
-    socket: {
-        connectTimeout: 50000,
-    }
-}); await client.connect().then(() => { });
+import client from "../db/redisClient.js";
 
 let exportedMethods = {
     async getAllPlaces() {

@@ -1,14 +1,7 @@
 import { users } from '../config/mongoCollections.js';
 import redis from "redis";
-const client = redis.createClient({
-  //  url: "redis://0.0.0.0:6379",
+import client from "../db/redisClient.js";
 
-    socket: {
-        connectTimeout: 50000,
-    }
-
-});
-await client.connect().then(() => { });
 // TODO: error handling + photo error handling for posts
 const exportedMethods = {
     async getAllUsers() {

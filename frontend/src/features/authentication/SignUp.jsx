@@ -8,6 +8,8 @@ import SocialSignIn from './SocialSignIn';
 import axios from "axios"
 
 function SignUp() {
+  const navigate = useNavigate();
+
   const { currentUser } = useContext(AuthContext);
   const [pwMatch, setPwMatch] = useState('');
   const [formError, setFormError] = useState('');
@@ -72,7 +74,6 @@ function SignUp() {
   };
 
   if (currentUser && redirect) {
-    const navigate = useNavigate();
     navigate('/home')
 
   }

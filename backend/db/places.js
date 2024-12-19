@@ -1,6 +1,7 @@
 import { places } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
 import redis from 'redis';
+import { checkId, checkString } from "./validate.js";
 const client = redis.createClient();
 await client.connect().then(() => { });
 
@@ -22,6 +23,9 @@ let exportedMethods = {
     },
 
     async getPlaceById(id) {
+        if (!checkId(id) ){
+            throw new Error('Invalid ID');
+        }
         const redisKey = `place:${id}`;
         const placeExists = await client.exists(redisKey);
 
@@ -42,6 +46,12 @@ let exportedMethods = {
     },
 
     async addPlace(place_id, name) {
+        if (!checkId(place_id) ){
+            throw new Error('Invalid ID');
+        }
+        if (!checkString(name) ){
+            throw new Error('Invalid name');
+        }
         let newplace = {
             _id: place_id,
             name: name, reviews: [], rating: null
@@ -58,27 +68,25 @@ let exportedMethods = {
         return await this.getPlaceById(newInsertInformation.insertedId.toString());
     },
 
-    async addReviewToPlace(placeId, post, poster_id) {
-        const newReview = {
-            _id: new ObjectId(),
-            review: post,
-            poster_id: poster_id,
+    // async addReviewToPlace(placeId, post, poster_id) {
+    //     const newReview = {
+    //         _id: new ObjectId(),
+    //         review: post,
+    //         poster_id: poster_id,
 
-        }
+    //     }
 
-        const placeCollection = await places();
+    //     const placeCollection = await places();
 
-        const result =
-            await placeCollection.updateOne(
-                { _id: placeId },
-                { $push: { reviews: newReview } }
-            );
+    //     const result =
+    //         await placeCollection.updateOne(
+    //             { _id: placeId },
+    //             { $push: { reviews: newReview } }
+    //         );
 
-        await client.del(`place:${placeId}`);
-        await client.del(`places`);
-
-        return result;
-    }
+    //     await client.flushDb();
+    //     return result;
+    // }
 
 
 

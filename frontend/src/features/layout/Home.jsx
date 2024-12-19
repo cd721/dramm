@@ -35,7 +35,7 @@ function Home() {
       <div className='left-side'>
         <div className='fyp-header'>
           <h2>Outdoor Locations For You!</h2>
-          <p>Browse through the best places based on your preferences and the current weather!</p>
+          <p>Discover top places tailored to your preferences and the weather!</p>
         </div>
 
         {zipCode ? <ForYou zipCode = {zipCode}/>

@@ -34,7 +34,7 @@ services:
         VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
         VITE_YELP_API_KEY: ${VITE_YELP_API_KEY}
         VITE_WEATHER_API_KEY: ${VITE_WEATHER_API_KEY}
-        VITE_API_URL: "localhost:3001"
+        VITE_API_URL: "dramm-backend:3001"
     container_name: frontend
     environment:
       VITE_FIREBASE_KEY: ${VITE_FIREBASE_KEY}
@@ -45,7 +45,7 @@ services:
       VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
       VITE_YELP_API_KEY: ${VITE_YELP_API_KEY}
       VITE_WEATHER_API_KEY: ${VITE_WEATHER_API_KEY}
-      VITE_API_URL: "localhost:3001"
+      VITE_API_URL: "dramm-backend:3001"
       PORT: 8000
 
     stdin_open: true

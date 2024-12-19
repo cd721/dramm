@@ -92,6 +92,6 @@ jobs:
             VITE_FIREBASE_SENDER_ID=${{ secrets.VITE_FIREBASE_SENDER_ID }}
             VITE_YELP_API_KEY=${{ secrets.VITE_YELP_API_KEY }}
             VITE_WEATHER_API_KEY=${{ secrets.VITE_WEATHER_API_KEY }}
-            VITE_API_URL=localhost:3001
+            VITE_API_URL=dramm-backend:3001
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm-frontend:latest

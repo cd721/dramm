@@ -6,6 +6,8 @@ import { AuthContext } from '../../context/AuthContext';
 import dayjs from 'dayjs'
 import { ReviewContext } from '../../context/ReviewContext';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
     //NEED TO DO PHOTOS ERROR HANDLING?
     const [caption, setCaption] = useState('')
@@ -86,7 +88,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                 console.log("Compressed Base64 size:", compressedBase64.length);
             }
 
-            const response = await axios.post(`http://localhost:3001/posts/${currentUser.uid}`, {
+            const response = await axios.post(`${API_URL}/posts/${currentUser.uid}`, {
                 caption,
                 location,
                 rating,
@@ -110,7 +112,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
     const updatePlaceForUser = async (rating) => {
         try {
             const { data: placesForUser } = await axios.get(
-                `http://localhost:3001/users/${currentUser.uid}/places`
+                `${API_URL}/users/${currentUser.uid}/places`
             );
 
             const existingPlace = placesForUser.find(
@@ -119,7 +121,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
 
             if (existingPlace) {
                 await axios.patch(
-                    `http://localhost:3001/users/${currentUser.uid}/places/${placeId}`,
+                    `${API_URL}/users/${currentUser.uid}/places/${placeId}`,
                     {
                         isVisited: true,
                         rating,
@@ -128,7 +130,7 @@ const CreatePostModal = ({ isOpen, onClose, place, placeId, city, state }) => {
                 console.log(`${place} has been updated with a new rating.`);
             } else {
                 await axios.patch(
-                    `http://localhost:3001/users/${currentUser.uid}/places/${placeId}`,
+                    `${API_URL}/users/${currentUser.uid}/places/${placeId}`,
                     {
                         isVisited: true,
                         isBookmarked: false,

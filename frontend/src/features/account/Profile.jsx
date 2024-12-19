@@ -23,6 +23,8 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 
 import StreakBadge from './StreakBadge';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 dayjs.extend(isoWeek);
 
 const lightTheme = createTheme({
@@ -55,7 +57,7 @@ function Profile() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/users/${id}`);
+                const response = await axios.get(`${API_URL}/users/${id}`);
                 const data = response.data;
                 setUserData({
                     displayName: data.displayName || "",
@@ -85,8 +87,8 @@ function Profile() {
             try {
                 const endpoint =
                     selectedView === "bookmarked"
-                        ? `http://localhost:3001/users/${id}/places?type=bookmarked`
-                        : `http://localhost:3001/users/${id}/places?type=visited`;
+                        ? `${API_URL}/users/${id}/places?type=bookmarked`
+                        : `${API_URL}/users/${id}/places?type=visited`;
 
                 const response = await axios.get(endpoint);
                 setPlaces(response.data);
@@ -102,7 +104,7 @@ function Profile() {
     useEffect(() => {
         const fetchReviewsAndCalculateStreak = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/posts/byUser/${id}`);
+                const response = await axios.get(`${API_URL}/posts/byUser/${id}`);
                 const reviews = response.data;
 
                 const today = dayjs();

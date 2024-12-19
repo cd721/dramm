@@ -6,6 +6,8 @@ import { Avatar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { RatingStars } from './RatingStars';
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const Review = ({ post }) => {
   const [newComment, setNewComment] = useState("");
   const { currentUser } = useContext(AuthContext);
@@ -26,7 +28,7 @@ const Review = ({ post }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/users/${post.userId}`);
+        const response = await axios.get(`${API_URL}/users/${post.userId}`);
         const userData = response.data;
         setProfilePic(userData.photo || "");
         setUsername(userData.displayName || "user");
@@ -49,7 +51,7 @@ const Review = ({ post }) => {
         post.comments.map(async (comment) => {
           if (!authorData[comment.userId]) {
             try {
-              const response = await axios.get(`http://localhost:3001/users/${comment.userId}`);
+              const response = await axios.get(`${API_URL}/users/${comment.userId}`);
               const userData = response.data;
               authorData[comment.userId] = userData.displayName;
             } catch (error) {
@@ -93,7 +95,7 @@ const Review = ({ post }) => {
       return;
     }
     try {
-      const response = await axios.patch(`http://localhost:3001/posts/comments/${currentUser.uid}`, {
+      const response = await axios.patch(`${API_URL}/posts/comments/${currentUser.uid}`, {
         postId: post._id,
         comment: trimmedComment,
         name: currentUser.displayName,

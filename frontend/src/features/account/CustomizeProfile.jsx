@@ -9,6 +9,8 @@ import { updateProfile } from "firebase/auth";
 import "../shared/styles/profile.css";
 import zipcodes from "zipcodes";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const lightTheme = createTheme({
     palette: {
         mode: "light",
@@ -88,7 +90,7 @@ function CustomizeProfile() {
             const compressedBase64 = await compressImage(file);
             console.log("Compressed Base64 size:", compressedBase64.length);
 
-            const response = await axios.patch(`http://localhost:3001/users/${currentUser.uid}/photo`, {
+            const response = await axios.patch(`${API_URL}/users/${currentUser.uid}/photo`, {
                 photo: compressedBase64,
             });
 
@@ -105,7 +107,7 @@ function CustomizeProfile() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/users/${currentUser.uid}`);
+                const response = await axios.get(`${API_URL}/users/${currentUser.uid}`);
                 const userData = response.data;
 
                 if (userData.zipCode) setZipCode(userData.zipCode);
@@ -148,7 +150,7 @@ function CustomizeProfile() {
             };
 
             const response = await axios.patch(
-                `http://localhost:3001/users/${currentUser.uid}/details`,
+                `${API_URL}/users/${currentUser.uid}/details`,
                 updatedData
             );
 

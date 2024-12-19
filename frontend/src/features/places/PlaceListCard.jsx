@@ -5,6 +5,8 @@ import { AuthContext } from "../../context/AuthContext";
 import { useContext, useState,useEffect } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function PlaceListCard({ place }) {
   const { currentUser } = useContext(AuthContext);
 
@@ -13,7 +15,7 @@ function PlaceListCard({ place }) {
   async function bookmarkPlaceForUser(place) {
       try {
           const { data } = await axios.patch(
-              `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+              `${API_URL}/users/${currentUser.uid}/places/${place.id}`,
               {
                   isBookmarked: true,
                   name: place.name || "Unknown Place",
@@ -40,7 +42,7 @@ function PlaceListCard({ place }) {
   async function removeBookmarkForUser(place) {
       try {
           const { data } = await axios.patch(
-              `http://localhost:3001/users/${currentUser.uid}/places/${place.id}`,
+              `${API_URL}/users/${currentUser.uid}/places/${place.id}`,
               {
                   isBookmarked: false
               }
@@ -63,7 +65,7 @@ function PlaceListCard({ place }) {
       const fetchData = async () => {
           try {
               const { data: placesForUser } = await axios.get(
-                  `http://localhost:3001/users/${currentUser.uid}/places`
+                  `${API_URL}/users/${currentUser.uid}/places`
               );
 
               const bookmarked = placesForUser.some(

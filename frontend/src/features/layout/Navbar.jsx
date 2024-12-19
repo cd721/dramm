@@ -15,12 +15,11 @@ export const Navbar = () => {
     return (
         <nav className="topbar">
             <ul className="topbar-links">
-                <li>
-                    <NavLink to='/home'>Home</NavLink>
-                </li>
-
                 {currentUser &&
                     <>
+                        <li>
+                            <NavLink to='/home'>Home</NavLink>
+                        </li>
                         <li>
                             <NavLink to='/places'>Places</NavLink>
                         </li>
@@ -61,7 +60,11 @@ export const Navbar = () => {
                 ) : (
                     <button
                         className="sign-out" 
-                        onClick={doSignOut}>
+                        onClick={async () => {
+                            await doSignOut(); 
+                            navigate('/');
+                        }}
+                    >
                         Sign Out
                     </button>
                 )}

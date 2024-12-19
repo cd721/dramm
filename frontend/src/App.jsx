@@ -58,6 +58,8 @@ function App() {
             <Route path="/place/:id" element={<Place />} />
           </Route>
 
+          {/* <Route path="/AddPlaceReview" element={<AddPlaceReview />} /> */}
+
           <Route path="/profile/:id" element={<PrivateRoute />}>
             <Route path="/profile/:id" element={<Profile />} />
           </Route>

@@ -1,5 +1,6 @@
 import { users } from '../config/mongoCollections.js';
 import redis from "redis";
+import { checkId } from './validate.js';
 const client = redis.createClient();
 await client.connect().then(() => { });
 // TODO: error handling + photo error handling for posts
@@ -17,6 +18,9 @@ const exportedMethods = {
 
     async getUserById(id) {
         if (!id) throw new Error('You must provide an ID');
+        if (!checkId(id)){
+            throw new Error('Invalid ID');
+        }
         const redisKey = `user:${id}`;
         const exists = await client.exists(redisKey);
         if (exists) {
@@ -31,6 +35,9 @@ const exportedMethods = {
     // NEED FIREBASE TO VALIDATE IF UID EXISTS ON FIREBASE
     async addUserIfNotExists(uid) {
         if (!uid) throw new Error('User ID is required');
+        if (!checkId(uid)){
+            throw new Error('Invalid ID');
+        }
         try {
             await this.getUserById(uid);
         } catch {
@@ -68,6 +75,9 @@ const exportedMethods = {
     ) {
         if (!uid || !placeId) {
             throw new Error("User ID and Place ID are required");
+        }
+        if (!checkId(uid) || !checkId(placeId)){
+            throw new Error('Invalid ID');
         }
 
         const userCollection = await users();
@@ -130,6 +140,9 @@ const exportedMethods = {
         if (!uid || !placeId) {
             throw new Error("User ID and Place ID are required");
         }
+        if (!checkId(uid) || !checkId(placeId)){
+            throw new Error('Invalid ID');
+        }
 
         const userCollection = await users();
 
@@ -149,6 +162,9 @@ const exportedMethods = {
 
     async getPlacesForUser(uid, type) {
         if (!uid) throw new Error("User ID is required");
+        if (!checkId(uid) ){
+            throw new Error('Invalid ID');
+        }
 
         let redisKey = "";
         if (type === "bookmarked" || type === 'visited') {
@@ -198,6 +214,9 @@ const exportedMethods = {
 
     async getUserPhoto(uid) {
         if (!uid) throw new Error("User ID is required");
+        if (!checkId(uid) ){
+            throw new Error('Invalid ID');
+        }
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: uid }, { projection: { photo: 1 } });
         return user?.photo || null;
@@ -206,6 +225,10 @@ const exportedMethods = {
     async saveUserPhoto(uid, photo) {
         if (!uid) throw new Error("User ID is required");
         if (!photo) throw new Error("Photo is required");
+        if (!checkId(uid)){
+            throw new Error('Invalid ID');
+        }
+
         const redisKey = `user:${id}`
         const userCollection = await users();
         const updateResult = await userCollection.updateOne(
@@ -226,6 +249,10 @@ const exportedMethods = {
         if (!uid || !updateFields) {
             throw new Error("User ID and fields to update are required");
         }
+        if (!checkId(uid)){
+            throw new Error('Invalid ID');
+        }
+
         const redisKey = `user:${uid}`
 
         const userCollection = await users();

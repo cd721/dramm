@@ -187,7 +187,7 @@
 .place-card {
     position: relative;
     width: 400px;
-    height: 300px;
+    height: 250px;
     margin: 0px;
 
     overflow: hidden;
@@ -481,11 +481,14 @@
 /* additionals */
 .place-information {
     display: flex;
+    flex-wrap:wrap;
+    justify-content: center;
 }
 
 #place-buttons,
-.place-info-container {
-    background: var(--primary-white);
+.place-info-container,  .place-info-container-hours{
+    background: white;
+    border: 1px solid black;
 
     border-radius: 20px;
     border: 1px solid #ddd;
@@ -494,8 +497,15 @@
 
 .place-info-container {
     height: 250px;
-    width: 500px;
+    width: 450px;
 
+    margin: 20px;
+    padding: 20px;
+}
+
+.place-info-container-hours{
+    height: 250px;
+    width: 300px;
     margin: 20px;
     padding: 20px;
 }

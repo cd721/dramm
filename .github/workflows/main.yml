@@ -3,7 +3,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [main, master, cd-docker, jr-docker]  
+    branches: [main, master, cd-docker, dcompose]  
   workflow_dispatch: 
 
 env:
@@ -26,7 +26,7 @@ env:
   VITE_YELP_API_KEY: ${{ secrets.VITE_YELP_API_KEY }}
 
   VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
-
+  VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
 
 jobs:
@@ -56,6 +56,7 @@ jobs:
           VITE_FIREBASE_SENDER_ID: ${{ secrets.VITE_FIREBASE_SENDER_ID }}
           VITE_YELP_API_KEY: ${{ secrets.VITE_YELP_API_KEY }}
           VITE_WEATHER_API_KEY: ${{ secrets.VITE_WEATHER_API_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
 
       # Log in to Docker Hub
@@ -75,6 +76,7 @@ jobs:
           
           build-args: |
             MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGODB_INITDB_ROOT_PASSWORD }}
+            REDIS_HOST: ${{ secrets.REDIS_HOST }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm-backend:latest
 
@@ -92,6 +94,6 @@ jobs:
             VITE_FIREBASE_SENDER_ID=${{ secrets.VITE_FIREBASE_SENDER_ID }}
             VITE_YELP_API_KEY=${{ secrets.VITE_YELP_API_KEY }}
             VITE_WEATHER_API_KEY=${{ secrets.VITE_WEATHER_API_KEY }}
-            VITE_API_URL=dramm-backend:3001
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/dramm-frontend:latest

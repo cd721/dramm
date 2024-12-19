@@ -38,8 +38,17 @@ function Home() {
           <p>Discover top places tailored to your preferences and the weather!</p>
         </div>
 
-        {zipCode ? <ForYou zipCode = {zipCode}/>
-          : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view reccomendation for you!.</p>}
+        {zipCode ? (
+          <ForYou zipCode={zipCode} />
+        ) : (
+          <p>
+            Your account is not attached to a zipcode yet. Head to your{" "}
+            <a href="http://localhost:5173/customize-profile">
+              profile
+            </a>{" "}
+            to update this information and view recommendations tailored for you.
+          </p>
+        )}
       </div>
 
       <div className='right-side'>
@@ -47,8 +56,16 @@ function Home() {
           Welcome {currentUser && currentUser.displayName}!
         </h2>
 
-        {zipCode ? <CurrentUserWeather zipCode = {zipCode}/>
-          : <p>Your account is not attached to a zipcode yet, head to your profile to update this information to view the current weather in your area!.</p>}
+        {zipCode ? ( <CurrentUserWeather zipCode = {zipCode}/>
+        ) : ( 
+          <p>
+            Your account is not attached to a zipcode yet. Head to your{" "}
+            <a href="http://localhost:5173/customize-profile">
+              profile
+            </a>{" "}
+            to update this information and view recommendations tailored for you.
+          </p>
+        )}
 
 
         <h2>Your Feed</h2>

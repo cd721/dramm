@@ -1,9 +1,12 @@
 services:
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
+      args:
+        MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+
     container_name: dramm_backend
     environment:
-      REDIS_HOST: redis
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports: 
       # - "127.0.0.1:3001:3001"
@@ -20,7 +23,18 @@ services:
 
     
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_FIREBASE_KEY: ${VITE_FIREBASE_KEY}
+        VITE_FIREBASE_DOMAIN: ${VITE_FIREBASE_DOMAIN}
+        VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
+        VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
+        VITE_FIREBASE_SENDER_ID: ${VITE_FIREBASE_SENDER_ID}
+        VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
+        VITE_YELP_API_KEY: ${VITE_YELP_API_KEY}
+        VITE_WEATHER_API_KEY: ${VITE_WEATHER_API_KEY}
+        VITE_API_URL: "dramm-backend:3001"
     container_name: frontend
     environment:
       VITE_FIREBASE_KEY: ${VITE_FIREBASE_KEY}
@@ -31,8 +45,9 @@ services:
       VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
       VITE_YELP_API_KEY: ${VITE_YELP_API_KEY}
       VITE_WEATHER_API_KEY: ${VITE_WEATHER_API_KEY}
-      VITE_API_URL: ${VITE_API_URL}
+      VITE_API_URL: "dramm-backend:3001"
       PORT: 8000
+
     stdin_open: true
     ports: 
       # - "127.0.0.1:5173:5173"

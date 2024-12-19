@@ -252,4 +252,4 @@ await seedUsers()
 await seedPlaces()
 await seedComments()
 await closeConnection();
-// process.exit(0)
+process.exit(0)

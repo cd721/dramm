@@ -45,4 +45,17 @@ Open a terminal and run the following command:
 redis-stack-server
 ```
 
+### 4. **Use the application**
 
+Navigate to localhost:5173 in your browser.
+
+You may log in with the user accounts listed below.
+
+Email: testing1@gmail.com
+Password: testing123
+
+Email: testing2@gmail.com
+Password: testing21
+
+Email: testing3@gmail.com
+Password: anothertest123

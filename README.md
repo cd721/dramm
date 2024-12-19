@@ -68,5 +68,3 @@ Password: anothertest123
 ### 5. Information about Docker/Azure Deployment
 
 Note: The branch "main" is for running the application locally. The branch "deployment" is used for containerizing and deploying the application.
-
-Click here for more information about containerization and deployment: https://docs.google.com/document/d/1hBd6jelxw-tcR0m1ChD9WchynBu5jtOFJ6rsTjBbcZw/

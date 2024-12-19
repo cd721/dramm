@@ -8,6 +8,7 @@ services:
     container_name: dramm_backend
     environment:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      REDIS_HOST: redis-stack
     ports: 
       # - "127.0.0.1:3001:3001"
       - "3001:3001"
@@ -62,7 +63,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: dramm
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      REDIS_HOST: ${REDIS_HOST}
     ports:
       - 27017:27017
     volumes:

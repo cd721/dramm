@@ -86,7 +86,6 @@ function PlaceList(props) {
         navigate("/404");
       }
     };
-  
     fetchPlacesData();
   }, [searchTerm, activeCategories, currentPage, navigate, userZipCode, searchZipCode]);
 
@@ -95,7 +94,7 @@ function PlaceList(props) {
     setCurrentPage(1);
   };
 
-  if (loading) {
+  if (loading ||userZipCode.length === 0) {
     return <h2>Loading...</h2>;
   }
 

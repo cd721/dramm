@@ -1,11 +1,17 @@
-import  {useContext, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {doCreateUserWithEmailAndPassword} from '../../firebase/FirebaseFunctions';
-import {AuthContext} from '../../context/AuthContext';
+import { useContext, useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { doCreateUserWithEmailAndPassword } from '../../firebase/FirebaseFunctions';
+import { AuthContext } from '../../context/AuthContext';
+import { useNavigate} from 'react-router-dom';
+
 import SocialSignIn from './SocialSignIn';
+import axios from "axios"
 
 function SignUp() {
-  const {currentUser} = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
+  const [pwMatch, setPwMatch] = useState('');
+  const [formError, setFormError] = useState('');
+  const [redirect, setRedirect] = useState(false); 
   const [formErrors, setFormErrors] = useState({});
 
   const validateForm = ({ displayName, email, passwordOne, passwordTwo }) => {
@@ -52,19 +58,23 @@ function SignUp() {
     }
 
     try {
-      await doCreateUserWithEmailAndPassword(
+      const response = await doCreateUserWithEmailAndPassword(
         email.value,
         passwordOne.value,
         displayName.value
       );
+
+      const x = await axios.post(`http://localhost:3001/users/${response.user.uid}`);
+      setRedirect(true);
     } catch (error) {
       setFormErrors({ form: error.message });
     }
   };
 
-  const navigate = useNavigate();
-  if (currentUser) {
+  if (currentUser && redirect) {
+    const navigate = useNavigate();
     navigate('/home')
+
   }
 
   return (

@@ -72,7 +72,7 @@ const exportedMethods = {
             throw "Insert failed!";
         }
         await client.flushDb();
-        return { signupCompleted: true };
+        return newPost;
     },
     
     async getAllPosts() {

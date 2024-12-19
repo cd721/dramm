@@ -87,7 +87,7 @@ const Reccomendation = ({ place }) => {
         return { header, messages };
     }
     if (loading) {
-        return <div>Loading reccomendations...</div>;
+        return <div>Loading recomendations...</div>;
     }
     return (
         <div className='recommendation'>

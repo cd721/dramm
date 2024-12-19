@@ -18,11 +18,12 @@ async function doCreateUserWithEmailAndPassword(email, password, displayName) {
   const auth = getAuth();
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
   console.log("user created")
-  console.log(userCredential.uid);
+  console.log(userCredential);
   await updateProfile(auth.currentUser, { displayName: displayName });
 
   
   await axios.post(`http://localhost:3001/users/${userCredential.user.uid}`);
+  return userCredential
 }
 
 async function doChangePassword(email, oldPassword, newPassword) {

@@ -14,8 +14,6 @@ function Home() {
   const { currentUser } = useContext(AuthContext);
   const [zipCode, setZipCode] = useState("");
 
-  console.log(currentUser);
-
   useEffect(() => {
     const fetchUserData = async () => {
         try {

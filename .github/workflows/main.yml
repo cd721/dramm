@@ -3,7 +3,7 @@ name: CI/CD
 
 on:
   push:
-    branches: [dcompose, jr-docker]  
+    branches: [development, dcompose, jr-docker]  
   workflow_dispatch: 
 
 env:
